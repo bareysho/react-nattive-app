@@ -1,0 +1,1 @@
+export { FullSpaceContainer } from './FullSpaceContainer';
