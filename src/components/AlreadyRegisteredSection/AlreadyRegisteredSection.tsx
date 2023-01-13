@@ -3,9 +3,11 @@ import { HStack, Link, Text } from 'native-base';
 
 interface IAlreadyRegisteredSection {
   navigate: (screen: string) => void;
+  hasAccountHint?: boolean;
 }
 export const AlreadyRegisteredSection: FC<IAlreadyRegisteredSection> = ({
   navigate,
+  hasAccountHint = true,
 }) => {
   const handlePress = useCallback(() => {
     navigate('Login');
@@ -13,7 +15,7 @@ export const AlreadyRegisteredSection: FC<IAlreadyRegisteredSection> = ({
 
   return (
     <HStack mt="6" justifyContent="center">
-      <Text fontSize="sm">У меня есть аккаунт. </Text>
+      {hasAccountHint && <Text fontSize="sm">У меня есть аккаунт. </Text>}
 
       <Link onPress={handlePress}>Войти</Link>
     </HStack>

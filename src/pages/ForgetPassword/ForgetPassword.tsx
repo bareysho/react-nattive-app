@@ -6,20 +6,22 @@ import {
   Button,
   Center,
   Heading,
+  HStack,
+  Icon,
+  Link,
   ScrollView,
   Text,
   VStack,
 } from 'native-base';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { useAppDispatch } from '@src/redux/store';
 import { required, validateEmail } from '@src/validators/common';
 import { useForm } from '@src/hooks/useForm';
-import { Input } from '@src/components/control/Input/Input';
 import { TimerName } from '@src/enums/timer';
 import { OtpConfirmationForm } from '@src/components/OtpConfirmationForm';
 import { OtpTimerInfo } from '@src/components/OtpTimerInfo';
-import { FormError } from '@src/components/control/FormError';
 import {
   requestTypedOtpCodeAction,
   verifyTypedOtpCodeAction,
@@ -32,8 +34,9 @@ import {
   IOtpFormValues,
   IUpdatePasswordForm,
 } from '@src/types/form';
-import { AlreadyRegisteredSection } from '@src/components/AlreadyRegisteredSection';
 import { usePageWithOtpForm } from '@src/hooks/usePageWithOtpForm';
+import { Input } from '@src/components/control';
+import { FormError } from '@src/components/control/FormError';
 
 export const FORGOT_ERROR_MAPPER: Record<
   string,
@@ -129,12 +132,16 @@ export const ForgetPassword: FC<NativeStackScreenProps<ParamListBase>> = ({
       <Center w="100%">
         <Box safeArea p={2} py={10} w="95%">
           <Heading size="lg" fontWeight={600}>
-            Восстановить пароль
+            Восстановление пароля
           </Heading>
 
-          <Heading mt={1} mb={35} fontWeight="medium" size="xs">
-            Введите email чтобы продолжить!
+          <Heading mt={1} fontWeight="medium" size="xs">
+            Следуйте инструкциям
           </Heading>
+
+          <Center my={36}>
+            <MaterialIcons name={'vpn-key'} size={98} color="gray" />
+          </Center>
 
           <Formik<IForgotFormValues>
             initialValues={FORGOT_FORM_INITIAL_VALUES}
@@ -147,28 +154,32 @@ export const ForgetPassword: FC<NativeStackScreenProps<ParamListBase>> = ({
               const isDisabledFields = formik.isSubmitting || isNeedDisableForm;
 
               return (
-                <VStack mt={5} space={4}>
-                  <Input
-                    label="Email"
-                    isDisabled={isDisabledFields}
-                    error={formik.errors.email}
-                    value={formik.values.email}
-                    isInvalid={Boolean(
-                      formik.touched.email || formik.submitCount,
-                    )}
-                    onChangeText={formik.handleChange('email')}
-                    onBlur={formik.handleBlur('email')}
-                    placeholder="Введите email"
-                  />
+                <VStack w="100%" mt={5} space={3}>
+                  {pageState !== PageWithOtpState.SuccessUpdate && (
+                    <>
+                      <Input
+                        label="Email"
+                        isDisabled={isDisabledFields}
+                        error={formik.errors.email}
+                        value={formik.values.email}
+                        isInvalid={Boolean(
+                          formik.touched.email || formik.submitCount,
+                        )}
+                        onChangeText={formik.handleChange('email')}
+                        onBlur={formik.handleBlur('email')}
+                        placeholder="Введите email"
+                      />
 
-                  {submitRequestError && (
-                    <FormError message={submitRequestError} />
+                      {submitRequestError && (
+                        <FormError message={submitRequestError} />
+                      )}
+                    </>
                   )}
 
                   {pageState === PageWithOtpState.Init && (
                     <>
                       <Button
-                        mt={10}
+                        mt={8}
                         onPress={formik.handleSubmit}
                         isDisabled={!!restTime || isDisabledFields}
                         isLoading={formik.isSubmitting}
@@ -203,10 +214,24 @@ export const ForgetPassword: FC<NativeStackScreenProps<ParamListBase>> = ({
           )}
 
           {pageState === PageWithOtpState.SuccessUpdate && (
-            <Text>Обновлен</Text>
-          )}
+            <Center my={30}>
+              <Icon
+                size={160}
+                as={<MaterialIcons name={'check-circle-outline'} />}
+              />
 
-          <AlreadyRegisteredSection navigate={navigation.navigate} />
+              <HStack alignItems="center" mt={16}>
+                <Text fontSize="lg">Пароль успешно обновлен. </Text>
+
+                <Link
+                  _text={{ fontSize: 'lg' }}
+                  onPress={() => navigation.navigate('Login')}
+                >
+                  Войти
+                </Link>
+              </HStack>
+            </Center>
+          )}
         </Box>
       </Center>
     </ScrollView>

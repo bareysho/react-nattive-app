@@ -8,6 +8,7 @@ import {
   Heading,
   HStack,
   Link,
+  ScrollView,
   Text,
   VStack,
 } from 'native-base';
@@ -62,82 +63,88 @@ export const Login: FC<NativeStackScreenProps<ParamListBase>> = ({
   );
 
   return (
-    <Center w="100%">
-      <Box safeArea p="2" py="10" w="95%">
-        <Heading size="lg" fontWeight="600">
-          Добро пожаловать
-        </Heading>
+    <ScrollView h="80">
+      <Center w="100%">
+        <Box safeArea p={2} py={10} w="95%">
+          <Heading size="lg" fontWeight="600">
+            Добро пожаловать
+          </Heading>
 
-        <Heading mt="1" fontWeight="medium" size="xs">
-          Авторизируйтесь чтобы продолжить!
-        </Heading>
+          <Heading mt={1} fontWeight="medium" size="xs">
+            Авторизируйтесь чтобы продолжить!
+          </Heading>
 
-        <Center my={60}>
-          <MaterialIcons name={'fitness-center'} size={100} color="gray" />
-        </Center>
+          <Center my={36}>
+            <MaterialIcons name={'fitness-center'} size={98} color="gray" />
+          </Center>
 
-        <Formik<ILoginFormValues>
-          initialValues={{ login: '', password: '' }}
-          onSubmit={onSubmit}
-          validateOnChange
-          validate={validate}
-        >
-          {formik => (
-            <VStack space={3}>
-              <InputWithIcon
-                label="Имя пользователя"
-                isDisabled={isLoading}
-                error={formik.errors.login}
-                value={formik.values.login}
-                isInvalid={Boolean(formik.touched.login || formik.submitCount)}
-                onChangeText={formik.handleChange('login')}
-                onBlur={formik.handleBlur('login')}
-                placeholder="Введите имя пользователя"
-                icon={<MaterialIcons name={'person'} />}
-              />
+          <Formik<ILoginFormValues>
+            initialValues={{ login: '', password: '' }}
+            onSubmit={onSubmit}
+            validateOnChange
+            validate={validate}
+          >
+            {formik => (
+              <VStack w="100%" space={3}>
+                <InputWithIcon
+                  label="Имя пользователя"
+                  isDisabled={isLoading}
+                  error={formik.errors.login}
+                  value={formik.values.login}
+                  isInvalid={Boolean(
+                    formik.touched.login || formik.submitCount,
+                  )}
+                  onChangeText={formik.handleChange('login')}
+                  onBlur={formik.handleBlur('login')}
+                  placeholder="Введите имя пользователя"
+                  icon={<MaterialIcons name={'person'} />}
+                />
 
-              <InputPassword
-                label="Пароль"
-                isDisabled={isLoading}
-                error={formik.errors.password}
-                value={formik.values.password}
-                isInvalid={Boolean(
-                  formik.touched.password || formik.submitCount,
+                <InputPassword
+                  label="Пароль"
+                  isDisabled={isLoading}
+                  error={formik.errors.password}
+                  value={formik.values.password}
+                  isInvalid={Boolean(
+                    formik.touched.password || formik.submitCount,
+                  )}
+                  onChangeText={formik.handleChange('password')}
+                  onBlur={formik.handleBlur('password')}
+                  placeholder="Введите пароль"
+                />
+
+                {submitRequestError && (
+                  <FormError message={submitRequestError} />
                 )}
-                onChangeText={formik.handleChange('password')}
-                onBlur={formik.handleBlur('password')}
-                placeholder="Введите пароль"
-              />
 
-              {submitRequestError && <FormError message={submitRequestError} />}
-
-              <Link
-                alignSelf="flex-end"
-                onPress={getNavigateCallback('ForgetPassword')}
-              >
-                Забыли пароль?
-              </Link>
-
-              <Button
-                mt={6}
-                onPress={formik.handleSubmit}
-                disabled={isLoading}
-                isLoading={isLoading}
-              >
-                Войти
-              </Button>
-
-              <HStack mt="6" justifyContent="center">
-                <Text fontSize="sm">Я новый пользователь. </Text>
-
-                <Link onPress={getNavigateCallback('Registration')}>
-                  Зарегистрироваться
+                <Link
+                  alignSelf="flex-end"
+                  onPress={getNavigateCallback('ForgetPassword')}
+                >
+                  Забыли пароль?
                 </Link>
-              </HStack>
-            </VStack>
-          )}
-        </Formik>
-      </Box>
-    </Center>
+
+                <Button
+                  mt={6}
+                  onPress={formik.handleSubmit}
+                  disabled={isLoading}
+                  isLoading={isLoading}
+                >
+                  Войти
+                </Button>
+
+                <HStack mt="6" justifyContent="center">
+                  <Text fontSize="sm">Я новый пользователь. </Text>
+
+                  <Link onPress={getNavigateCallback('Registration')}>
+                    Зарегистрироваться
+                  </Link>
+                </HStack>
+              </VStack>
+            )}
+          </Formik>
+        </Box>
+      </Center>
+    </ScrollView>
   );
 };

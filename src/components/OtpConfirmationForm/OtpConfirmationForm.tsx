@@ -114,7 +114,7 @@ export const OtpConfirmationForm: FC<IOtpConfirmation> = ({
                 ) : (
                   <Flex direction="row">
                     <Button
-                      isDisabled={isResendLoading || isPinReady}
+                      isDisabled={isResendLoading}
                       isLoading={isResendLoading}
                       p={0}
                       size="sm"
@@ -130,7 +130,7 @@ export const OtpConfirmationForm: FC<IOtpConfirmation> = ({
 
             <Button
               mt={5}
-              isDisabled={isFormLoading}
+              isDisabled={isFormLoading || !isPinReady}
               isLoading={isFormLoading}
               onPress={formik.handleSubmit}
             >

@@ -117,9 +117,13 @@ export const Registration: FC<NativeStackScreenProps<ParamListBase>> = ({
             Регистрация
           </Heading>
 
-          <Heading mt={1} mb={35} fontWeight="medium" size="xs">
+          <Heading mt={1} fontWeight="medium" size="xs">
             Зарегистрируйтесь чтобы продолжить!
           </Heading>
+
+          <Center my={18}>
+            <MaterialIcons name={'supervisor-account'} size={98} color="gray" />
+          </Center>
 
           <Formik<IRegistrationFormValues>
             initialValues={REGISTRATION_FORM_INITIAL_VALUES}
@@ -132,7 +136,7 @@ export const Registration: FC<NativeStackScreenProps<ParamListBase>> = ({
               const isDisabledFields = formik.isSubmitting || isNeedDisableForm;
 
               return (
-                <VStack mt={5} space={4}>
+                <VStack w="100%" mt={5} space={4}>
                   <InputWithIcon
                     label="Имя пользователя"
                     isDisabled={isDisabledFields}
