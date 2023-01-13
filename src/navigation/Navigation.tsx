@@ -44,6 +44,7 @@ export const Navigation = () => {
               name="ForgetPassword"
               options={{
                 title: 'Восстановление пароля',
+                headerShown: false,
               }}
               component={ForgetPassword}
             />

@@ -7,3 +7,7 @@ export interface IUser {
   username: string;
   verified: boolean;
 }
+
+export interface IUserWithToken extends IUser {
+  token: string;
+}

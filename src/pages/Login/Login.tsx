@@ -16,22 +16,18 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { selectAuthState } from '@src/selectors/auth';
 import { useAppDispatch, useAppSelector } from '@src/redux/store';
-import { login } from '@src/redux/slices/auth';
+import { loginAction } from '@src/redux/actions/authActions';
 import { onlyLatin, required } from '@src/validators/common';
 import { useForm } from '@src/hooks/useForm';
 import { InputPassword, InputWithIcon } from '@src/components/control';
 import { FormError } from '@src/components/control/FormError';
+import { ILoginFormValues } from '@src/types/form';
 
 export const LOGIN_ERRORS_MAPPER: Record<string, Partial<ILoginFormValues>> = {
   INVALID_CREDENTIALS_ERROR: {
     password: 'Неверное имя пользователя или пароль',
   },
 };
-
-interface ILoginFormValues {
-  login: string;
-  password: string;
-}
 
 export const Login: FC<NativeStackScreenProps<ParamListBase>> = ({
   navigation,
@@ -40,9 +36,9 @@ export const Login: FC<NativeStackScreenProps<ParamListBase>> = ({
 
   const { isLoading } = useAppSelector(selectAuthState);
 
-  const submitCallback = useCallback(
+  const submitRegistration = useCallback(
     async ({ login: username, password }: FormikValues): Promise<void> => {
-      await dispatch(login({ username, password })).unwrap();
+      await dispatch(loginAction({ username, password })).unwrap();
 
       navigation.navigate('Home');
     },
@@ -50,7 +46,7 @@ export const Login: FC<NativeStackScreenProps<ParamListBase>> = ({
   );
 
   const { validate, onSubmit, submitRequestError } = useForm<ILoginFormValues>({
-    submitCallback,
+    submitCallback: submitRegistration,
     fieldsValidators: {
       login: [required, onlyLatin],
       password: [required],

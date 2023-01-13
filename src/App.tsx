@@ -4,7 +4,7 @@ import { Center, Spinner } from 'native-base';
 
 import { useAppDispatch } from '@src/redux/store';
 import { selectAuthState } from '@src/selectors/auth';
-import { recallUser } from '@src/redux/slices/auth/asyncThunks/authAthunkThunks';
+import { recallUserAction } from '@src/redux/actions/authActions';
 import { getStorageUser, removeStorageUser } from '@src/utils/asyncStorage';
 import { Navigation } from '@src/navigation/Navigation';
 import { GlobalLoadingContext } from '@src/providers/GlobalLoadingProvider';
@@ -27,7 +27,9 @@ export const App = () => {
         setGlobalLoading(true);
 
         try {
-          await dispatch(recallUser(authenticatedUserId)).unwrap();
+          await dispatch(
+            recallUserAction({ userId: authenticatedUserId }),
+          ).unwrap();
         } catch (error) {
           await removeStorageUser();
         }
