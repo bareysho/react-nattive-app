@@ -1,22 +1,9 @@
 import React, { FC } from 'react';
-import { Button, Text } from 'react-native-paper';
-import { StyleSheet, View } from 'react-native';
+import { Button, Center, Text } from 'native-base';
 
 import { useAppDispatch, useAppSelector } from '@src/redux/store';
 import { selectAuthState } from '@src/selectors/auth';
-import { FullSpaceContainer } from '@src/components/FullSpaceContainer';
 import { logout } from '@src/redux/slices/auth/asyncThunks/authAthunkThunks';
-
-const styles = StyleSheet.create({
-  button: {
-    margin: 4,
-  },
-  buttonContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-  },
-});
 
 export const Profile: FC<{ onLogoutNavigate: () => void }> = ({
   onLogoutNavigate,
@@ -25,11 +12,17 @@ export const Profile: FC<{ onLogoutNavigate: () => void }> = ({
 
   const { user } = useAppSelector(selectAuthState);
 
+  const handleLogout = async () => {
+    await dispatch(logout());
+
+    onLogoutNavigate();
+  };
+
   return (
-    <FullSpaceContainer>
+    <>
       {user && (
-        <>
-          <Text>Authenticated User information</Text>
+        <Center>
+          <Text fontWeight={600}>Authenticated user information:</Text>
 
           <Text>{user.email}</Text>
 
@@ -41,21 +34,11 @@ export const Profile: FC<{ onLogoutNavigate: () => void }> = ({
 
           <Text>{user.verified}</Text>
 
-          <View style={styles.buttonContainer}>
-            <Button
-              mode="contained-tonal"
-              style={styles.button}
-              onPress={async () => {
-                await dispatch(logout());
-
-                onLogoutNavigate();
-              }}
-            >
-              Выйти
-            </Button>
-          </View>
-        </>
+          <Button px={10} onPress={handleLogout}>
+            Выйти
+          </Button>
+        </Center>
       )}
-    </FullSpaceContainer>
+    </>
   );
 };

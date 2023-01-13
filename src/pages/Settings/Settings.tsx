@@ -1,12 +1,6 @@
 import React, { FC } from 'react';
-import { Text } from 'react-native-paper';
-
-import { FullSpaceContainer } from '@src/components/FullSpaceContainer';
+import { Text } from 'native-base';
 
 export const Settings: FC = () => {
-  return (
-    <FullSpaceContainer>
-      <Text variant="headlineMedium">Settings!</Text>
-    </FullSpaceContainer>
-  );
+  return <Text variant="headlineMedium">Settings!</Text>;
 };

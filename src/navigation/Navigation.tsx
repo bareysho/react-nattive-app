@@ -2,7 +2,6 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useTheme } from 'react-native-paper';
 
 import { selectAuthState } from '@src/selectors/auth';
 import { ForgetPassword, Home, Login, Registration } from '@src/pages';
@@ -10,22 +9,13 @@ import { ForgetPassword, Home, Login, Registration } from '@src/pages';
 const Stack = createNativeStackNavigator();
 
 export const Navigation = () => {
-  const theme = useTheme();
-
-  const { user: authenticatedUser } = useSelector(selectAuthState);
+  const { user: authenticatedUser, isAuthenticated } =
+    useSelector(selectAuthState);
 
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={{
-          contentStyle: [
-            {
-              backgroundColor: theme.colors.background,
-            },
-          ],
-        }}
-      >
-        {authenticatedUser ? (
+      <Stack.Navigator>
+        {authenticatedUser && isAuthenticated ? (
           <>
             <Stack.Screen
               name="Home"
@@ -45,10 +35,7 @@ export const Navigation = () => {
               name="Registration"
               options={{
                 title: 'Регистрация',
-                headerTintColor: theme.colors.onBackground,
-                headerStyle: {
-                  backgroundColor: theme.colors.elevation.level2,
-                },
+                headerShown: false,
               }}
               component={Registration}
             />
@@ -57,10 +44,6 @@ export const Navigation = () => {
               name="ForgetPassword"
               options={{
                 title: 'Восстановление пароля',
-                headerTintColor: theme.colors.onBackground,
-                headerStyle: {
-                  backgroundColor: theme.colors.elevation.level2,
-                },
               }}
               component={ForgetPassword}
             />

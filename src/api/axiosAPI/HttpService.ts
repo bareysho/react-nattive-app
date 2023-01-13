@@ -12,6 +12,7 @@ class HttpService {
 
   private static initHttp(): AxiosInstance {
     const axiosInstance = axios.create({
+      timeout: 30 * 1000,
       baseURL: 'http://192.168.1.2:3000',
     });
 
@@ -61,6 +62,16 @@ class HttpService {
     params?: AxiosRequestConfig,
   ): Promise<R> {
     const response = await this.http.post(url, data, params);
+
+    return response.data;
+  }
+
+  async patch<T = CustomAny, R = AxiosResponse<T>>(
+    url: string,
+    data?: T,
+    params?: AxiosRequestConfig,
+  ): Promise<R> {
+    const response = await this.http.patch(url, data, params);
 
     return response.data;
   }
