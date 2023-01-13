@@ -1,12 +1,6 @@
 import React from 'react';
-import { Text } from 'react-native-paper';
-
-import { FullSpaceContainer } from '@src/components/FullSpaceContainer';
+import { Text } from 'native-base';
 
 export const ForgetPassword = () => {
-  return (
-    <FullSpaceContainer>
-      <Text>Забытый пароль</Text>
-    </FullSpaceContainer>
-  );
+  return <Text>Забытый пароль</Text>;
 };

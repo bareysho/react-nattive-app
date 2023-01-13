@@ -7,7 +7,9 @@ import {
   login,
   logout,
   recallUser,
+  registration,
   setAuthLoading,
+  verifyRegistration,
 } from './asyncThunks/authAthunkThunks';
 
 export interface IAuthState {
@@ -41,6 +43,18 @@ const authenticateFulfilledReducer: CaseReducer<
   state.token = token;
   state.user = user;
   state.isLoading = false;
+  state.isAuthenticated = true;
+};
+
+const registrationFulfilledReducer: CaseReducer<
+  IAuthState,
+  PayloadAction<IUser & { token: string }>
+> = (state, action) => {
+  return {
+    ...state,
+    user: action.payload,
+    isLoading: false,
+  };
 };
 
 const setInitialState = (state: IAuthState) => ({
@@ -62,6 +76,12 @@ export const authSlice = createSlice({
     builder.addCase(logout.pending, setLoading(true));
     builder.addCase(logout.rejected, setLoading(false));
     builder.addCase(logout.fulfilled, setInitialState);
+    builder.addCase(registration.fulfilled, registrationFulfilledReducer);
+    builder.addCase(registration.pending, setLoading(true));
+    builder.addCase(registration.rejected, setLoading(false));
+    builder.addCase(verifyRegistration.fulfilled, authenticateFulfilledReducer);
+    builder.addCase(verifyRegistration.pending, setLoading(true));
+    builder.addCase(verifyRegistration.rejected, setLoading(false));
   },
   initialState,
   name: '@auth',

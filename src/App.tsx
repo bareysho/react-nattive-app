@@ -1,26 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { ActivityIndicator, useTheme } from 'react-native-paper';
 import { useSelector } from 'react-redux';
+import { Center, Spinner } from 'native-base';
 
 import { useAppDispatch } from '@src/redux/store';
 import { selectAuthState } from '@src/selectors/auth';
 import { recallUser } from '@src/redux/slices/auth/asyncThunks/authAthunkThunks';
 import { getStorageUser, removeStorageUser } from '@src/utils/asyncStorage';
-import { GlobalLoadingContext } from '@src/providers/GlobalLoadingProvider';
 import { Navigation } from '@src/navigation/Navigation';
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+import { GlobalLoadingContext } from '@src/providers/GlobalLoadingProvider';
 
 export const App = () => {
-  const theme = useTheme();
-
   const dispatch = useAppDispatch();
 
   const { isGlobalLoading, setGlobalLoading } =
@@ -53,16 +42,9 @@ export const App = () => {
   const isApplicationLoading = isGlobalLoading || !isUserRecalled;
 
   return isApplicationLoading ? (
-    <View
-      style={[
-        styles.mainContainer,
-        {
-          backgroundColor: theme.colors.background,
-        },
-      ]}
-    >
-      <ActivityIndicator size={40} />
-    </View>
+    <Center alignItems="center" flex={1}>
+      <Spinner size={60} />
+    </Center>
   ) : (
     <Navigation />
   );

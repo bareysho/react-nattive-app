@@ -28,8 +28,24 @@ const revokeToken = () => {
   );
 };
 
+const registration = ({
+  username,
+  password,
+  email,
+}: {
+  username: string;
+  password: string;
+  email: string;
+}) => {
+  return http.post<
+    { username: string; password: string; email: string },
+    IUser & { token: string }
+  >('/auth/registration', { username, password, email });
+};
+
 export const authApi = {
   login,
   recallUser,
   revokeToken,
+  registration,
 };
