@@ -1,85 +1,89 @@
-import React, { FC } from 'react';
-import { Easing, StyleSheet, View } from 'react-native';
-import { Appbar, BottomNavigation } from 'react-native-paper';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import React, { FC, ReactElement, useMemo } from 'react';
 import { StackScreenProps } from '@react-navigation/stack/src/types';
 import { ParamListBase } from '@react-navigation/native';
+import { Center, HStack, Icon, Pressable, Text, VStack } from 'native-base';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { Profile } from '../Profile';
 import { Main } from '../Main';
 import { Settings } from '../Settings';
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
-  button: {
-    margin: 4,
-  },
-});
-
-type RoutesState = Array<{
+interface IRoutesConfig {
   key: string;
   title: string;
   focusedIcon: string;
-  badge?: boolean;
-}>;
-
-const SCENE_ANIMATION = 'shifting';
+  content: ReactElement;
+}
 
 export const Home: FC<StackScreenProps<ParamListBase>> = ({ navigation }) => {
-  const insets = useSafeAreaInsets();
+  const routes: IRoutesConfig[] = useMemo(
+    () => [
+      {
+        key: 'home',
+        title: 'Home',
+        focusedIcon: 'home-outline',
+        content: <Main />,
+      },
+      {
+        key: 'cog',
+        title: 'Setting',
+        focusedIcon: 'cog-outline',
+        content: <Settings />,
+      },
+      {
+        key: 'account',
+        title: 'Profile',
+        focusedIcon: 'account-outline',
+        content: (
+          <Profile
+            onLogoutNavigate={() => {
+              navigation.navigate('Login');
+            }}
+          />
+        ),
+      },
+    ],
+    [],
+  );
 
-  const [index, setIndex] = React.useState(0);
-
-  const [routes] = React.useState<RoutesState>([
-    {
-      key: 'home',
-      title: 'Home',
-      focusedIcon: 'home',
-    },
-    {
-      key: 'settings',
-      title: 'Setting',
-      focusedIcon: 'cog',
-      badge: true,
-    },
-    {
-      key: 'profile',
-      title: 'Profile',
-      focusedIcon: 'account',
-    },
-  ]);
-
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: false,
-    });
-  }, [navigation]);
+  const [selectedTab, setSelectedTab] = React.useState(0);
 
   return (
-    <View style={styles.screen}>
-      <Appbar.Header elevated>
-        <Appbar.Content title="Главная" />
-      </Appbar.Header>
+    <VStack justifyContent="space-between" flex={1}>
+      <Center alignItems="center" flex={1}>
+        {routes[selectedTab].content}
+      </Center>
 
-      <BottomNavigation
-        safeAreaInsets={{ bottom: insets.bottom }}
-        navigationState={{ index, routes }}
-        onIndexChange={setIndex}
-        labelMaxFontSizeMultiplier={2}
-        /* eslint-disable-next-line new-cap */
-        renderScene={BottomNavigation.SceneMap({
-          home: () => <Main />,
-          settings: () => <Settings />,
-          profile: () => (
-            <Profile onLogoutNavigate={() => navigation.navigate('Login')} />
-          ),
+      <HStack bg="white" alignItems="center" safeAreaBottom shadow={6}>
+        {routes.map((route, index) => {
+          const isActive = selectedTab === index;
+
+          const opacity = isActive ? 1 : 0.5;
+          const name = isActive ? route.key : route.focusedIcon;
+
+          const handleSelect = () => setSelectedTab(index);
+
+          return (
+            <Pressable
+              key={route.key}
+              opacity={opacity}
+              py={2}
+              flex={1}
+              onPress={handleSelect}
+            >
+              <Center alignItems="center">
+                <Icon
+                  mb={1}
+                  as={<MaterialCommunityIcons name={name} />}
+                  size="lg"
+                />
+
+                <Text fontSize={12}>{route.title}</Text>
+              </Center>
+            </Pressable>
+          );
         })}
-        sceneAnimationEnabled
-        sceneAnimationType={SCENE_ANIMATION}
-        sceneAnimationEasing={Easing.ease}
-      />
-    </View>
+      </HStack>
+    </VStack>
   );
 };
