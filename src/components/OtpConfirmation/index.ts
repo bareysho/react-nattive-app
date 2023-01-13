@@ -1,1 +1,0 @@
-export { OtpConfirmation } from './OtpConfirmation';

@@ -1,0 +1,1 @@
+export { OtpConfirmationForm } from './OtpConfirmationForm';

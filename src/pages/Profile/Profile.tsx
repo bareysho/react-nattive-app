@@ -3,7 +3,7 @@ import { Button, Center, Text } from 'native-base';
 
 import { useAppDispatch, useAppSelector } from '@src/redux/store';
 import { selectAuthState } from '@src/selectors/auth';
-import { logout } from '@src/redux/slices/auth/asyncThunks/authAthunkThunks';
+import { logoutAction } from '@src/redux/actions/authActions';
 
 interface IProfile {
   onLogoutNavigate: () => void;
@@ -15,7 +15,7 @@ export const Profile: FC<IProfile> = ({ onLogoutNavigate }) => {
   const { user } = useAppSelector(selectAuthState);
 
   const handleLogout = async () => {
-    await dispatch(logout());
+    await dispatch(logoutAction());
 
     onLogoutNavigate();
   };

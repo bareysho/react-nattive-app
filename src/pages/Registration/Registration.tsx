@@ -1,19 +1,9 @@
-import React, { FC, useCallback, useMemo, useState } from 'react';
+import React, { FC, useCallback } from 'react';
 import { Formik, FormikErrors } from 'formik';
 import { ParamListBase } from '@react-navigation/native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {
-  Box,
-  Button,
-  Center,
-  Heading,
-  HStack,
-  Link,
-  ScrollView,
-  Text,
-  VStack,
-} from 'native-base';
+import { Box, Button, Center, Heading, ScrollView, VStack } from 'native-base';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 import { useAppDispatch } from '@src/redux/store';
 import {
@@ -26,24 +16,24 @@ import {
 import { useForm } from '@src/hooks/useForm';
 import { Input } from '@src/components/control/Input/Input';
 import { InputPassword, InputWithIcon } from '@src/components/control';
-import { useCountdown } from '@src/hooks/useCountdown';
-import { OTP_TIMER_LIMIT } from '@src/constants/common';
 import { TimerName } from '@src/enums/timer';
-import { OtpConfirmation } from '@src/components/OtpConfirmation';
+import { OtpConfirmationForm } from '@src/components/OtpConfirmationForm';
 import { OtpTimerInfo } from '@src/components/OtpTimerInfo';
-import { registration } from '@src/redux/slices/auth/asyncThunks/authAthunkThunks';
+import {
+  requestSignupOtpAction,
+  verifySignupOtpCodeAction,
+} from '@src/redux/actions/authActions';
 import { FormError } from '@src/components/control/FormError';
+import { AlreadyRegisteredSection } from '@src/components/AlreadyRegisteredSection';
+import { IOtpFormValues } from '@src/types/form';
+import { usePageWithOtpForm } from '@src/hooks/usePageWithOtpForm';
+import { PageWithOtpState } from '@src/enums/otpCode';
 
 interface IRegistrationFormValues {
-  login: string;
+  username: string;
   email: string;
   password: string;
   confirmationPassword: string;
-}
-
-enum PageState {
-  Init,
-  CodeSent,
 }
 
 export const REGISTRATION_ERROR_MAPPER: Record<
@@ -54,8 +44,15 @@ export const REGISTRATION_ERROR_MAPPER: Record<
     email: 'Email уже зарегистрирован',
   },
   USERNAME_EXISTS: {
-    login: 'Имя пользователя уже зарегистрировано',
+    username: 'Имя пользователя уже зарегистрировано',
   },
+};
+
+const REGISTRATION_FORM_INITIAL_VALUES: IRegistrationFormValues = {
+  username: '',
+  email: '',
+  password: '',
+  confirmationPassword: '',
 };
 
 export const Registration: FC<NativeStackScreenProps<ParamListBase>> = ({
@@ -63,38 +60,36 @@ export const Registration: FC<NativeStackScreenProps<ParamListBase>> = ({
 }) => {
   const dispatch = useAppDispatch();
 
-  const [pageState, setPageState] = useState(PageState.Init);
-
-  const {
-    start: timerStart,
-    time: restTime,
-    isInitializing: isTimerInitializing,
-  } = useCountdown(OTP_TIMER_LIMIT, TimerName.RegistrationCode);
-
-  const [userValues, setUserValues] = useState<IRegistrationFormValues>();
-
-  const requestOtp = async ({
-    login: username,
+  const onRequestOtp = async ({
+    username,
     password,
     email,
   }: IRegistrationFormValues) => {
-    await dispatch(registration({ username, password, email })).unwrap();
-    await timerStart();
-
-    setPageState(PageState.CodeSent);
+    await dispatch(
+      requestSignupOtpAction({ username, password, email }),
+    ).unwrap();
   };
 
-  const submitCallback = async (values: IRegistrationFormValues) => {
-    setUserValues(values);
-
-    await requestOtp(values);
-  };
+  const {
+    pageState,
+    restTime,
+    resendCode,
+    submitRequestCode,
+    storedFormValues: userValues,
+    cancelVerification,
+    isNeedDisableForm,
+    isTimerInitializing,
+  } = usePageWithOtpForm<IRegistrationFormValues>({
+    name: TimerName.RegistrationCode,
+    onRequestOtp,
+    initValues: REGISTRATION_FORM_INITIAL_VALUES,
+  });
 
   const { validate, onSubmit, submitRequestError } =
     useForm<IRegistrationFormValues>({
-      submitCallback: submitCallback,
+      submitCallback: submitRequestCode,
       fieldsValidators: {
-        login: [required, onlyLatin],
+        username: [required, onlyLatin],
         email: [required, validateEmail],
         password: [required, validatePassword],
         confirmationPassword: [required, validatePassword],
@@ -103,25 +98,15 @@ export const Registration: FC<NativeStackScreenProps<ParamListBase>> = ({
       errorMapper: REGISTRATION_ERROR_MAPPER,
     });
 
-  const resendCode = useCallback(
-    () => userValues && requestOtp(userValues),
-    [userValues],
-  );
+  const submitOtpVerification = useCallback(
+    async ({ otp }: IOtpFormValues) => {
+      await dispatch(
+        verifySignupOtpCodeAction({ otp, email: userValues.email }),
+      ).unwrap();
 
-  const cancelVerification = useCallback(() => {
-    setPageState(PageState.Init);
-  }, []);
-
-  const getNavigateCallback = useCallback(
-    (route: string) => () => {
-      navigation.navigate(route);
+      navigation.navigate('Home');
     },
-    [navigation],
-  );
-
-  const isNeedDisableForm = useMemo(
-    () => Boolean(isTimerInitializing || pageState === PageState.CodeSent),
-    [isTimerInitializing, pageState],
+    [dispatch],
   );
 
   return (
@@ -137,12 +122,7 @@ export const Registration: FC<NativeStackScreenProps<ParamListBase>> = ({
           </Heading>
 
           <Formik<IRegistrationFormValues>
-            initialValues={{
-              login: '',
-              email: '',
-              password: '',
-              confirmationPassword: '',
-            }}
+            initialValues={REGISTRATION_FORM_INITIAL_VALUES}
             onSubmit={onSubmit}
             validate={validate}
             validateOnChange
@@ -156,13 +136,13 @@ export const Registration: FC<NativeStackScreenProps<ParamListBase>> = ({
                   <InputWithIcon
                     label="Имя пользователя"
                     isDisabled={isDisabledFields}
-                    error={formik.errors.login}
-                    value={formik.values.login}
+                    error={formik.errors.username}
+                    value={formik.values.username}
                     isInvalid={Boolean(
-                      formik.touched.login || formik.submitCount,
+                      formik.touched.username || formik.submitCount,
                     )}
-                    onChangeText={formik.handleChange('login')}
-                    onBlur={formik.handleBlur('login')}
+                    onChangeText={formik.handleChange('username')}
+                    onBlur={formik.handleBlur('username')}
                     placeholder="Введите имя пользователя"
                     icon={<MaterialIcons name={'person'} />}
                   />
@@ -209,7 +189,7 @@ export const Registration: FC<NativeStackScreenProps<ParamListBase>> = ({
                     <FormError message={submitRequestError} />
                   )}
 
-                  {pageState === PageState.Init && (
+                  {pageState === PageWithOtpState.Init && (
                     <>
                       <Button
                         mt={10}
@@ -232,22 +212,17 @@ export const Registration: FC<NativeStackScreenProps<ParamListBase>> = ({
             }}
           </Formik>
 
-          {pageState === PageState.CodeSent && userValues && (
-            <OtpConfirmation
-              resend={resendCode}
+          {pageState === PageWithOtpState.CodeSent && (
+            <OtpConfirmationForm
+              resendCode={resendCode}
               restTime={restTime}
-              email={userValues.email}
               isTimerInitializing={isTimerInitializing}
+              submitCallback={submitOtpVerification}
               cancelVerification={cancelVerification}
-              onSuccessVerify={getNavigateCallback('Home')}
             />
           )}
 
-          <HStack mt="6" justifyContent="center">
-            <Text fontSize="sm">У меня есть аккаунт. </Text>
-
-            <Link onPress={getNavigateCallback('Login')}>Войти</Link>
-          </HStack>
+          <AlreadyRegisteredSection navigate={navigation.navigate} />
         </Box>
       </Center>
     </ScrollView>
