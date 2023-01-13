@@ -41,8 +41,7 @@ export const usePageWithOtpForm = <T>({
   }, []);
 
   const isNeedDisableForm = useMemo(
-    () =>
-      Boolean(isTimerInitializing || pageState === PageWithOtpState.CodeSent),
+    () => Boolean(isTimerInitializing || pageState !== PageWithOtpState.Init),
     [isTimerInitializing, pageState],
   );
 
