@@ -75,10 +75,11 @@ export const InputOtp: FC<IInputOtpCode & IInput> = ({
       return (
         <Box justifyContent="space-between" key={index}>
           <Input
-            w={10}
+            w={12}
             value={digit}
             isFocused={isInputBoxFocused && isValueFocused}
             isReadOnly={false}
+            isDisabled={isDisabled}
             textAlign="center"
           />
         </Box>
@@ -96,23 +97,25 @@ export const InputOtp: FC<IInputOtpCode & IInput> = ({
           {boxArray.map(boxDigit)}
         </HStack>
 
-        <Input
-          {...inputProps}
-          opacity={0}
-          position="absolute"
-          keyboardType="numeric"
-          caretHidden={true}
-          contextMenuHidden={true}
-          selectTextOnFocus={false}
-          pl="100%"
-          value={code}
-          isDisabled={isDisabled}
-          ref={inputRef}
-          maxLength={maximumLength}
-          onChangeText={handleChange}
-          onPressIn={handleOnPress}
-          onBlur={handleOnBlur}
-        />
+        {!isDisabled && (
+          <Input
+            {...inputProps}
+            opacity={0}
+            position="absolute"
+            keyboardType="numeric"
+            caretHidden={true}
+            contextMenuHidden={true}
+            selectTextOnFocus={false}
+            pl="100%"
+            value={code}
+            isDisabled={isDisabled}
+            ref={inputRef}
+            maxLength={maximumLength}
+            onChangeText={handleChange}
+            onPressIn={handleOnPress}
+            onBlur={handleOnBlur}
+          />
+        )}
       </Pressable>
 
       {helpText && <FormControl.HelperText>{helpText}</FormControl.HelperText>}
