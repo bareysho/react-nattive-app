@@ -8,6 +8,7 @@ import { useForm } from '@src/hooks/useForm';
 import { required } from '@src/validators/common';
 import { verifyRegistration } from '@src/redux/slices/auth/asyncThunks/authAthunkThunks';
 import { useAppDispatch } from '@src/redux/store';
+import { InputOtp } from '@src/components/control/Input/InputOtp';
 
 interface IOtpFormValues {
   otp: string;
@@ -75,6 +76,8 @@ export const OtpConfirmation: FC<IOtpConfirmation> = ({
     errorMapper: VERIFICATION_ERROR_MAPPER,
   });
 
+  const [isPinReady, setIsPinReady] = useState(false);
+
   return (
     <Formik<IOtpFormValues>
       initialValues={{
@@ -85,7 +88,8 @@ export const OtpConfirmation: FC<IOtpConfirmation> = ({
     >
       {formik => (
         <VStack mt={5} space={2}>
-          <Input
+          <InputOtp
+            setIsPinReady={setIsPinReady}
             label="Код подтверждения"
             error={formik.errors.otp}
             value={formik.values.otp}
@@ -93,7 +97,7 @@ export const OtpConfirmation: FC<IOtpConfirmation> = ({
             onChangeText={formik.handleChange('otp')}
             onBlur={formik.handleBlur('otp')}
             isDisabled={isLoading || formik.isSubmitting || isResendLoading}
-            placeholder="Введите код подтверждения"
+            maximumLength={6}
           />
 
           <Flex direction="row">
