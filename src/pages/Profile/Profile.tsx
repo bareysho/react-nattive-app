@@ -5,9 +5,11 @@ import { useAppDispatch, useAppSelector } from '@src/redux/store';
 import { selectAuthState } from '@src/selectors/auth';
 import { logout } from '@src/redux/slices/auth/asyncThunks/authAthunkThunks';
 
-export const Profile: FC<{ onLogoutNavigate: () => void }> = ({
-  onLogoutNavigate,
-}) => {
+interface IProfile {
+  onLogoutNavigate: () => void;
+}
+
+export const Profile: FC<IProfile> = ({ onLogoutNavigate }) => {
   const dispatch = useAppDispatch();
 
   const { user } = useAppSelector(selectAuthState);

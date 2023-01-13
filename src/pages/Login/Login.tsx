@@ -1,8 +1,6 @@
 import React, { FC, useCallback } from 'react';
 import { Formik, FormikValues } from 'formik';
-import { StackScreenProps } from '@react-navigation/stack/src/types';
 import { ParamListBase } from '@react-navigation/native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
   Box,
   Button,
@@ -13,6 +11,8 @@ import {
   Text,
   VStack,
 } from 'native-base';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { selectAuthState } from '@src/selectors/auth';
 import { useAppDispatch, useAppSelector } from '@src/redux/store';
@@ -33,7 +33,9 @@ interface ILoginFormValues {
   password: string;
 }
 
-export const Login: FC<StackScreenProps<ParamListBase>> = ({ navigation }) => {
+export const Login: FC<NativeStackScreenProps<ParamListBase>> = ({
+  navigation,
+}) => {
   const dispatch = useAppDispatch();
 
   const { isLoading } = useAppSelector(selectAuthState);

@@ -1,8 +1,8 @@
 import React, { FC, ReactElement, useMemo } from 'react';
-import { StackScreenProps } from '@react-navigation/stack/src/types';
 import { ParamListBase } from '@react-navigation/native';
 import { Center, HStack, Icon, Pressable, Text, VStack } from 'native-base';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { Profile } from '../Profile';
 import { Main } from '../Main';
@@ -15,7 +15,9 @@ interface IRoutesConfig {
   content: ReactElement;
 }
 
-export const Home: FC<StackScreenProps<ParamListBase>> = ({ navigation }) => {
+export const Home: FC<NativeStackScreenProps<ParamListBase>> = ({
+  navigation,
+}) => {
   const routes: IRoutesConfig[] = useMemo(
     () => [
       {

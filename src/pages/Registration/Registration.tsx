@@ -1,6 +1,5 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import { Formik, FormikErrors } from 'formik';
-import { StackScreenProps } from '@react-navigation/stack/src/types';
 import { ParamListBase } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {
@@ -14,6 +13,7 @@ import {
   Text,
   VStack,
 } from 'native-base';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 import { useAppDispatch } from '@src/redux/store';
 import {
@@ -58,7 +58,7 @@ export const REGISTRATION_ERROR_MAPPER: Record<
   },
 };
 
-export const Registration: FC<StackScreenProps<ParamListBase>> = ({
+export const Registration: FC<NativeStackScreenProps<ParamListBase>> = ({
   navigation,
 }) => {
   const dispatch = useAppDispatch();
