@@ -106,7 +106,7 @@ export const Registration: FC<NativeStackScreenProps<ParamListBase>> = ({
 
       navigation.navigate('Home');
     },
-    [dispatch],
+    [dispatch, userValues, navigation],
   );
 
   return (
