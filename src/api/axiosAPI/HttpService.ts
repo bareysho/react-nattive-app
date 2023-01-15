@@ -13,7 +13,8 @@ class HttpService {
   private static initHttp(): AxiosInstance {
     const axiosInstance = axios.create({
       timeout: 30 * 1000,
-      baseURL: 'http://192.168.1.2:3000',
+      baseURL: 'https://workout-plan-node-server.herokuapp.com',
+      // baseURL: 'http://192.168.1.2:3000',
     });
 
     axiosInstance.interceptors.request.use(
