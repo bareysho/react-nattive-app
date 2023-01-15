@@ -37,6 +37,7 @@ import {
 import { usePageWithOtpForm } from '@src/hooks/usePageWithOtpForm';
 import { Input } from '@src/components/control';
 import { FormError } from '@src/components/control/FormError';
+import { AlreadyRegisteredSection } from '@src/components/AlreadyRegisteredSection';
 
 export const FORGOT_ERROR_MAPPER: Record<
   string,
@@ -108,7 +109,7 @@ export const ForgetPassword: FC<NativeStackScreenProps<ParamListBase>> = ({
 
       setPageState(PageWithOtpState.SuccessUpdate);
     },
-    [dispatch, otpFormValues, forgotFormValues?.email],
+    [dispatch, otpFormValues, forgotFormValues.email],
   );
 
   const submitOtpVerification = useCallback(
@@ -116,7 +117,7 @@ export const ForgetPassword: FC<NativeStackScreenProps<ParamListBase>> = ({
       await dispatch(
         verifyTypedOtpCodeAction({
           otp,
-          email: forgotFormValues?.email,
+          email: forgotFormValues.email,
           type: OtpCodeType.PasswordRecovery,
         }),
       ).unwrap();
@@ -124,7 +125,7 @@ export const ForgetPassword: FC<NativeStackScreenProps<ParamListBase>> = ({
       setOtpFormValues({ otp });
       setPageState(PageWithOtpState.SetPassword);
     },
-    [dispatch],
+    [dispatch, forgotFormValues],
   );
 
   return (
@@ -231,6 +232,10 @@ export const ForgetPassword: FC<NativeStackScreenProps<ParamListBase>> = ({
                 </Link>
               </HStack>
             </Center>
+          )}
+
+          {pageState !== PageWithOtpState.SuccessUpdate && (
+            <AlreadyRegisteredSection navigate={navigation.navigate} />
           )}
         </Box>
       </Center>

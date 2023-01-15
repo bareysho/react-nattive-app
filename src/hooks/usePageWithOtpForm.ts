@@ -30,6 +30,8 @@ export const usePageWithOtpForm = <T>({
 }: IUseOtpParams<T>): IUseOtpPageValues<T> => {
   const [pageState, setPageState] = useState(PageWithOtpState.Init);
 
+  const [storedFormValues, setStoredFormValues] = useState<T>(initValues);
+
   const {
     start: timerStart,
     time: restTime,
@@ -44,8 +46,6 @@ export const usePageWithOtpForm = <T>({
     () => Boolean(isTimerInitializing || pageState !== PageWithOtpState.Init),
     [isTimerInitializing, pageState],
   );
-
-  const [storedFormValues, setStoredFormValues] = useState<T>(initValues);
 
   const requestOtp = async (values: T) => {
     await onRequestOtp(values);
