@@ -1,12 +1,13 @@
 import React, { FC, ReactElement, useMemo } from 'react';
 import { ParamListBase } from '@react-navigation/native';
 import { Center, HStack, Icon, Pressable, Text, VStack } from 'native-base';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { Profile } from '../Profile';
-import { Main } from '../Main';
-import { Settings } from '../Settings';
+import { PageLayout } from '@src/components/PageLayout';
+import { useThemedBgColor } from '@src/hooks/useThemedBgColor';
+
+import { Main, Profile, Settings } from './screens';
 
 interface IRoutesConfig {
   key: string;
@@ -22,19 +23,19 @@ export const Home: FC<NativeStackScreenProps<ParamListBase>> = ({
     () => [
       {
         key: 'home',
-        title: 'Home',
+        title: 'Дом',
         focusedIcon: 'home-outline',
         content: <Main />,
       },
       {
         key: 'cog',
-        title: 'Setting',
+        title: 'Настройки',
         focusedIcon: 'cog-outline',
         content: <Settings />,
       },
       {
         key: 'account',
-        title: 'Profile',
+        title: 'Профиль',
         focusedIcon: 'account-outline',
         content: (
           <Profile
@@ -50,13 +51,15 @@ export const Home: FC<NativeStackScreenProps<ParamListBase>> = ({
 
   const [selectedTab, setSelectedTab] = React.useState(0);
 
-  return (
-    <VStack justifyContent="space-between" flex={1}>
-      <Center alignItems="center" flex={1}>
-        {routes[selectedTab].content}
-      </Center>
+  const bg = useThemedBgColor();
 
-      <HStack bg="white" alignItems="center" safeAreaBottom shadow={6}>
+  return (
+    <VStack w="100%" justifyContent="space-between" flex={1}>
+      <PageLayout>
+        <Center>{routes[selectedTab].content}</Center>
+      </PageLayout>
+
+      <HStack bg={bg} alignItems="center" safeAreaBottom shadow={6}>
         {routes.map((route, index) => {
           const isActive = selectedTab === index;
 

@@ -26,7 +26,7 @@ export const InputPassword: FC<IInput> = ({ ...inputProps }) => {
       InputRightElement={
         <Pressable onPress={handleChangeType}>
           <Icon
-            as={<MaterialIcons name={show ? 'visibility' : 'visibility-off'} />}
+            as={<MaterialIcons name={show ? 'visibility-off' : 'visibility'} />}
             size={5}
             mr="2"
           />

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useState } from 'react';
+import React, { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { Formik, FormikErrors } from 'formik';
 import { ParamListBase } from '@react-navigation/native';
 import {
@@ -9,7 +9,6 @@ import {
   HStack,
   Icon,
   Link,
-  ScrollView,
   Text,
   VStack,
 } from 'native-base';
@@ -38,6 +37,8 @@ import { usePageWithOtpForm } from '@src/hooks/usePageWithOtpForm';
 import { Input } from '@src/components/control';
 import { FormError } from '@src/components/control/FormError';
 import { AlreadyRegisteredSection } from '@src/components/AlreadyRegisteredSection';
+import { PageLayout } from '@src/components/PageLayout';
+import { ScreenLoadingContext } from '@src/providers/ScreenLoadingProvider';
 
 export const FORGOT_ERROR_MAPPER: Record<
   string,
@@ -82,6 +83,12 @@ export const ForgetPassword: FC<NativeStackScreenProps<ParamListBase>> = ({
     onRequestOtp,
     initValues: FORGOT_FORM_INITIAL_VALUES,
   });
+
+  const { setScreenLoading } = useContext(ScreenLoadingContext);
+
+  useEffect(() => {
+    setScreenLoading(isTimerInitializing);
+  }, [isTimerInitializing]);
 
   const [otpFormValues, setOtpFormValues] = useState<IOtpFormValues>(
     OTP_FORM_INITIAL_VALUES,
@@ -129,116 +136,112 @@ export const ForgetPassword: FC<NativeStackScreenProps<ParamListBase>> = ({
   );
 
   return (
-    <ScrollView h="80">
-      <Center w="100%">
-        <Box safeArea p={2} py={10} w="95%">
-          <Heading size="lg" fontWeight={600}>
-            Восстановление пароля
-          </Heading>
+    <PageLayout>
+      <Heading size="lg" fontWeight={600}>
+        Восстановление пароля
+      </Heading>
 
-          <Heading mt={1} fontWeight="medium" size="xs">
-            Следуйте инструкциям
-          </Heading>
+      <Heading mt={1} fontWeight="medium" size="xs">
+        Следуйте инструкциям
+      </Heading>
 
-          <Center my={36}>
-            <MaterialIcons name={'vpn-key'} size={98} color="gray" />
-          </Center>
-
-          <Formik<IForgotFormValues>
-            initialValues={FORGOT_FORM_INITIAL_VALUES}
-            onSubmit={onSubmit}
-            validate={validate}
-            validateOnChange
-            validateOnBlur
-          >
-            {formik => {
-              const isDisabledFields = formik.isSubmitting || isNeedDisableForm;
-
-              return (
-                <VStack w="100%" mt={5} space={3}>
-                  {pageState !== PageWithOtpState.SuccessUpdate && (
-                    <>
-                      <Input
-                        label="Email"
-                        isDisabled={isDisabledFields}
-                        error={formik.errors.email}
-                        value={formik.values.email}
-                        isInvalid={Boolean(
-                          formik.touched.email || formik.submitCount,
-                        )}
-                        onChangeText={formik.handleChange('email')}
-                        onBlur={formik.handleBlur('email')}
-                        placeholder="Введите email"
-                      />
-
-                      {submitRequestError && (
-                        <FormError message={submitRequestError} />
-                      )}
-                    </>
-                  )}
-
-                  {pageState === PageWithOtpState.Init && (
-                    <>
-                      <Button
-                        mt={8}
-                        onPress={formik.handleSubmit}
-                        isDisabled={!!restTime || isDisabledFields}
-                        isLoading={formik.isSubmitting}
-                      >
-                        Отправить код
-                      </Button>
-
-                      {!!restTime && (
-                        <Box mt={4}>
-                          <OtpTimerInfo timeLeft={restTime} />
-                        </Box>
-                      )}
-                    </>
-                  )}
-                </VStack>
-              );
-            }}
-          </Formik>
-
-          {pageState === PageWithOtpState.CodeSent && forgotFormValues && (
-            <OtpConfirmationForm
-              resendCode={resendCode}
-              restTime={restTime}
-              isTimerInitializing={isTimerInitializing}
-              cancelVerification={cancelVerification}
-              submitCallback={submitOtpVerification}
-            />
-          )}
-
-          {pageState === PageWithOtpState.SetPassword && (
-            <UpdatePasswordForm submitCallback={submitUpdatePassword} />
-          )}
-
-          {pageState === PageWithOtpState.SuccessUpdate && (
-            <Center my={30}>
-              <Icon
-                size={160}
-                as={<MaterialIcons name={'check-circle-outline'} />}
-              />
-
-              <HStack alignItems="center" mt={16}>
-                <Text fontSize="lg">Пароль успешно обновлен. </Text>
-
-                <Link
-                  _text={{ fontSize: 'lg' }}
-                  onPress={() => navigation.navigate('Login')}
-                >
-                  Войти
-                </Link>
-              </HStack>
-            </Center>
-          )}
-
-          {pageState !== PageWithOtpState.SuccessUpdate && (
-            <AlreadyRegisteredSection navigate={navigation.navigate} />
-          )}
-        </Box>
+      <Center my={36}>
+        <MaterialIcons name={'vpn-key'} size={98} color="gray" />
       </Center>
-    </ScrollView>
+
+      <Formik<IForgotFormValues>
+        initialValues={FORGOT_FORM_INITIAL_VALUES}
+        onSubmit={onSubmit}
+        validate={validate}
+        validateOnChange
+        validateOnBlur
+      >
+        {formik => {
+          const isDisabledFields = formik.isSubmitting || isNeedDisableForm;
+
+          return (
+            <VStack w="100%" mt={5} space={3}>
+              {pageState !== PageWithOtpState.SuccessUpdate && (
+                <>
+                  <Input
+                    label="Email"
+                    isDisabled={isDisabledFields}
+                    error={formik.errors.email}
+                    value={formik.values.email}
+                    isInvalid={Boolean(
+                      formik.touched.email || formik.submitCount,
+                    )}
+                    onChangeText={formik.handleChange('email')}
+                    onBlur={formik.handleBlur('email')}
+                    placeholder="Введите email"
+                  />
+
+                  {submitRequestError && (
+                    <FormError message={submitRequestError} />
+                  )}
+                </>
+              )}
+
+              {pageState === PageWithOtpState.Init && (
+                <>
+                  <Button
+                    mt={8}
+                    onPress={formik.handleSubmit}
+                    isDisabled={!!restTime || isDisabledFields}
+                    isLoading={formik.isSubmitting}
+                  >
+                    Отправить код
+                  </Button>
+
+                  {!!restTime && (
+                    <Box mt={4}>
+                      <OtpTimerInfo timeLeft={restTime} />
+                    </Box>
+                  )}
+                </>
+              )}
+            </VStack>
+          );
+        }}
+      </Formik>
+
+      {pageState === PageWithOtpState.CodeSent && forgotFormValues && (
+        <OtpConfirmationForm
+          resendCode={resendCode}
+          restTime={restTime}
+          isTimerInitializing={isTimerInitializing}
+          cancelVerification={cancelVerification}
+          submitCallback={submitOtpVerification}
+        />
+      )}
+
+      {pageState === PageWithOtpState.SetPassword && (
+        <UpdatePasswordForm submitCallback={submitUpdatePassword} />
+      )}
+
+      {pageState === PageWithOtpState.SuccessUpdate && (
+        <Center my={30}>
+          <Icon
+            size={160}
+            as={<MaterialIcons name={'check-circle-outline'} />}
+          />
+
+          <HStack alignItems="center" mt={16}>
+            <Text fontSize="lg">Пароль успешно обновлен. </Text>
+
+            <Link
+              _text={{ fontSize: 'lg' }}
+              onPress={() => navigation.navigate('Login')}
+            >
+              Войти
+            </Link>
+          </HStack>
+        </Center>
+      )}
+
+      {pageState !== PageWithOtpState.SuccessUpdate && (
+        <AlreadyRegisteredSection navigate={navigation.navigate} />
+      )}
+    </PageLayout>
   );
 };
