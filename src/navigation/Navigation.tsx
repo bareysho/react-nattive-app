@@ -19,7 +19,11 @@ export const Navigation = () => {
           <>
             <Stack.Screen
               name="Home"
-              options={{ title: 'Главная' }}
+              options={{
+                title: 'Главная',
+                headerShown: false,
+                // header: props => <ApplicationBar {...props} />,
+              }}
               component={Home}
             />
           </>
