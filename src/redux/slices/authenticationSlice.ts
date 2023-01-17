@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { CaseReducer } from '@reduxjs/toolkit/src/createReducer';
 
-import { IUser, IUserWithToken } from '@src/types/user';
+import { IUser } from '@src/types/user';
 
 import {
   loginAction,
@@ -33,24 +33,9 @@ const setLoading =
     state.isLoading = value;
   };
 
-const authenticateFulfilledReducer: CaseReducer<
-  IAuthState,
-  PayloadAction<IUserWithToken>
-> = (state, action) => {
-  const { token, ...user } = action.payload;
-
-  state.token = token;
-  state.user = user;
+const setUserAuthenticated: CaseReducer<IAuthState> = state => {
   state.isLoading = false;
   state.isAuthenticated = true;
-};
-
-const registrationFulfilledReducer: CaseReducer<
-  IAuthState,
-  PayloadAction<IUserWithToken>
-> = (state, action) => {
-  state.user = action.payload;
-  state.isLoading = false;
 };
 
 const setInitialState = () => initialState;
@@ -63,34 +48,41 @@ export const authenticationSlice = createSlice({
     setLoading: (state, action) => {
       state.isLoading = action.payload;
     },
+    setAccessToken: (state, action) => {
+      state.token = action.payload;
+    },
   },
   extraReducers: builder => {
     builder.addCase(recallUserAction.pending, setLoading(true));
-    builder.addCase(recallUserAction.fulfilled, authenticateFulfilledReducer);
+    builder.addCase(recallUserAction.fulfilled, (state, action) => {
+      state.isAuthenticated = true;
+      state.isLoading = false;
+      state.user = action.payload;
+    });
     builder.addCase(recallUserAction.rejected, setLoading(false));
-    builder.addCase(loginAction.fulfilled, authenticateFulfilledReducer);
+
+    builder.addCase(loginAction.fulfilled, setUserAuthenticated);
     builder.addCase(loginAction.pending, setLoading(true));
     builder.addCase(loginAction.rejected, setLoading(false));
+
+    builder.addCase(requestSignupOtpAction.fulfilled, setLoading(false));
+    builder.addCase(requestSignupOtpAction.pending, setLoading(true));
+    builder.addCase(requestSignupOtpAction.rejected, setLoading(false));
+
+    builder.addCase(verifySignupOtpCodeAction.fulfilled, setUserAuthenticated);
+    builder.addCase(verifySignupOtpCodeAction.pending, setLoading(true));
+    builder.addCase(verifySignupOtpCodeAction.rejected, setLoading(false));
+
     builder.addCase(logoutAction.pending, setLoading(true));
     builder.addCase(logoutAction.rejected, setLoading(false));
     builder.addCase(logoutAction.fulfilled, setInitialState);
-    builder.addCase(
-      requestSignupOtpAction.fulfilled,
-      registrationFulfilledReducer,
-    );
-    builder.addCase(requestSignupOtpAction.pending, setLoading(true));
-    builder.addCase(requestSignupOtpAction.rejected, setLoading(false));
-    builder.addCase(
-      verifySignupOtpCodeAction.fulfilled,
-      authenticateFulfilledReducer,
-    );
-    builder.addCase(verifySignupOtpCodeAction.pending, setLoading(true));
-    builder.addCase(verifySignupOtpCodeAction.rejected, setLoading(false));
   },
   initialState,
   name: '@authentication',
 });
 
 export const setAuthLoading = authenticationSlice.actions.setLoading;
+export const setAccessToken = authenticationSlice.actions.setAccessToken;
+export const clearUser = authenticationSlice.actions.clearUser;
 
 export const authReducer = authenticationSlice.reducer;

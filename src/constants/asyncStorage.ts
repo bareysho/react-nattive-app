@@ -1,1 +1,3 @@
-export const USER_KEY = 'ASYNC_STORAGE_USER';
+export const USER_ID_KEY = 'USER_ID_KEY';
+export const ACCESS_TOKEN_KEY = 'ACCESS_TOKEN_KEY';
+export const REFRESH_TOKEN_KEY = 'REFRESH_TOKEN_KEY';

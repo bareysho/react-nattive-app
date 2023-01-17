@@ -1,4 +1,4 @@
-import { IUser, IUserWithToken } from '@src/types/user';
+import { IUser } from '@src/types/user';
 import {
   IChangePasswordActionParams,
   SetRecoveryPasswordActionParams,
@@ -13,16 +13,6 @@ export const getUser = ({
   userId: string;
 }): Promise<{ user: IUser }> =>
   http.get<string, { user: IUser }>(`/user/${userId}`);
-
-const verifyEmail = ({
-  email,
-  otp,
-}: VerifyOtpCodeParams): Promise<IUserWithToken> =>
-  http.patch<VerifyOtpCodeParams, IUserWithToken>(
-    '/api/user/verify-email',
-    { email, otp },
-    { withCredentials: true },
-  );
 
 const changePassword = ({
   currentPassword,
@@ -52,7 +42,6 @@ const changeEmail = ({ email, otp }: VerifyOtpCodeParams): Promise<void> =>
 
 export const userApi = {
   getUser,
-  verifyEmail,
   changePassword,
   setRecoveredPassword,
   changeEmail,

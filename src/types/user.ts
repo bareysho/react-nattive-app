@@ -8,6 +8,8 @@ export interface IUser {
   verified: boolean;
 }
 
-export interface IUserWithToken extends IUser {
+export interface IAuthResponse {
+  id: string;
+  refreshToken: string;
   token: string;
 }
