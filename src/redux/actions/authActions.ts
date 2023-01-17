@@ -2,52 +2,50 @@ import { AxiosError } from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { IUserWithToken } from '@src/types/user';
-import { authApi, userApi } from '@src/api/axiosAPI';
-import { USER_KEY } from '@src/constants/asyncStorage';
-import { getStorageUser, removeStorageUser } from '@src/utils/asyncStorage';
+import { IUser } from '@src/types/user';
+import { authApi } from '@src/api/axiosAPI';
+import {
+  ACCESS_TOKEN_KEY,
+  USER_ID_KEY,
+  REFRESH_TOKEN_KEY,
+} from '@src/constants/asyncStorage';
 import { TimerName } from '@src/enums/timer';
-import { delay } from '@src/utils/common';
 import {
   ILoginActionParams,
   IRegistrationActionParams,
   VerifyOtpCodeParams,
 } from '@src/types/request';
 
-export const recallUserAction = createAsyncThunk<
-  IUserWithToken,
-  { userId: string }
->('@auth/recallUser', async ({ userId }, { rejectWithValue }) => {
-  try {
-    const { token, id } = await getStorageUser();
+import { setAccessToken } from '../slices/authenticationSlice';
 
-    const data = await authApi.recallUser({ id: userId || id });
-
-    await delay(2000);
-
-    console.log({ data });
-
-    return { ...data, token };
-  } catch (error) {
-    const axiosError = error as AxiosError;
-
-    return rejectWithValue(axiosError?.response?.data);
-  }
-});
-
-export const loginAction = createAsyncThunk<IUserWithToken, ILoginActionParams>(
-  '@auth/login',
-  async ({ username, password }, { rejectWithValue }) => {
+export const recallUserAction = createAsyncThunk<IUser, { userId: string }>(
+  '@auth/recallUser',
+  async ({ userId }, { rejectWithValue }) => {
     try {
-      const data = await authApi.login({ username, password });
+      return await authApi.recallUser({ id: userId });
+    } catch (error) {
+      const axiosError = error as AxiosError;
 
-      await AsyncStorage.setItem(USER_KEY, JSON.stringify(data));
+      return rejectWithValue(axiosError?.response?.data);
+    }
+  },
+);
 
-      await delay(2000);
+export const loginAction = createAsyncThunk<void, ILoginActionParams>(
+  '@auth/login',
+  async ({ username, password }, { rejectWithValue, dispatch }) => {
+    try {
+      const { id, token, refreshToken } = await authApi.login({
+        username,
+        password,
+      });
 
-      console.log({ data });
+      await AsyncStorage.setItem(USER_ID_KEY, id);
+      await AsyncStorage.setItem(ACCESS_TOKEN_KEY, token);
+      await AsyncStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
 
-      return data;
+      await dispatch(setAccessToken(token));
+      await dispatch(recallUserAction({ userId: id }));
     } catch (error) {
       const axiosError = error as AxiosError;
 
@@ -57,22 +55,17 @@ export const loginAction = createAsyncThunk<IUserWithToken, ILoginActionParams>(
 );
 
 export const requestSignupOtpAction = createAsyncThunk<
-  IUserWithToken,
+  void,
   IRegistrationActionParams
 >(
   '@authentication/requestSignupOtp',
   async ({ username, password, email }, { rejectWithValue }) => {
     try {
-      const data = await authApi.registration({
+      await authApi.registration({
         username,
         password,
         email,
       });
-      await delay(1500);
-
-      console.log({ data });
-
-      return data;
     } catch (error) {
       const axiosError = error as AxiosError;
 
@@ -82,21 +75,24 @@ export const requestSignupOtpAction = createAsyncThunk<
 );
 
 export const verifySignupOtpCodeAction = createAsyncThunk<
-  IUserWithToken,
+  void,
   VerifyOtpCodeParams
 >(
   '@authentication/verifySignupOtpCode',
-  async ({ email, otp }, { rejectWithValue }) => {
+  async ({ email, otp }, { rejectWithValue, dispatch }) => {
     try {
-      const data = await userApi.verifyEmail({ email, otp });
-      await delay(500);
+      const { refreshToken, token, id } = await authApi.verifyRegistration({
+        email,
+        otp,
+      });
 
-      await AsyncStorage.setItem(USER_KEY, JSON.stringify(data));
       await AsyncStorage.removeItem(TimerName.RegistrationCode);
 
-      console.log({ data });
+      await AsyncStorage.setItem(USER_ID_KEY, id);
+      await AsyncStorage.setItem(ACCESS_TOKEN_KEY, token);
+      await AsyncStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
 
-      return data;
+      await dispatch(recallUserAction({ userId: id }));
     } catch (error) {
       const axiosError = error as AxiosError;
 
@@ -108,8 +104,13 @@ export const verifySignupOtpCodeAction = createAsyncThunk<
 export const logoutAction = createAsyncThunk(
   '@authentication/logout',
   async () => {
-    await authApi.revokeToken();
+    const refreshToken = await AsyncStorage.getItem(REFRESH_TOKEN_KEY);
 
-    await removeStorageUser();
+    if (refreshToken) {
+      await authApi.revokeToken({ refreshToken });
+    }
+
+    await AsyncStorage.removeItem(ACCESS_TOKEN_KEY);
+    await AsyncStorage.removeItem(REFRESH_TOKEN_KEY);
   },
 );

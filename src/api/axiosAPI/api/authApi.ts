@@ -1,7 +1,8 @@
-import { IUser, IUserWithToken } from '@src/types/user';
+import { IAuthResponse, IUser } from '@src/types/user';
 import {
   ILoginActionParams,
   IRegistrationActionParams,
+  VerifyOtpCodeParams,
 } from '@src/types/request';
 
 import { http } from '../HttpService';
@@ -9,8 +10,8 @@ import { http } from '../HttpService';
 const login = ({
   username,
   password,
-}: ILoginActionParams): Promise<IUserWithToken> =>
-  http.post<ILoginActionParams, IUserWithToken>(
+}: ILoginActionParams): Promise<IAuthResponse> =>
+  http.post<ILoginActionParams, IAuthResponse>(
     '/auth/authenticate',
     {
       username,
@@ -20,27 +21,46 @@ const login = ({
   );
 
 const recallUser = ({ id }: { id: string }): Promise<IUser> =>
-  http.get<string, IUser>(`/api/user/${id}`);
+  http.get<{ id: string }, IUser>(`/api/user/${id}`);
 
-const revokeToken = (): Promise<void> =>
-  http.post<undefined, void>('/auth/revoke-token', undefined, {
-    withCredentials: true,
-  });
+const revokeToken = ({
+  refreshToken,
+}: {
+  refreshToken: string;
+}): Promise<void> =>
+  http.post<{ refreshToken: string }, void>(
+    '/auth/revoke-token',
+    { refreshToken },
+    {
+      withCredentials: true,
+    },
+  );
 
 const registration = ({
   username,
   password,
   email,
-}: IRegistrationActionParams): Promise<IUserWithToken> =>
-  http.post<IRegistrationActionParams, IUserWithToken>('/auth/registration', {
+}: IRegistrationActionParams): Promise<void> =>
+  http.post<IRegistrationActionParams, void>('/auth/registration', {
     username,
     password,
     email,
   });
+
+const verifyRegistration = ({
+  email,
+  otp,
+}: VerifyOtpCodeParams): Promise<IAuthResponse> =>
+  http.patch<VerifyOtpCodeParams, IAuthResponse>(
+    '/auth/verify-registration',
+    { email, otp },
+    { withCredentials: true },
+  );
 
 export const authApi = {
   login,
   recallUser,
   revokeToken,
   registration,
+  verifyRegistration,
 };

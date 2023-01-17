@@ -2,14 +2,16 @@ import React, { useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Center, Fab, Icon, Spinner, useColorMode } from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { useAppDispatch } from '@src/redux/store';
 import { selectAuthState } from '@src/selectors/auth';
 import { recallUserAction } from '@src/redux/actions/authActions';
-import { getStorageUser, removeStorageUser } from '@src/utils/asyncStorage';
 import { Navigation } from '@src/navigation/Navigation';
 import { GlobalLoadingContext } from '@src/providers/GlobalLoadingProvider';
 import { ICON_NAME_MAPPER_BY_COLOR_MODE } from '@src/constants/common';
+import { ACCESS_TOKEN_KEY, USER_ID_KEY } from '@src/constants/asyncStorage';
+import { setAccessToken } from '@src/redux/slices/authenticationSlice';
 
 export const App = () => {
   const dispatch = useAppDispatch();
@@ -24,7 +26,14 @@ export const App = () => {
 
   useEffect(() => {
     (async () => {
-      const { id: authenticatedUserId } = await getStorageUser();
+      const authenticatedUserId = await AsyncStorage.getItem(USER_ID_KEY);
+      const accessToken = await AsyncStorage.getItem(ACCESS_TOKEN_KEY);
+
+      if (!accessToken || !authenticatedUserId) {
+        setUserRecalled(true);
+      }
+
+      await dispatch(setAccessToken(accessToken));
 
       if (!authenticatedUser && authenticatedUserId) {
         setGlobalLoading(true);
@@ -34,7 +43,7 @@ export const App = () => {
             recallUserAction({ userId: authenticatedUserId }),
           ).unwrap();
         } catch (error) {
-          await removeStorageUser();
+          await AsyncStorage.removeItem(USER_ID_KEY);
         }
 
         setGlobalLoading(false);

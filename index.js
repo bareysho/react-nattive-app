@@ -11,12 +11,6 @@ import { ScreenLoadingProvider } from '@src/providers/ScreenLoadingProvider';
 import { name as appName } from './app.json';
 
 const RNRedux = () => {
-  const textShadow = {
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 10,
-  };
-
   const theme = extendTheme({
     colors: {
       primary: {

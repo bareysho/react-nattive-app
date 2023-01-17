@@ -1,7 +1,8 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 import { CustomAny } from '@src/types/common/customAny';
-import { getStorageUser } from '@src/utils/asyncStorage';
+import { store } from '@src/redux/store';
+import { selectAuthState } from '@src/selectors/auth';
 
 class HttpService {
   private readonly http: AxiosInstance;
@@ -13,8 +14,8 @@ class HttpService {
   private static initHttp(): AxiosInstance {
     const axiosInstance = axios.create({
       timeout: 30 * 1000,
-      baseURL: 'https://workout-plan-node-server.herokuapp.com',
-      // baseURL: 'http://192.168.1.2:3000',
+      // baseURL: 'https://workout-plan-node-server.herokuapp.com',
+      baseURL: 'http://192.168.1.2:3000',
     });
 
     axiosInstance.interceptors.request.use(
@@ -23,7 +24,7 @@ class HttpService {
           // @ts-ignore
           // eslint-disable-next-line @typescript-eslint/dot-notation
           if (!config.headers['authorization']) {
-            const { token } = await getStorageUser();
+            const { token } = selectAuthState(store.getState());
 
             // @ts-ignore
             // eslint-disable-next-line @typescript-eslint/dot-notation
