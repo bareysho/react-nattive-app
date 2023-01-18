@@ -1,7 +1,6 @@
 import { IUser } from '@src/types/user';
 import {
   IChangePasswordActionParams,
-  SetRecoveryPasswordActionParams,
   VerifyOtpCodeParams,
 } from '@src/types/request';
 
@@ -23,16 +22,6 @@ const changePassword = ({
     password,
   });
 
-const setRecoveredPassword = ({
-  email,
-  otp,
-  password,
-}: SetRecoveryPasswordActionParams): Promise<void> =>
-  http.patch<SetRecoveryPasswordActionParams, void>(
-    '/api/user/recovery-password',
-    { email, otp, password },
-  );
-
 const changeEmail = ({ email, otp }: VerifyOtpCodeParams): Promise<void> =>
   http.patch<VerifyOtpCodeParams, void>(
     '/api/user/change-email',
@@ -43,6 +32,5 @@ const changeEmail = ({ email, otp }: VerifyOtpCodeParams): Promise<void> =>
 export const userApi = {
   getUser,
   changePassword,
-  setRecoveredPassword,
   changeEmail,
 };

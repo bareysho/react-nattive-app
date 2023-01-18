@@ -2,6 +2,7 @@ import { IAuthResponse, IUser } from '@src/types/user';
 import {
   ILoginActionParams,
   IRegistrationActionParams,
+  SetRecoveryPasswordActionParams,
   VerifyOtpCodeParams,
 } from '@src/types/request';
 
@@ -68,11 +69,23 @@ const refreshToken = ({
     { withCredentials: true },
   );
 
+const setRecoveredPassword = ({
+  email,
+  otp,
+  password,
+}: SetRecoveryPasswordActionParams): Promise<void> =>
+  http.patch<SetRecoveryPasswordActionParams, void>('/auth/recovery-password', {
+    email,
+    otp,
+    password,
+  });
+
 export const authApi = {
   login,
   recallUser,
   revokeToken,
   registration,
   refreshToken,
+  setRecoveredPassword,
   verifyRegistration,
 };

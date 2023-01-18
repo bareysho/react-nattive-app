@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 
-import { userApi } from '@src/api/axiosAPI';
+import { authApi } from '@src/api/axiosAPI';
 import { setAuthLoading } from '@src/redux/slices';
 import { SetRecoveryPasswordActionParams } from '@src/types/request';
 
@@ -14,7 +14,7 @@ export const setRecoveredPasswordAction = createAsyncThunk<
     try {
       dispatch(setAuthLoading(true));
 
-      await userApi.setRecoveredPassword({ email, otp, password });
+      await authApi.setRecoveredPassword({ email, otp, password });
     } catch (error) {
       const axiosError = error as AxiosError;
 
