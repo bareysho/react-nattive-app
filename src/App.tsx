@@ -43,7 +43,7 @@ export const App = () => {
             recallUserAction({ userId: authenticatedUserId }),
           ).unwrap();
         } catch (error) {
-          await AsyncStorage.removeItem(USER_ID_KEY);
+          console.log(error);
         }
 
         setGlobalLoading(false);

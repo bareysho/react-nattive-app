@@ -38,7 +38,7 @@ const setUserAuthenticated: CaseReducer<IAuthState> = state => {
   state.isAuthenticated = true;
 };
 
-const setInitialState = () => initialState;
+const setInitialStateReducer = () => initialState;
 
 export const authenticationSlice = createSlice({
   reducers: {
@@ -51,6 +51,7 @@ export const authenticationSlice = createSlice({
     setAccessToken: (state, action) => {
       state.token = action.payload;
     },
+    setInitialState: setInitialStateReducer,
   },
   extraReducers: builder => {
     builder.addCase(recallUserAction.pending, setLoading(true));
@@ -75,7 +76,7 @@ export const authenticationSlice = createSlice({
 
     builder.addCase(logoutAction.pending, setLoading(true));
     builder.addCase(logoutAction.rejected, setLoading(false));
-    builder.addCase(logoutAction.fulfilled, setInitialState);
+    builder.addCase(logoutAction.fulfilled, setInitialStateReducer);
   },
   initialState,
   name: '@authentication',
@@ -83,6 +84,6 @@ export const authenticationSlice = createSlice({
 
 export const setAuthLoading = authenticationSlice.actions.setLoading;
 export const setAccessToken = authenticationSlice.actions.setAccessToken;
-export const clearUser = authenticationSlice.actions.clearUser;
+export const setAuthInitialState = authenticationSlice.actions.setInitialState;
 
 export const authReducer = authenticationSlice.reducer;

@@ -92,6 +92,7 @@ export const verifySignupOtpCodeAction = createAsyncThunk<
       await AsyncStorage.setItem(ACCESS_TOKEN_KEY, token);
       await AsyncStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
 
+      await dispatch(setAccessToken(token));
       await dispatch(recallUserAction({ userId: id }));
     } catch (error) {
       const axiosError = error as AxiosError;

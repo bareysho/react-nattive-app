@@ -24,7 +24,7 @@ import { ILoginFormValues } from '@src/types/form';
 import { PageLayout } from '@src/components/PageLayout';
 
 export const LOGIN_ERRORS_MAPPER: Record<string, Partial<ILoginFormValues>> = {
-  INVALID_CREDENTIALS_ERROR: {
+  INVALID_CREDENTIALS: {
     password: 'Неверное имя пользователя или пароль',
   },
 };
