@@ -47,9 +47,13 @@ export const OtpConfirmationForm: FC<IOtpConfirmation> = ({
     async ({ otp }: IOtpFormValues) => {
       setLoading(true);
 
-      await submitCallback({ otp });
-
-      setLoading(false);
+      try {
+        await submitCallback({ otp });
+      } catch (error) {
+        throw error;
+      } finally {
+        setLoading(false);
+      }
     },
     [submitCallback],
   );
