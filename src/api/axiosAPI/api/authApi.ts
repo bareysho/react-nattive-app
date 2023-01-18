@@ -57,10 +57,22 @@ const verifyRegistration = ({
     { withCredentials: true },
   );
 
+const refreshToken = ({
+  refreshToken: refreshTokenValue,
+}: {
+  refreshToken: string;
+}): Promise<IAuthResponse> =>
+  http.post<{ refreshToken: string }, IAuthResponse>(
+    '/auth/refresh-token',
+    { refreshToken: refreshTokenValue },
+    { withCredentials: true },
+  );
+
 export const authApi = {
   login,
   recallUser,
   revokeToken,
   registration,
+  refreshToken,
   verifyRegistration,
 };

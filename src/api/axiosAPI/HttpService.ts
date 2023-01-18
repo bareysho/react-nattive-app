@@ -1,8 +1,16 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { CustomAny } from '@src/types/common/customAny';
 import { store } from '@src/redux/store';
 import { selectAuthState } from '@src/selectors/auth';
+import { authApi } from '@src/api/axiosAPI/api/authApi';
+import {
+  ACCESS_TOKEN_KEY,
+  REFRESH_TOKEN_KEY,
+  USER_ID_KEY,
+} from '@src/constants/asyncStorage';
+import { setAuthInitialState } from '@src/redux/slices/authenticationSlice';
 
 class HttpService {
   private readonly http: AxiosInstance;
@@ -14,8 +22,8 @@ class HttpService {
   private static initHttp(): AxiosInstance {
     const axiosInstance = axios.create({
       timeout: 30 * 1000,
-      // baseURL: 'https://workout-plan-node-server.herokuapp.com',
-      baseURL: 'http://192.168.1.2:3000',
+      baseURL: 'https://workout-plan-node-server.herokuapp.com',
+      // baseURL: 'http://192.168.1.2:3000',
     });
 
     axiosInstance.interceptors.request.use(
@@ -33,6 +41,65 @@ class HttpService {
         }
 
         return config;
+      },
+    );
+
+    axiosInstance.interceptors.response.use(
+      response => response,
+      async error => {
+        // Logout if refresh token expired
+        if (
+          error.response.status === 400 &&
+          error.response.data.error.message === 'INVALID_REFRESH_TOKEN_ERROR'
+        ) {
+          await AsyncStorage.removeItem(USER_ID_KEY);
+          await AsyncStorage.removeItem(ACCESS_TOKEN_KEY);
+          await AsyncStorage.removeItem(REFRESH_TOKEN_KEY);
+
+          store.dispatch(setAuthInitialState());
+        }
+
+        if (
+          error.response.status === 401 &&
+          error.response.data.message === 'TOKEN_EXPIRED'
+        ) {
+          try {
+            const currentRefreshToken = await AsyncStorage.getItem(
+              REFRESH_TOKEN_KEY,
+            );
+
+            if (currentRefreshToken) {
+              const { refreshToken, token, id } = await authApi.refreshToken({
+                refreshToken: currentRefreshToken,
+              });
+
+              await AsyncStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
+              await AsyncStorage.setItem(ACCESS_TOKEN_KEY, token);
+              await AsyncStorage.setItem(USER_ID_KEY, id);
+
+              const config = error.config;
+
+              config.headers.authorization = `bearer ${token}`;
+
+              return await new Promise((resolve, reject) => {
+                axios
+                  .request(config)
+                  .then(response => resolve(response))
+                  .catch(reconfiguredRequestError =>
+                    reject(reconfiguredRequestError),
+                  );
+              });
+            } else {
+              await AsyncStorage.removeItem(USER_ID_KEY);
+              await AsyncStorage.removeItem(ACCESS_TOKEN_KEY);
+              await AsyncStorage.removeItem(REFRESH_TOKEN_KEY);
+
+              store.dispatch(setAuthInitialState());
+            }
+          } catch (refreshTokenError) {
+            return Promise.reject(refreshTokenError);
+          }
+        }
       },
     );
 
