@@ -44,8 +44,8 @@ export const FORGOT_ERROR_MAPPER: Record<
   string,
   FormikErrors<IForgotFormValues>
 > = {
-  EMAIL_EXISTS: {
-    email: 'Email уже зарегистрирован',
+  USER_NOT_FOUND: {
+    email: 'Email не зарегистрирован',
   },
 };
 
