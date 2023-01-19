@@ -24,7 +24,7 @@ import { OtpTimerInfo } from '@src/components/OtpTimerInfo';
 import {
   requestTypedOtpCodeAction,
   verifyTypedOtpCodeAction,
-} from '@src/redux/actions/emailActions';
+} from '@src/redux/actions/emailTokenActions';
 import { OtpCodeType, PageWithOtpState } from '@src/enums/otpCode';
 import { UpdatePasswordForm } from '@src/components/UpdatePasswordForm/UpdatePasswordForm';
 import { setRecoveredPasswordAction } from '@src/redux/actions/passwordActions';
@@ -79,7 +79,7 @@ export const ForgetPassword: FC<NativeStackScreenProps<ParamListBase>> = ({
     isNeedDisableForm,
     isTimerInitializing,
   } = usePageWithOtpForm<IForgotFormValues>({
-    name: TimerName.RegistrationCode,
+    name: TimerName.RecoveryCode,
     onRequestOtp,
     initValues: FORGOT_FORM_INITIAL_VALUES,
   });

@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { selectAuthState } from '@src/selectors/auth';
 import { ForgetPassword, Home, Login, Registration } from '@src/pages';
+import { ChangeEmail, ChangePassword } from '@src/pages/Home/screens';
 
 const Stack = createNativeStackNavigator();
 
@@ -25,6 +26,26 @@ export const Navigation = () => {
                 // header: props => <ApplicationBar {...props} />,
               }}
               component={Home}
+            />
+
+            <Stack.Screen
+              name="ChangePassword"
+              options={{
+                title: 'Изменение пароля',
+                headerShown: true,
+                // header: props => <ApplicationBar {...props} />,
+              }}
+              component={ChangePassword}
+            />
+
+            <Stack.Screen
+              name="ChangeEmail"
+              options={{
+                title: 'Изменение email',
+                headerShown: true,
+                // header: props => <ApplicationBar {...props} />,
+              }}
+              component={ChangeEmail}
             />
           </>
         ) : (

@@ -4,11 +4,13 @@ import { AlertDialog, Button, Center, Pressable } from 'native-base';
 interface IExitModal {
   handleLogout: () => Promise<void>;
   renderComponent: (toggleOpen: () => void) => ReactNode;
+  isLoading?: boolean;
 }
 
 export const ExitModal: FC<IExitModal> = ({
   handleLogout,
   renderComponent,
+  isLoading = false,
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -45,7 +47,9 @@ export const ExitModal: FC<IExitModal> = ({
                 Отмена
               </Button>
 
-              <Button onPress={handleLogout}>Выход</Button>
+              <Button isLoading={isLoading} onPress={handleLogout}>
+                Выход
+              </Button>
             </Button.Group>
           </AlertDialog.Footer>
         </AlertDialog.Content>

@@ -1,56 +1,43 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 
-import { OtpCodeType } from '@src/enums/otpCode';
-import { emailApi } from '@src/api/axiosAPI';
-import { setChangeEmailLoading, setAuthLoading } from '@src/redux/slices';
-import {
-  RequestOtpWithTypeParams,
-  VerifyOtpCodeWithTypeParams,
-} from '@src/types/request';
+import { userApi } from '@src/api/axiosAPI';
+import { IRequestOtpCode, VerifyOtpCodeParams } from '@src/types/request';
+import { setChangeEmailLoading } from '@src/redux/slices';
+import { updateAuthUser } from '@src/redux/slices/authenticationSlice';
 
-const setLoadingMapper = {
-  [OtpCodeType.Verification]: setAuthLoading,
-  [OtpCodeType.ChangeEmail]: setChangeEmailLoading,
-  [OtpCodeType.PasswordRecovery]: setAuthLoading,
-};
-
-export const requestTypedOtpCodeAction = createAsyncThunk<
-  void,
-  RequestOtpWithTypeParams
->(
+export const requestChangeEmailAction = createAsyncThunk<void, IRequestOtpCode>(
   '@auth/requestTypedOtpCode',
-  async ({ email, type }, { rejectWithValue, dispatch }) => {
+  async ({ email }, { rejectWithValue, dispatch }) => {
     try {
-      dispatch(setLoadingMapper[type](true));
+      dispatch(setChangeEmailLoading(true));
 
-      await emailApi.requestEmailCode({ email, type });
+      await userApi.requestChangeEmailCode({ email });
     } catch (error) {
       const axiosError = error as AxiosError;
 
       return rejectWithValue(axiosError?.response?.data);
     } finally {
-      dispatch(setLoadingMapper[type](false));
+      dispatch(setChangeEmailLoading(false));
     }
   },
 );
 
-export const verifyTypedOtpCodeAction = createAsyncThunk<
-  void,
-  VerifyOtpCodeWithTypeParams
->(
-  '@auth/verifyTypedOtpCode',
-  async ({ email, otp, type }, { rejectWithValue, dispatch }) => {
+export const changeEmailAction = createAsyncThunk<void, VerifyOtpCodeParams>(
+  '@userSettings/changeEmail',
+  async ({ email, otp }, { rejectWithValue, dispatch }) => {
     try {
-      dispatch(setLoadingMapper[type](true));
+      dispatch(setChangeEmailLoading(true));
 
-      await emailApi.verifyEmailCode({ email, otp, type });
+      await userApi.changeEmail({ email, otp });
+
+      await dispatch(updateAuthUser({ email }));
     } catch (error) {
       const axiosError = error as AxiosError;
 
       return rejectWithValue(axiosError?.response?.data);
     } finally {
-      dispatch(setLoadingMapper[type](false));
+      dispatch(setChangeEmailLoading(false));
     }
   },
 );
