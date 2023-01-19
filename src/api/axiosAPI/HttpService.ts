@@ -100,6 +100,8 @@ class HttpService {
             return Promise.reject(refreshTokenError);
           }
         }
+
+        return Promise.reject(error);
       },
     );
 
