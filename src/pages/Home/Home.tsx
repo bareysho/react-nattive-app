@@ -37,13 +37,7 @@ export const Home: FC<NativeStackScreenProps<ParamListBase>> = ({
         key: 'account',
         title: 'Профиль',
         focusedIcon: 'account-outline',
-        content: (
-          <Profile
-            onLogoutNavigate={() => {
-              navigation.navigate('Login');
-            }}
-          />
-        ),
+        content: <Profile navigate={navigation.navigate} />,
       },
     ],
     [],

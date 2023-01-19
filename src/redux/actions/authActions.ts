@@ -111,6 +111,7 @@ export const logoutAction = createAsyncThunk(
       await authApi.revokeToken({ refreshToken });
     }
 
+    await AsyncStorage.removeItem(USER_ID_KEY);
     await AsyncStorage.removeItem(ACCESS_TOKEN_KEY);
     await AsyncStorage.removeItem(REFRESH_TOKEN_KEY);
   },

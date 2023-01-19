@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
 import {
   Button,
   HStack,
@@ -18,9 +18,10 @@ import { logoutAction } from '@src/redux/actions/authActions';
 import { MenuItem } from '@src/components/MenuItem';
 import { ExitModal } from '@src/components/ExitModal';
 import { ICON_NAME_MAPPER_BY_COLOR_MODE } from '@src/constants/common';
+import { GlobalLoadingContext } from '@src/providers/GlobalLoadingProvider';
 
 interface IProfile {
-  onLogoutNavigate: () => void;
+  navigate: (path: string) => void;
 }
 
 export const SwitchTheme = () => {
@@ -35,15 +36,19 @@ export const SwitchTheme = () => {
   );
 };
 
-export const Profile: FC<IProfile> = ({ onLogoutNavigate }) => {
+export const Profile: FC<IProfile> = ({ navigate }) => {
   const dispatch = useAppDispatch();
 
-  const { user } = useAppSelector(selectAuthState);
+  const { setGlobalLoading } = useContext(GlobalLoadingContext);
+
+  const { user, isLoading } = useAppSelector(selectAuthState);
 
   const handleLogout = async () => {
     await dispatch(logoutAction());
 
-    onLogoutNavigate();
+    setGlobalLoading(true);
+
+    navigate('Login');
   };
 
   const { toggleColorMode, colorMode } = useColorMode();
@@ -95,13 +100,13 @@ export const Profile: FC<IProfile> = ({ onLogoutNavigate }) => {
             <MenuItem
               title="Пароль"
               icon={<MaterialIcons name="vpn-key" />}
-              callback={() => {}}
+              callback={() => navigate('ChangePassword')}
             />
 
             <MenuItem
               title="Email"
               icon={<MaterialIcons name="email" />}
-              callback={() => {}}
+              callback={() => navigate('ChangeEmail')}
             />
 
             <MenuItem
@@ -114,6 +119,7 @@ export const Profile: FC<IProfile> = ({ onLogoutNavigate }) => {
 
           <ExitModal
             handleLogout={handleLogout}
+            isLoading={isLoading}
             renderComponent={toggleOpen => (
               <Button onPress={toggleOpen} px={10}>
                 Выйти

@@ -31,9 +31,12 @@ export const App = () => {
 
       if (!accessToken || !authenticatedUserId) {
         setUserRecalled(true);
+        setGlobalLoading(false);
       }
 
-      await dispatch(setAccessToken(accessToken));
+      if (accessToken) {
+        await dispatch(setAccessToken(accessToken));
+      }
 
       if (!authenticatedUser && authenticatedUserId) {
         setGlobalLoading(true);
@@ -45,11 +48,10 @@ export const App = () => {
         } catch (error) {
           console.log(error);
         }
-
-        setGlobalLoading(false);
       }
 
       setUserRecalled(true);
+      setGlobalLoading(false);
     })();
   }, [dispatch, authenticatedUser]);
 

@@ -1,6 +1,7 @@
 import { IUser } from '@src/types/user';
 import {
   IChangePasswordActionParams,
+  IRequestOtpCode,
   VerifyOtpCodeParams,
 } from '@src/types/request';
 
@@ -22,7 +23,17 @@ const changePassword = ({
     password,
   });
 
-const changeEmail = ({ email, otp }: VerifyOtpCodeParams): Promise<void> =>
+const requestChangeEmailCode = ({ email }: IRequestOtpCode): Promise<void> =>
+  http.post<IRequestOtpCode, void>(
+    '/api/user/request-change-email-code',
+    { email },
+    { withCredentials: true },
+  );
+
+const verifyChangeEmail = ({
+  email,
+  otp,
+}: VerifyOtpCodeParams): Promise<void> =>
   http.patch<VerifyOtpCodeParams, void>(
     '/api/user/change-email',
     { email, otp },
@@ -32,5 +43,6 @@ const changeEmail = ({ email, otp }: VerifyOtpCodeParams): Promise<void> =>
 export const userApi = {
   getUser,
   changePassword,
-  changeEmail,
+  changeEmail: verifyChangeEmail,
+  requestChangeEmailCode,
 };

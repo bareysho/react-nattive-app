@@ -42,8 +42,8 @@ const setInitialStateReducer = () => initialState;
 
 export const authenticationSlice = createSlice({
   reducers: {
-    clearUser: state => {
-      state.user = null;
+    updateAuthUser: (state, action) => {
+      state.user = { ...state.user, ...action.payload };
     },
     setLoading: (state, action) => {
       state.isLoading = action.payload;
@@ -85,5 +85,6 @@ export const authenticationSlice = createSlice({
 export const setAuthLoading = authenticationSlice.actions.setLoading;
 export const setAccessToken = authenticationSlice.actions.setAccessToken;
 export const setAuthInitialState = authenticationSlice.actions.setInitialState;
+export const updateAuthUser = authenticationSlice.actions.updateAuthUser;
 
 export const authReducer = authenticationSlice.reducer;

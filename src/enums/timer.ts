@@ -11,4 +11,5 @@ export enum TimerType {
 export enum TimerName {
   RecoveryCode = '@recoveryCode',
   RegistrationCode = '@registrationCode',
+  ChangeEmailCode = '@changeEmailCode',
 }
