@@ -11,3 +11,5 @@ export {
   setChangePasswordLoading,
   setChangeEmailLoading,
 } from './userSettingsSlice';
+
+export { workoutSlice, workoutSliceReducer } from './workoutSlice';

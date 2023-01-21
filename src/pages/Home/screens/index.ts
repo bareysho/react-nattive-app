@@ -1,5 +1,6 @@
-export { Main } from './Main/Main';
+export { Workouts } from './Workouts/Workouts';
 export { Profile } from './Profile/Profile';
-export { Settings } from './Settings/Settings';
+export { Statistics } from './Statistics/Statistics';
 export { ChangePassword } from './ChangePassword/ChangePassword';
 export { ChangeEmail } from './ChangeEmail/ChangeEmail';
+export { Dashboard } from './Dashboard/Dashboard';

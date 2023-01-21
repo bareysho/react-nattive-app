@@ -19,7 +19,7 @@ const RNRedux = () => {
         200: '#fef08a',
         300: '#fde047',
         400: '#facc15',
-        500: '#eab308',
+        500: '#ffe502',
         600: '#ffe502',
         700: '#bba700',
         800: '#854d0e',
@@ -30,6 +30,19 @@ const RNRedux = () => {
       Button: {
         variants: {
           ghost: {
+            _dark: {
+              _text: {
+                color: 'trueGray.200',
+                textDecorationLine: 'underline',
+                textDecorationStyle: 'solid',
+                textDecorationColor: 'trueGray.200',
+              },
+              _spinner: { color: 'trueGray.200' },
+              _pressed: {
+                opacity: 0.6,
+                backgroundColor: 'transparent',
+              },
+            },
             _light: {
               _text: {
                 color: 'trueGray.800',
@@ -46,6 +59,7 @@ const RNRedux = () => {
           },
           solid: {
             _dark: {
+              shadow: 1,
               _text: { color: 'trueGray.900' },
               _spinner: { color: 'trueGray.900' },
               _pressed: {
@@ -53,6 +67,7 @@ const RNRedux = () => {
               },
             },
             _light: {
+              shadow: 1,
               _text: { color: 'trueGray.700' },
               _spinner: { color: 'trueGray.700' },
               _pressed: {

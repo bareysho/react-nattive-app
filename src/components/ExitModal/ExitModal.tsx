@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from 'react';
-import { AlertDialog, Button, Center, Pressable } from 'native-base';
+import { AlertDialog, Button, Pressable } from 'native-base';
 
 interface IExitModal {
   handleLogout: () => Promise<void>;
@@ -21,7 +21,7 @@ export const ExitModal: FC<IExitModal> = ({
   const toggleOpen = () => setIsOpen(!isOpen);
 
   return (
-    <Center>
+    <>
       <Pressable onPress={toggleOpen}>{renderComponent(toggleOpen)}</Pressable>
 
       <AlertDialog
@@ -54,6 +54,6 @@ export const ExitModal: FC<IExitModal> = ({
           </AlertDialog.Footer>
         </AlertDialog.Content>
       </AlertDialog>
-    </Center>
+    </>
   );
 };

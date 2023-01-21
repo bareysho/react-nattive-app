@@ -1,13 +1,20 @@
 import React, { FC, ReactElement, useMemo } from 'react';
 import { ParamListBase } from '@react-navigation/native';
-import { Center, HStack, Icon, Pressable, Text, VStack } from 'native-base';
+import {
+  Box,
+  Center,
+  HStack,
+  Icon,
+  Pressable,
+  Text,
+  VStack,
+} from 'native-base';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { PageLayout } from '@src/components/PageLayout';
 import { useThemedBgColor } from '@src/hooks/useThemedBgColor';
 
-import { Main, Profile, Settings } from './screens';
+import { Workouts, Profile, Statistics, Dashboard } from './screens';
 
 interface IRoutesConfig {
   key: string;
@@ -22,16 +29,22 @@ export const Home: FC<NativeStackScreenProps<ParamListBase>> = ({
   const routes: IRoutesConfig[] = useMemo(
     () => [
       {
-        key: 'home',
-        title: 'Дом',
-        focusedIcon: 'home-outline',
-        content: <Main />,
+        key: 'application',
+        title: 'Сводка',
+        focusedIcon: 'application-outline',
+        content: <Dashboard />,
       },
       {
-        key: 'cog',
-        title: 'Настройки',
-        focusedIcon: 'cog-outline',
-        content: <Settings />,
+        key: 'arm-flex',
+        title: 'Тренировка',
+        focusedIcon: 'arm-flex-outline',
+        content: <Workouts />,
+      },
+      {
+        key: 'chart-box',
+        title: 'Статистика',
+        focusedIcon: 'chart-box-outline',
+        content: <Statistics />,
       },
       {
         key: 'account',
@@ -49,11 +62,16 @@ export const Home: FC<NativeStackScreenProps<ParamListBase>> = ({
 
   return (
     <VStack w="100%" justifyContent="space-between" flex={1}>
-      <PageLayout>
-        <Center>{routes[selectedTab].content}</Center>
-      </PageLayout>
+      <Box height="92%">{routes[selectedTab].content}</Box>
 
-      <HStack bg={bg} alignItems="center" safeAreaBottom shadow={6}>
+      <HStack
+        height="8%"
+        zIndex={3}
+        bg={bg}
+        alignItems="center"
+        safeAreaBottom
+        shadow={6}
+      >
         {routes.map((route, index) => {
           const isActive = selectedTab === index;
 
