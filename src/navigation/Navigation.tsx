@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { selectAuthState } from '@src/selectors/auth';
 import { ForgetPassword, Home, Login, Registration } from '@src/pages';
 import { ChangeEmail, ChangePassword } from '@src/pages/Home/screens';
-import {ApplicationBar} from "@src/components/ApplicationBar";
+import { ApplicationBar } from '@src/components/ApplicationBar';
 
 const Stack = createNativeStackNavigator();
 

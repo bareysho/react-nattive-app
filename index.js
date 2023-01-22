@@ -9,6 +9,9 @@ import { GlobalLoadingProvider } from '@src/providers/GlobalLoadingProvider';
 import { ScreenLoadingProvider } from '@src/providers/ScreenLoadingProvider';
 
 import { name as appName } from './app.json';
+import StorageContext from './src/storage/storage';
+
+const { RealmProvider } = StorageContext;
 
 const RNRedux = () => {
   const theme = extendTheme({
@@ -90,7 +93,9 @@ const RNRedux = () => {
       <NativeBaseProvider theme={theme}>
         <GlobalLoadingProvider>
           <ScreenLoadingProvider>
-            <App />
+            <RealmProvider>
+              <App />
+            </RealmProvider>
           </ScreenLoadingProvider>
         </GlobalLoadingProvider>
       </NativeBaseProvider>

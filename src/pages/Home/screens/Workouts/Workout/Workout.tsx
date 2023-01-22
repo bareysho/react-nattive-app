@@ -3,6 +3,7 @@ import { Box, Button, Center, HStack, Icon, Progress, Text } from 'native-base';
 import { useTimer } from 'use-timer';
 import { useColorModeValue } from 'native-base/src/core/color-mode/hooks';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { format } from 'date-fns';
 
 import {
   WorkoutState,
@@ -16,8 +17,13 @@ import { TimerType } from '@src/enums/timer';
 import { WorkoutType } from '@src/enums/WorkoutType';
 import { selectWorkout } from '@src/selectors/workout';
 import { useAppDispatch, useAppSelector } from '@src/redux/store';
+import { WorkoutEvent } from '@src/storage/models/WorkoutEvent';
+import StorageContext from '@src/storage/storage';
+import { selectAuthState } from '@src/selectors/auth';
 
 import { CircleButton } from './CircleButton';
+
+const { useRealm, useQuery, useObject } = StorageContext;
 
 interface IWorkout {
   mainColor: string;
@@ -29,6 +35,11 @@ export const Workout: FC<IWorkout> = ({
   workoutType,
 }) => {
   const dispatch = useAppDispatch();
+
+  const { user } = useAppSelector(selectAuthState);
+
+  const realm = useRealm();
+  const workouts = useQuery(WorkoutEvent);
 
   const workoutMainColor = `${colorSchema}.300`;
 
@@ -113,7 +124,14 @@ export const Workout: FC<IWorkout> = ({
     },
     [WorkoutState.Finished]: {
       title: 'Начать заново',
-      callback: () => {
+      callback: async () => {
+        realm.write(() => {
+          realm.create(
+            'WorkoutEvent',
+            WorkoutEvent.generate({ userId: user.id, setList }),
+          );
+        });
+
         dispatch(initWorkout({ setList, setNumber: 0 }));
       },
     },
@@ -136,6 +154,16 @@ export const Workout: FC<IWorkout> = ({
   return (
     <>
       <HStack py={4} height="12%" justifyContent="space-evenly">
+        {workouts.map(workout => (
+          <Box key={workout._id.toString()}>
+            <Text>{format(workout.workoutDate, 'dd-MM-yyyy')}</Text>
+
+            <Text>{workout.setList.join(',')}</Text>
+
+            <Text>{workout.userId}</Text>
+          </Box>
+        ))}
+
         {setList.map((setListReps, index) => (
           <Center
             key={index}
