@@ -27,7 +27,7 @@ export const Workouts = () => {
   return (
     <>
       <VStack bg={bg} height="100%" width="100%" justifyContent="space-between">
-        <HStack height="12%" pb={2} justifyContent="space-evenly">
+        <HStack height="10%" pb={2} justifyContent="space-evenly">
           <Pressable
             width="33.33%"
             alignItems="center"
@@ -37,8 +37,7 @@ export const Workouts = () => {
             )}`}
             onPress={() => {
               setWorkoutType(WorkoutType.Squat);
-            }}
-          >
+            }}>
             <Box opacity={0.6}>
               <ImageApp name={ImageAppName.Squat} />
             </Box>
@@ -54,8 +53,7 @@ export const Workouts = () => {
             )}`}
             onPress={() => {
               setWorkoutType(WorkoutType.PushUp);
-            }}
-          >
+            }}>
             <Box opacity={0.6}>
               <ImageApp name={ImageAppName.PushUp} />
             </Box>
@@ -71,8 +69,7 @@ export const Workouts = () => {
             )}`}
             onPress={() => {
               setWorkoutType(WorkoutType.SitUp);
-            }}
-          >
+            }}>
             <Box opacity={0.6}>
               <ImageApp name={ImageAppName.SitUp} />
             </Box>

@@ -2,6 +2,7 @@
 import { AppRegistry } from 'react-native';
 import { Provider } from 'react-redux';
 import { extendTheme, NativeBaseProvider } from 'native-base';
+import 'react-native-get-random-values';
 
 import { App } from '@src/App';
 import { store } from '@src/redux/store';

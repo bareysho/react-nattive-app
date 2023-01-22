@@ -14,7 +14,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 import { useThemedBgColor } from '@src/hooks/useThemedBgColor';
 
-import { Workouts, Profile, Statistics, Dashboard } from './screens';
+import {Workouts, Profile, Statistics, Dashboard, History} from './screens';
 
 interface IRoutesConfig {
   key: string;
@@ -47,6 +47,12 @@ export const Home: FC<NativeStackScreenProps<ParamListBase>> = ({
         content: <Statistics />,
       },
       {
+        key: 'history',
+        title: 'История',
+        focusedIcon: 'history',
+        content: <History />,
+      },
+      {
         key: 'account',
         title: 'Профиль',
         focusedIcon: 'account-outline',
@@ -70,8 +76,7 @@ export const Home: FC<NativeStackScreenProps<ParamListBase>> = ({
         bg={bg}
         alignItems="center"
         safeAreaBottom
-        shadow={6}
-      >
+        shadow={6}>
         {routes.map((route, index) => {
           const isActive = selectedTab === index;
 
@@ -86,8 +91,7 @@ export const Home: FC<NativeStackScreenProps<ParamListBase>> = ({
               opacity={opacity}
               py={2}
               flex={1}
-              onPress={handleSelect}
-            >
+              onPress={handleSelect}>
               <Center alignItems="center">
                 <Icon
                   mb={1}

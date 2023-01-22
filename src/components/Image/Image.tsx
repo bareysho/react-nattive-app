@@ -2,9 +2,9 @@ import React, { FC, ReactElement } from 'react';
 import { Image } from 'react-native';
 
 export enum ImageAppName {
-  Squat,
-  PushUp,
-  SitUp,
+  Squat = 'squat',
+  PushUp = 'pushUp',
+  SitUp = 'sitUp',
 }
 
 interface IImageApp {
@@ -12,7 +12,7 @@ interface IImageApp {
   size?: number;
 }
 
-export const ImageApp: FC<IImageApp> = ({ name, size = 48 }) => {
+export const ImageApp: FC<IImageApp> = ({ name, size = 44 }) => {
   const ICON_MAPPER: Record<ImageAppName, ReactElement> = {
     [ImageAppName.Squat]: (
       <Image

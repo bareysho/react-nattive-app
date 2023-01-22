@@ -32,24 +32,8 @@ export const Statistics: FC = () => {
             <LineChart
               data={{
                 labels: Array.from(Array(12).keys()).map(i => `${i + 1}`),
-                legend: ['L1', 'L2'],
+                legend: ['L1'],
                 datasets: [
-                  {
-                    data: [
-                      Math.random() * 100,
-                      Math.random() * 100,
-                      Math.random() * 100,
-                      Math.random() * 100,
-                      Math.random() * 100,
-                      Math.random() * 100,
-                      Math.random() * 100,
-                      Math.random() * 100,
-                      Math.random() * 100,
-                      Math.random() * 100,
-                      Math.random() * 100,
-                      Math.random() * 100,
-                    ],
-                  },
                   {
                     data: [
                       Math.random() * 100,
@@ -74,19 +58,18 @@ export const Statistics: FC = () => {
               yAxisSuffix="k"
               yAxisInterval={1} // optional, defaults to 1
               chartConfig={{
-                backgroundColor: '#ffe502',
-                backgroundGradientFrom: '#fb8c00',
-                backgroundGradientTo: '#ffa726',
+                backgroundGradientFrom: '#e7e5e4',
+                backgroundGradientTo: '#e7e5e4',
                 decimalPlaces: 2, // optional, defaults to 2dp
-                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                color: (opacity = 1) => '#78716c',
+                labelColor: (opacity = 1) => '#78716c',
                 style: {
                   borderRadius: 16,
                 },
                 propsForDots: {
                   r: '6',
                   strokeWidth: '2',
-                  stroke: '#ffa726',
+                  stroke: '#44403c',
                 },
               }}
               bezier

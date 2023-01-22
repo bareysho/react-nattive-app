@@ -1,17 +1,28 @@
 import React, { FC, useEffect, useMemo } from 'react';
-import { Box, Button, Center, HStack, Icon, Progress, Text } from 'native-base';
+import {
+  Actionsheet,
+  Box,
+  Button,
+  Center,
+  HStack,
+  Icon,
+  Progress,
+  Text,
+  useDisclose,
+} from 'native-base';
 import { useTimer } from 'use-timer';
 import { useColorModeValue } from 'native-base/src/core/color-mode/hooks';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { format } from 'date-fns';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import DatePicker from 'react-native-date-picker';
 
 import {
-  WorkoutState,
   finishSet,
   increaseReps,
+  increaseSetNumber,
   initWorkout,
   setWorkoutState,
-  increaseSetNumber,
+  WorkoutState,
 } from '@src/redux/slices/workoutSlice';
 import { TimerType } from '@src/enums/timer';
 import { WorkoutType } from '@src/enums/WorkoutType';
@@ -23,7 +34,7 @@ import { selectAuthState } from '@src/selectors/auth';
 
 import { CircleButton } from './CircleButton';
 
-const { useRealm, useQuery, useObject } = StorageContext;
+const { useRealm } = StorageContext;
 
 interface IWorkout {
   mainColor: string;
@@ -39,14 +50,23 @@ export const Workout: FC<IWorkout> = ({
   const { user } = useAppSelector(selectAuthState);
 
   const realm = useRealm();
-  const workouts = useQuery(WorkoutEvent);
 
   const workoutMainColor = `${colorSchema}.300`;
 
   const initialSetList = [20, 19, 15, 18];
 
+  const {
+    time: durationTimeSec,
+    start: startWorkoutTimer,
+      pause: stopDurationTimer,
+    reset: resetWorkoutTimer,
+  } = useTimer({
+    timerType: TimerType.Incremental,
+  });
+
   useEffect(() => {
     dispatch(initWorkout({ setList: initialSetList, setNumber: 0 }));
+    startWorkoutTimer();
   }, [dispatch]);
 
   const { reps, repsDoneTotal, setNumber, workoutState, setList } =
@@ -67,7 +87,11 @@ export const Workout: FC<IWorkout> = ({
     [setNumber, setList.length],
   );
 
-  const { start, time, reset } = useTimer({
+  const {
+    time: pauseTime,
+    start: startPause,
+    reset: resetPause,
+  } = useTimer({
     timerType: TimerType.Decremental,
     endTime: 0,
     initialTime: 60,
@@ -80,7 +104,7 @@ export const Workout: FC<IWorkout> = ({
     if (isSetDone && !isLastSet) {
       dispatch(increaseSetNumber());
       dispatch(setWorkoutState(WorkoutState.Pause));
-      start();
+      startPause();
     }
 
     if (isSetDone && isLastSet) {
@@ -90,7 +114,7 @@ export const Workout: FC<IWorkout> = ({
 
   useEffect(() => {
     if (workoutState === WorkoutState.Pause) {
-      start();
+      startPause();
     }
   }, [dispatch, workoutState]);
 
@@ -98,6 +122,24 @@ export const Workout: FC<IWorkout> = ({
 
   const setBlockColor = useColorModeValue('trueGray.50', 'trueGray.800');
   const prevSetBlockColor = useColorModeValue('gray.300', 'gray.600');
+
+  const finishWorkoutCallback = async () => {
+    realm.write(() => {
+      realm.create(
+        'WorkoutEvent',
+        WorkoutEvent.generate({
+          userId: user.id,
+          setList,
+          workoutType,
+          durationTimeSec,
+        }),
+      );
+    });
+
+    stopDurationTimer();
+    dispatch(setWorkoutState(WorkoutState.Finished));
+    // dispatch(initWorkout({ setList, setNumber: 0 }));
+  };
 
   const buttonProps: Record<
     WorkoutState,
@@ -119,21 +161,12 @@ export const Workout: FC<IWorkout> = ({
       title: 'Пропустить отдых',
       callback: () => {
         dispatch(setWorkoutState(WorkoutState.Working));
-        reset();
+        resetPause();
       },
     },
     [WorkoutState.Finished]: {
       title: 'Начать заново',
-      callback: async () => {
-        realm.write(() => {
-          realm.create(
-            'WorkoutEvent',
-            WorkoutEvent.generate({ userId: user.id, setList }),
-          );
-        });
-
-        dispatch(initWorkout({ setList, setNumber: 0 }));
-      },
+      callback: finishWorkoutCallback,
     },
   };
 
@@ -151,19 +184,15 @@ export const Workout: FC<IWorkout> = ({
     return setBlockColor;
   };
 
+  const { isOpen, onOpen, onClose } = useDisclose();
+
+  const handleClose = () => {
+    onClose();
+  };
+
   return (
     <>
       <HStack py={4} height="12%" justifyContent="space-evenly">
-        {workouts.map(workout => (
-          <Box key={workout._id.toString()}>
-            <Text>{format(workout.workoutDate, 'dd-MM-yyyy')}</Text>
-
-            <Text>{workout.setList.join(',')}</Text>
-
-            <Text>{workout.userId}</Text>
-          </Box>
-        ))}
-
         {setList.map((setListReps, index) => (
           <Center
             key={index}
@@ -173,8 +202,7 @@ export const Workout: FC<IWorkout> = ({
             alignItems="center"
             borderColor="gray.200"
             shadow={1}
-            backgroundColor={getSetBlockBackgroundColor(index)}
-          >
+            backgroundColor={getSetBlockBackgroundColor(index)}>
             <Text px={4} textAlign="center" fontSize={16}>
               {setListReps}
             </Text>
@@ -195,6 +223,12 @@ export const Workout: FC<IWorkout> = ({
 
       <Box justifyContent="center" height="8%">
         <Text px={4} textAlign="left" fontSize={16}>
+          <Text>Длительность: </Text>
+
+          <Text fontWeight={600}>{durationTimeSec}</Text>
+        </Text>
+
+        <Text px={4} textAlign="left" fontSize={16}>
           <Text>Всего повторений: </Text>
 
           <Text fontWeight={600}>{totalWorkoutReps}</Text>
@@ -208,11 +242,10 @@ export const Workout: FC<IWorkout> = ({
       </Box>
 
       <Center
-        height="56%"
+        height="50%"
         alignSelf="center"
         justifyContent="center"
-        alignItems="center"
-      >
+        alignItems="center">
         {workoutState !== WorkoutState.Finished && (
           <>
             {(workoutState === WorkoutState.Working ||
@@ -228,7 +261,7 @@ export const Workout: FC<IWorkout> = ({
 
             {workoutState === WorkoutState.Pause && (
               <CircleButton
-                text={time}
+                text={pauseTime}
                 withLoading
                 loaderColor={workoutMainColor}
                 pressedBackgroundColor="gray.300"
@@ -245,17 +278,67 @@ export const Workout: FC<IWorkout> = ({
         )}
       </Center>
 
-      <Center height="8%">
-        <Button
-          width="95%"
-          backgroundColor={workoutMainColor}
-          _pressed={{
-            backgroundColor: `${colorSchema}.400`,
-          }}
-          onPress={callback}
-        >
-          {title}
-        </Button>
+      <Center height="14%">
+        <HStack width="95%" justifyContent="space-between" alignItems="center">
+          <Button
+            backgroundColor={workoutMainColor}
+            _pressed={{
+              backgroundColor: `${colorSchema}.400`,
+            }}
+            mr={6}
+            onPress={callback}>
+            {title}
+          </Button>
+
+          <Button
+            onPress={onOpen}
+            backgroundColor={workoutMainColor}
+            rightIcon={
+              <Icon
+                size="lg"
+                color="gray.600"
+                as={<MaterialCommunityIcons name="arrow-up-drop-circle" />}
+              />
+            }
+          />
+        </HStack>
+
+        <Actionsheet useRNModal isOpen={isOpen} onClose={handleClose}>
+          <Actionsheet.Content pb={10}>
+            <Button
+              width="95%"
+              mt={2}
+              backgroundColor={workoutMainColor}
+              _pressed={{
+                backgroundColor: `${colorSchema}.400`,
+              }}
+              onPress={callback}>
+              Пропустить подход
+            </Button>
+
+            <Button
+              width="95%"
+              mt={2}
+              backgroundColor={workoutMainColor}
+              _pressed={{
+                backgroundColor: `${colorSchema}.400`,
+              }}
+              onPress={callback}>
+              Закончил самостоятельно
+            </Button>
+
+            <Button
+              width="95%"
+              mt={2}
+              backgroundColor={workoutMainColor}
+              _pressed={{
+                backgroundColor: `${colorSchema}.400`,
+              }}
+              onPress={finishWorkoutCallback}>
+              Прекратить тренировку
+            </Button>
+          </Actionsheet.Content>
+        </Actionsheet>
       </Center>
     </>
   );

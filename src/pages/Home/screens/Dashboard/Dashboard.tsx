@@ -4,9 +4,14 @@ import * as dateFns from 'date-fns';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ru } from 'date-fns/locale';
+import { Results } from 'realm';
 
 import { PageLayout } from '@src/components/PageLayout';
 import { Card } from '@src/components/Card';
+import { WorkoutRecords } from '@src/storage/repositories/workoutRecords';
+import { useIntervalDate } from '@src/hooks/useIntervalDate';
+import { WorkoutType } from '@src/enums/WorkoutType';
+import { WorkoutEvent } from '@src/storage/models/WorkoutEvent';
 
 import { DashboardWorkoutsCard } from './DashboardWorkoutsCard';
 import { DashboardCard } from './DashboardCard';
@@ -20,6 +25,73 @@ export const Dashboard: FC = () => {
   const todayDateString = dateFns.format(new Date(), 'dd MMMM yyyy', {
     locale: ru,
   });
+
+  const { endDate: todayEndTade, startDate: todayStartTade } = useIntervalDate(
+    new Date(),
+  );
+
+  const { endDate: weekEndDate, startDate: weekStartDate } = useIntervalDate(
+    new Date(),
+    -7,
+  );
+
+  console.log({ todayEndTade, todayStartTade });
+  console.log({ weekEndDate, weekStartDate });
+
+  const separateByType = (workoutsToday: Results<WorkoutEvent>) =>
+    workoutsToday.reduce<Record<WorkoutType, WorkoutEvent[]>>(
+      (accum, item) => {
+        return {
+          ...accum,
+          [item.workoutType]: [...accum[item.workoutType], item],
+        };
+      },
+      {
+        [WorkoutType.SitUp]: [],
+        [WorkoutType.Squat]: [],
+        [WorkoutType.PushUp]: [],
+      },
+    );
+
+  const getSums = (workoutsToday: Record<WorkoutType, WorkoutEvent[]>) =>
+    Object.entries(workoutsToday).reduce<Record<WorkoutType, number>>(
+      (accum, [key, value]) => {
+        return {
+          ...accum,
+          [key]:
+            accum[key as WorkoutType] +
+            value.reduce(
+              (accumWorkouts, workoutEvent) =>
+                accumWorkouts +
+                workoutEvent.setList.reduce((sum, v) => sum + v, 0),
+              0,
+            ),
+        };
+      },
+      {
+        [WorkoutType.SitUp]: 0,
+        [WorkoutType.Squat]: 0,
+        [WorkoutType.PushUp]: 0,
+      },
+    );
+
+  const sumsToday = getSums(
+    separateByType(
+      WorkoutRecords.getWorkoutRecordsInDateInterval(
+        todayStartTade,
+        todayEndTade,
+      ),
+    ),
+  );
+
+  const sumsThisWeek = getSums(
+    separateByType(
+      WorkoutRecords.getWorkoutRecordsInDateInterval(
+        weekStartDate,
+        weekEndDate,
+      ),
+    ),
+  );
 
   return (
     <PageLayout>
@@ -46,7 +118,10 @@ export const Dashboard: FC = () => {
 
             return (
               <VStack key={item}>
-                <Text mb={2} fontWeight={item === 7 ? 'bold' : undefined} textAlign="center">
+                <Text
+                  mb={2}
+                  fontWeight={item === 7 ? 'bold' : undefined}
+                  textAlign="center">
                   {dayOfWeek}
                 </Text>
 
@@ -67,8 +142,7 @@ export const Dashboard: FC = () => {
           <Button alignSelf="flex-start" py={0} px={1} variant="ghost">
             Запись
           </Button>
-        }
-      >
+        }>
         <HStack justifyContent="space-between">
           <Box mr={5}>
             <Text fontSize={14}>Текущий вес:</Text>
@@ -101,18 +175,18 @@ export const Dashboard: FC = () => {
         title="Сегодня:"
         iconColor="emerald.300"
         icon={<MaterialCommunityIcons name="shield-check" />}
-        pushUpsCount={15}
-        sitUpsCount={11}
-        squatsCount={29}
+        pushUpsCount={sumsToday[WorkoutType.PushUp]}
+        sitUpsCount={sumsToday[WorkoutType.SitUp]}
+        squatsCount={sumsToday[WorkoutType.Squat]}
       />
 
       <DashboardWorkoutsCard
         title="За неделю:"
         iconColor="violet.500"
         icon={<Ionicons name="ios-today" />}
-        pushUpsCount={15}
-        sitUpsCount={11}
-        squatsCount={29}
+        pushUpsCount={sumsThisWeek[WorkoutType.PushUp]}
+        sitUpsCount={sumsThisWeek[WorkoutType.SitUp]}
+        squatsCount={sumsThisWeek[WorkoutType.Squat]}
       />
     </PageLayout>
   );
