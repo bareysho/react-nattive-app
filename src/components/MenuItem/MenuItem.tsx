@@ -1,7 +1,8 @@
 import React, { FC, ReactElement } from 'react';
 import { GestureResponderEvent } from 'react-native';
-import { HStack, Icon, Pressable, Text } from 'native-base';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+import { HStack, Icon, Pressable, Text } from '@src/components/UI';
 
 interface IMenuItem {
   title: string;
@@ -18,22 +19,27 @@ export const MenuItem: FC<IMenuItem> = ({
 }) => {
   return (
     <Pressable
-      _pressed={{
-        opacity: 0.6,
-      }}
       mb={1}
+      width="100%"
+      rounded={10}
+      pressedBackgroundColor="#d6d3d1"
       onPress={callback}
     >
-      <HStack h={12} justifyContent="space-between" alignItems="center">
+      <HStack
+        width="100%"
+        height={46}
+        alignItems="center"
+        justifyContent="space-between"
+      >
         <HStack alignItems="center">
-          <Icon mr={3} size={6} as={icon} />
+          <Icon mr={3} size={26} as={icon} />
 
           <Text fontSize={14}>{title}</Text>
         </HStack>
 
         <Icon
           mr={2}
-          size={6}
+          size={26}
           as={rightIcon || <MaterialIcons name="keyboard-arrow-right" />}
         />
       </HStack>

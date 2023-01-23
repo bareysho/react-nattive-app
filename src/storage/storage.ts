@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { createRealmContext, Realm } from '@realm/react';
 
 import { WorkoutEvent } from './models/WorkoutEvent';

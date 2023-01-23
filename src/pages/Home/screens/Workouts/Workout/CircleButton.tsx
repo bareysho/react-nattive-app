@@ -1,14 +1,15 @@
 import React, { FC } from 'react';
-import { Button, Spinner } from 'native-base';
+
+import { Button, Spinner } from '@src/components/UI';
 
 interface ICircleButton {
   text: string | number;
-  backgroundColor: string;
-  pressedBackgroundColor: string;
   loaderColor?: string;
   shadow?: number;
   onPress?: () => void;
   withLoading?: boolean;
+  backgroundColor?: string;
+  pressedBackgroundColor?: string;
 }
 export const CircleButton: FC<ICircleButton> = ({
   text,
@@ -22,26 +23,20 @@ export const CircleButton: FC<ICircleButton> = ({
   return (
     <Button
       size={200}
-      width={200}
-      height={200}
       rounded={100}
       borderWidth={8}
-      _pressed={{
-        backgroundColor: pressedBackgroundColor,
-      }}
       shadow={shadow}
-      borderColor="gray.200"
       onPress={onPress}
+      position="relative"
+      borderColor="#e4e4e7"
       backgroundColor={backgroundColor}
-      _text={{ fontSize: 60, fontWeight: 300, color: 'gray.900' }}
+      backgroundColorPressed={pressedBackgroundColor}
+      _text={{ fontSize: 60, fontWeight: 300 }}
     >
       {withLoading && (
         <Spinner
-          width="100%"
-          height="100%"
-          top={-42}
           size={320}
-          zIndex={5}
+          right={-123}
           position="absolute"
           color={loaderColor || backgroundColor}
           borderColor={backgroundColor}

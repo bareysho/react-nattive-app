@@ -1,20 +1,11 @@
 import React, { FC, useState } from 'react';
-import {
-  Box,
-  Button,
-  Center,
-  Heading,
-  HStack,
-  Icon,
-  Text,
-  VStack,
-} from 'native-base';
 import { useSelector } from 'react-redux';
 import { Formik } from 'formik';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
+import { Button, Center, Icon, Text, VStack } from '@src/components/UI';
 import { PageLayout } from '@src/components/PageLayout';
 import { selectAuthState } from '@src/selectors/auth';
 import { useForm } from '@src/hooks/useForm';
@@ -23,7 +14,7 @@ import {
   required,
   validatePassword,
 } from '@src/validators/common';
-import { InputPassword } from '@src/components/control';
+import { InputPassword } from '@src/components/UI';
 import { useAppDispatch } from '@src/redux/store';
 import { changePassword } from '@src/redux/actions/passwordActions';
 
@@ -86,15 +77,15 @@ export const ChangePassword: FC<NativeStackScreenProps<ParamListBase>> = ({
     <PageLayout>
       {pageState !== PageState.Success && (
         <>
-          <Heading size="lg" fontWeight={600}>
+          <Text fontSize={20} fontWeight={600}>
             Изменение пароля
-          </Heading>
+          </Text>
 
-          <Heading mt={1} fontWeight="medium" size="xs">
+          <Text fontSize={18} fontWeight={300} mt={1}>
             Следуйте инструкциям
-          </Heading>
+          </Text>
 
-          <Center my={36}>
+          <Center width="100%" my={36}>
             <MaterialIcons name={'vpn-key'} size={98} color="gray" />
           </Center>
         </>
@@ -107,23 +98,23 @@ export const ChangePassword: FC<NativeStackScreenProps<ParamListBase>> = ({
           validate={validate}
         >
           {formik => (
-            <VStack mt={3} space={2}>
-              <Box mb={8}>
-                <InputPassword
-                  label="Текущий пароль"
-                  isDisabled={isLoading}
-                  error={formik.errors.currentPassword}
-                  value={formik.values.currentPassword}
-                  isInvalid={Boolean(
-                    formik.touched.currentPassword || formik.submitCount,
-                  )}
-                  onChangeText={formik.handleChange('currentPassword')}
-                  onBlur={formik.handleBlur('currentPassword')}
-                  placeholder="Введите текущий пароль"
-                />
-              </Box>
+            <VStack width="100%" mt={3}>
+              <InputPassword
+                mb={8}
+                label="Текущий пароль"
+                isDisabled={isLoading}
+                error={formik.errors.currentPassword}
+                value={formik.values.currentPassword}
+                isInvalid={Boolean(
+                  formik.touched.currentPassword || formik.submitCount,
+                )}
+                onChangeText={formik.handleChange('currentPassword')}
+                onBlur={formik.handleBlur('currentPassword')}
+                placeholder="Введите текущий пароль"
+              />
 
               <InputPassword
+                mb={4}
                 label="Пароль"
                 isDisabled={isLoading}
                 error={formik.errors.password}
@@ -150,7 +141,8 @@ export const ChangePassword: FC<NativeStackScreenProps<ParamListBase>> = ({
               />
 
               <Button
-                mt={5}
+                mt={10}
+                width="100%"
                 isDisabled={formik.isSubmitting}
                 isLoading={isLoading || formik.isSubmitting}
                 onPress={formik.handleSubmit}
@@ -163,17 +155,15 @@ export const ChangePassword: FC<NativeStackScreenProps<ParamListBase>> = ({
       )}
 
       {pageState === PageState.Success && (
-        <Center my={30}>
+        <Center width="100%" my={30}>
           <Icon
             size={160}
             as={<MaterialIcons name={'check-circle-outline'} />}
           />
 
-          <HStack alignItems="center" my={16}>
-            <Text fontSize="sm">Пароль успешно обновлен. </Text>
-          </HStack>
+          <Text my={16}>Пароль успешно обновлен. </Text>
 
-          <Button w="100%" variant="solid" onPress={navigation.goBack}>
+          <Button width="100%" onPress={navigation.goBack}>
             Назад
           </Button>
         </Center>

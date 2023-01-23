@@ -1,30 +1,27 @@
-import React, { FC, useCallback, useContext, useEffect } from 'react';
-import {
-  Box,
-  Button,
-  Center,
-  Heading,
-  HStack,
-  Icon,
-  Text,
-  VStack,
-} from 'native-base';
+import React, { FC, useCallback } from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Formik, FormikErrors } from 'formik';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 
+import {
+  Box,
+  Button,
+  Center,
+  Icon,
+  InputControlled,
+  Text,
+  VStack,
+  FormError,
+} from '@src/components/UI';
 import { useAppDispatch } from '@src/redux/store';
 import { IChangeEmailFormValues, IOtpFormValues } from '@src/types/form';
 import { PageWithOtpState } from '@src/enums/otpCode';
 import { usePageWithOtpForm } from '@src/hooks/usePageWithOtpForm';
 import { TimerName } from '@src/enums/timer';
-import { ScreenLoadingContext } from '@src/providers/ScreenLoadingProvider';
 import { useForm } from '@src/hooks/useForm';
 import { required, validateEmail } from '@src/validators/common';
 import { PageLayout } from '@src/components/PageLayout';
-import { Input } from '@src/components/control';
-import { FormError } from '@src/components/control/FormError';
 import { OtpTimerInfo } from '@src/components/OtpTimerInfo';
 import { OtpConfirmationForm } from '@src/components/OtpConfirmationForm';
 import {
@@ -70,12 +67,6 @@ export const ChangeEmail: FC<NativeStackScreenProps<ParamListBase>> = ({
     initValues: CHANGE_EMAIL_FORM_INITIAL_VALUES,
   });
 
-  const { setScreenLoading } = useContext(ScreenLoadingContext);
-
-  useEffect(() => {
-    setScreenLoading(isTimerInitializing);
-  }, [isTimerInitializing]);
-
   const { validate, onSubmit, submitRequestError } =
     useForm<IChangeEmailFormValues>({
       submitCallback: submitRequestCode,
@@ -101,104 +92,105 @@ export const ChangeEmail: FC<NativeStackScreenProps<ParamListBase>> = ({
 
   return (
     <PageLayout>
-      {pageState !== PageWithOtpState.SuccessUpdate && (
-        <>
-          <Heading size="lg" fontWeight={600}>
-            Изменение email
-          </Heading>
+      <Box width="100%">
+        {pageState !== PageWithOtpState.SuccessUpdate && (
+          <>
+            <Text fontSize={20} fontWeight={600}>
+              Изменение email
+            </Text>
 
-          <Heading mt={1} fontWeight="medium" size="xs">
-            Следуйте инструкциям
-          </Heading>
+            <Text fontSize={18} fontWeight={300} mt={1}>
+              Следуйте инструкциям
+            </Text>
 
-          <Center my={36}>
-            <MaterialIcons name={'email'} size={98} color="gray" />
-          </Center>
-        </>
-      )}
+            <Center width="100%" my={36}>
+              <MaterialIcons name={'email'} size={98} color="gray" />
+            </Center>
+          </>
+        )}
 
-      <Formik<IChangeEmailFormValues>
-        initialValues={CHANGE_EMAIL_FORM_INITIAL_VALUES}
-        onSubmit={onSubmit}
-        validate={validate}
-        validateOnChange
-        validateOnBlur
-      >
-        {formik => {
-          const isDisabledFields = formik.isSubmitting || isNeedDisableForm;
+        <Formik<IChangeEmailFormValues>
+          initialValues={CHANGE_EMAIL_FORM_INITIAL_VALUES}
+          onSubmit={onSubmit}
+          validate={validate}
+          validateOnChange
+          validateOnBlur
+        >
+          {formik => {
+            const isDisabledFields = formik.isSubmitting || isNeedDisableForm;
 
-          return (
-            <VStack w="100%" mt={5} space={3}>
-              {pageState !== PageWithOtpState.SuccessUpdate && (
-                <>
-                  <Input
-                    label="Email"
-                    isDisabled={isDisabledFields}
-                    error={formik.errors.email}
-                    value={formik.values.email}
-                    isInvalid={Boolean(
-                      formik.touched.email || formik.submitCount,
+            return (
+              <VStack width="100%" mt={5}>
+                {pageState !== PageWithOtpState.SuccessUpdate && (
+                  <>
+                    <InputControlled
+                      label="Email"
+                      isDisabled={isDisabledFields}
+                      error={formik.errors.email}
+                      value={formik.values.email}
+                      isInvalid={Boolean(
+                        formik.touched.email || formik.submitCount,
+                      )}
+                      onChangeText={formik.handleChange('email')}
+                      onBlur={formik.handleBlur('email')}
+                      placeholder="Введите email"
+                    />
+
+                    {submitRequestError && (
+                      <FormError message={submitRequestError} />
                     )}
-                    onChangeText={formik.handleChange('email')}
-                    onBlur={formik.handleBlur('email')}
-                    placeholder="Введите email"
-                  />
+                  </>
+                )}
 
-                  {submitRequestError && (
-                    <FormError message={submitRequestError} />
-                  )}
-                </>
-              )}
+                {pageState === PageWithOtpState.Init && (
+                  <>
+                    <Button
+                      mt={8}
+                      width="100%"
+                      onPress={formik.handleSubmit}
+                      isDisabled={!!restTime || isDisabledFields}
+                      isLoading={formik.isSubmitting}
+                    >
+                      Отправить код
+                    </Button>
 
-              {pageState === PageWithOtpState.Init && (
-                <>
-                  <Button
-                    mt={8}
-                    onPress={formik.handleSubmit}
-                    isDisabled={!!restTime || isDisabledFields}
-                    isLoading={formik.isSubmitting}
-                  >
-                    Отправить код
-                  </Button>
+                    {!!restTime && (
+                      <Box mt={4}>
+                        <OtpTimerInfo timeLeft={restTime} />
+                      </Box>
+                    )}
+                  </>
+                )}
+              </VStack>
+            );
+          }}
+        </Formik>
 
-                  {!!restTime && (
-                    <Box mt={4}>
-                      <OtpTimerInfo timeLeft={restTime} />
-                    </Box>
-                  )}
-                </>
-              )}
-            </VStack>
-          );
-        }}
-      </Formik>
-
-      {pageState === PageWithOtpState.CodeSent && changeEmailFormValues && (
-        <OtpConfirmationForm
-          resendCode={resendCode}
-          restTime={restTime}
-          isTimerInitializing={isTimerInitializing}
-          cancelVerification={cancelVerification}
-          submitCallback={submitOtpVerification}
-        />
-      )}
-
-      {pageState === PageWithOtpState.SuccessUpdate && (
-        <Center my={30}>
-          <Icon
-            size={160}
-            as={<MaterialIcons name={'check-circle-outline'} />}
+        {pageState === PageWithOtpState.CodeSent && changeEmailFormValues && (
+          <OtpConfirmationForm
+            resendCode={resendCode}
+            restTime={restTime}
+            isTimerInitializing={isTimerInitializing}
+            cancelVerification={cancelVerification}
+            submitCallback={submitOtpVerification}
           />
+        )}
 
-          <HStack alignItems="center" my={16}>
-            <Text fontSize="sm">Email успешно обновлен. </Text>
-          </HStack>
+        {pageState === PageWithOtpState.SuccessUpdate && (
+          <Center width="100%" my={30}>
+            <Icon
+              size={160}
+              as={<MaterialIcons name={'check-circle-outline'} />}
+            />
 
-          <Button w="100%" variant="solid" onPress={navigation.goBack}>
-            Назад
-          </Button>
-        </Center>
-      )}
+            <Text my={16}>Email успешно обновлен. </Text>
+
+            <Button width="100%" variant="solid" onPress={navigation.goBack}>
+              Назад
+            </Button>
+          </Center>
+        )}
+      </Box>
     </PageLayout>
   );
 };

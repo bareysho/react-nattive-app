@@ -1,4 +1,7 @@
-import React, { FC, useContext } from 'react';
+import React, { FC, useContext, useState } from 'react';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 import {
   Button,
   HStack,
@@ -6,12 +9,8 @@ import {
   Pressable,
   Switch,
   Text,
-  useColorMode,
   VStack,
-} from 'native-base';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-
+} from '@src/components/UI';
 import { useAppDispatch, useAppSelector } from '@src/redux/store';
 import { selectAuthState } from '@src/selectors/auth';
 import { logoutAction } from '@src/redux/actions/authActions';
@@ -21,21 +20,12 @@ import { ICON_NAME_MAPPER_BY_COLOR_MODE } from '@src/constants/common';
 import { GlobalLoadingContext } from '@src/providers/GlobalLoadingProvider';
 import { PageLayout } from '@src/components/PageLayout';
 import { Card } from '@src/components/Card';
-
-interface IProfile {
-  navigate: (path: string) => void;
-}
+import { IHomeTab } from '@src/pages/Home/Home';
 
 export const SwitchTheme = () => {
-  const { toggleColorMode, colorMode } = useColorMode();
+  const [toggle, setToggle] = useState(false);
 
-  return (
-    <Switch
-      onToggle={toggleColorMode}
-      value={colorMode === 'dark'}
-      colorScheme="primary"
-    />
-  );
+  return <Switch toggle={setToggle} value={toggle} />;
 };
 
 const ROLE_MAPPER = {
@@ -43,7 +33,7 @@ const ROLE_MAPPER = {
   admin: 'Администратор',
 };
 
-export const Profile: FC<IProfile> = ({ navigate }) => {
+export const Profile: FC<IHomeTab> = ({ navigate }) => {
   const dispatch = useAppDispatch();
 
   const { setGlobalLoading } = useContext(GlobalLoadingContext);
@@ -58,93 +48,82 @@ export const Profile: FC<IProfile> = ({ navigate }) => {
     navigate('Login');
   };
 
-  const { toggleColorMode, colorMode } = useColorMode();
-
   return (
     <PageLayout>
-      {user && (
-        <VStack w="100%">
-          <HStack mb={6} justifyContent="space-between">
-            <Pressable onPress={toggleColorMode}>
-              <Card>
-                <Icon
-                  as={Ionicons}
-                  name={ICON_NAME_MAPPER_BY_COLOR_MODE[colorMode || 'light']}
-                  size="lg"
-                />
+      <HStack width="100%" justifyContent="space-between" mb={6}>
+        <Pressable>
+          <Card>
+            <Icon
+              as={<Ionicons name={ICON_NAME_MAPPER_BY_COLOR_MODE.light} />}
+              size={20}
+            />
+          </Card>
+        </Pressable>
+
+        <ExitModal
+          handleLogout={handleLogout}
+          renderComponent={toggleOpen => (
+            <Pressable onPress={toggleOpen}>
+              <Card width="auto">
+                <Icon as={<Ionicons name="exit-outline" />} size={20} />
               </Card>
             </Pressable>
+          )}
+        />
+      </HStack>
 
-            <ExitModal
-              handleLogout={handleLogout}
-              renderComponent={() => (
-                <Card>
-                  <Icon as={Ionicons} name="exit-outline" size="lg" />
-                </Card>
-              )}
-            />
-          </HStack>
+      <Card flexDirection="row" mb={10}>
+        <Icon mr={10} size={120} as={<MaterialIcons name="account-circle" />} />
 
-          <Card mb={10}>
-            <HStack>
-              <Icon
-                mr={10}
-                size={120}
-                as={<MaterialIcons name="account-circle" />}
-              />
+        <VStack>
+          <Text mb={2} fontWeight={600}>
+            Пользователь:
+          </Text>
 
-              <VStack mb={0}>
-                <Text mb={2} fontSize={16} fontWeight={600}>
-                  Пользователь:
-                </Text>
+          <Text fontSize={14}>{user.username}</Text>
 
-                <Text>{user.username}</Text>
+          <Text fontSize={14}>{user.email}</Text>
 
-                <Text>{user.email}</Text>
+          <Text fontSize={14}>
+            {user.verified ? 'Верифицирован' : 'Не верифицирован'}
+          </Text>
 
-                <Text>
-                  {user.verified ? 'Верифицирован' : 'Не верифицирован'}
-                </Text>
-
-                <Text>{ROLE_MAPPER[user.role]}</Text>
-              </VStack>
-            </HStack>
-          </Card>
-
-          <Card mb={20}>
-            <VStack>
-              <MenuItem
-                title="Пароль"
-                icon={<MaterialIcons name="vpn-key" />}
-                callback={() => navigate('ChangePassword')}
-              />
-
-              <MenuItem
-                title="Email"
-                icon={<MaterialIcons name="email" />}
-                callback={() => navigate('ChangeEmail')}
-              />
-
-              <MenuItem
-                title="Темная тема"
-                icon={<Ionicons name="ios-sunny-sharp" />}
-                rightIcon={<SwitchTheme />}
-                callback={toggleColorMode}
-              />
-            </VStack>
-          </Card>
-
-          <ExitModal
-            handleLogout={handleLogout}
-            isLoading={isLoading}
-            renderComponent={toggleOpen => (
-              <Button width="100%" onPress={toggleOpen} px={10}>
-                Выйти
-              </Button>
-            )}
-          />
+          <Text fontSize={14}>{ROLE_MAPPER[user.role]}</Text>
         </VStack>
-      )}
+      </Card>
+
+      <Card mb={20}>
+        <MenuItem
+          title="Пароль"
+          icon={<MaterialIcons name="vpn-key" />}
+          callback={() => navigate('ChangePassword')}
+        />
+
+        <MenuItem
+          title="Email"
+          icon={<MaterialIcons name="email" />}
+          callback={() => navigate('ChangeEmail')}
+        />
+
+        <MenuItem
+          title="Темная тема"
+          icon={<Ionicons name="ios-sunny-sharp" />}
+          rightIcon={<SwitchTheme />}
+          callback={() => {
+            console.log('changed theme');
+          }}
+        />
+      </Card>
+
+      <ExitModal
+        handleLogout={handleLogout}
+        isLoading={isLoading}
+        renderComponent={toggleOpen => (
+          <Button width="100%" onPress={toggleOpen}>
+            Выйти
+          </Button>
+        )}
+      />
     </PageLayout>
   );
 };

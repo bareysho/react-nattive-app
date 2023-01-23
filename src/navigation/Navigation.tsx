@@ -17,14 +17,13 @@ export const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {authenticatedUser && isAuthenticated ? (
+        {authenticatedUser.id && isAuthenticated ? (
           <>
             <Stack.Screen
               name="Home"
               options={{
                 title: 'Главная',
                 headerShown: false,
-                // header: props => <ApplicationBar {...props} />,
               }}
               component={Home}
             />
@@ -34,7 +33,7 @@ export const Navigation = () => {
               options={{
                 title: 'Изменение пароля',
                 headerShown: true,
-                header: props => <ApplicationBar {...props} />,
+                header: ApplicationBar,
               }}
               component={ChangePassword}
             />
@@ -44,7 +43,7 @@ export const Navigation = () => {
               options={{
                 title: 'Изменение email',
                 headerShown: true,
-                header: props => <ApplicationBar {...props} />,
+                header: ApplicationBar,
               }}
               component={ChangeEmail}
             />

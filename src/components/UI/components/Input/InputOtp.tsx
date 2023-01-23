@@ -1,15 +1,14 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
-import {
-  Box,
-  FormControl,
-  HStack,
-  Input,
-  Pressable,
-  WarningOutlineIcon,
-} from 'native-base';
 import { Keyboard, TextInput } from 'react-native';
 
 import { ONLY_DIGIT } from '@src/constants/regexp';
+
+import {
+  FormControlWrapper,
+  IInputForm,
+} from '../FormControlWrapper/FormControlWrapper';
+import { separateInputProps } from '../../utils/common';
+import { Box, HStack, Input, Pressable } from '../../';
 
 import { IInput } from './Input';
 
@@ -17,7 +16,7 @@ interface IInputOtpCode {
   maximumLength: number;
   setIsPinReady: (value: boolean) => void;
 }
-export const InputOtp: FC<IInputOtpCode & IInput> = ({
+export const InputOtp: FC<IInputOtpCode & IInput & IInputForm> = ({
   maximumLength = 6,
   setIsPinReady,
   onChangeText: setCode,
@@ -25,11 +24,13 @@ export const InputOtp: FC<IInputOtpCode & IInput> = ({
   isDisabled,
   isInvalid,
   error,
-  label,
-  helpText,
-  ...inputProps
+  ...rest
 }) => {
-  const inputRef = useRef<TextInput | null>();
+  const { inputProps, wrapperProps } = separateInputProps(rest);
+
+  const isInputInvalid = Boolean(isInvalid && error);
+
+  const inputRef = useRef<TextInput | null>(null);
 
   const boxArray = new Array(maximumLength).fill(0);
 
@@ -75,38 +76,42 @@ export const InputOtp: FC<IInputOtpCode & IInput> = ({
       return (
         <Box justifyContent="space-between" key={index}>
           <Input
-            w={12}
+            {...inputProps}
+            width={42}
+            pl={0}
             value={digit}
             isFocused={isInputBoxFocused && isValueFocused}
-            isReadOnly={false}
+            isInvalid={isInputInvalid}
+            isReadOnly
             isDisabled={isDisabled}
             textAlign="center"
           />
         </Box>
       );
     },
-    [code, isInputBoxFocused, maximumLength],
+    [code, isInputBoxFocused, maximumLength, isDisabled, isInputInvalid],
   );
 
   return (
-    <FormControl isDisabled={isDisabled} isInvalid={isInvalid && !!error}>
-      <FormControl.Label mb={2}>{label}</FormControl.Label>
-
+    <FormControlWrapper
+      {...wrapperProps}
+      error={error}
+      isInvalid={isInvalid}
+      isDisabled={isDisabled}
+    >
       <Pressable onPress={Keyboard.dismiss}>
-        <HStack w="100%" justifyContent="space-between">
+        <HStack width="100%" justifyContent="space-between">
           {boxArray.map(boxDigit)}
         </HStack>
 
         {!isDisabled && (
           <Input
-            {...inputProps}
-            opacity={0}
             position="absolute"
             keyboardType="numeric"
             caretHidden={true}
             contextMenuHidden={true}
             selectTextOnFocus={false}
-            pl="100%"
+            opacity={0}
             value={code}
             isDisabled={isDisabled}
             ref={inputRef}
@@ -117,14 +122,6 @@ export const InputOtp: FC<IInputOtpCode & IInput> = ({
           />
         )}
       </Pressable>
-
-      {helpText && <FormControl.HelperText>{helpText}</FormControl.HelperText>}
-
-      {error !== ' ' && (
-        <FormControl.ErrorMessage leftIcon={<WarningOutlineIcon size="xs" />}>
-          {error}
-        </FormControl.ErrorMessage>
-      )}
-    </FormControl>
+    </FormControlWrapper>
   );
 };

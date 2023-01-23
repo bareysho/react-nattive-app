@@ -1,11 +1,10 @@
 import React, { FC, useCallback, useState } from 'react';
 import { Formik, FormikErrors } from 'formik';
-import { Button, Flex, VStack } from 'native-base';
 
+import { InputOtp, Button, VStack } from '@src/components/UI';
 import { OtpTimerInfo } from '@src/components/OtpTimerInfo';
 import { useForm } from '@src/hooks/useForm';
 import { required } from '@src/validators/common';
-import { InputOtp } from '@src/components/control/Input/InputOtp';
 import { IOtpFormValues } from '@src/types/form';
 import { OTP_LENGTH } from '@src/constants/common';
 
@@ -86,7 +85,7 @@ export const OtpConfirmationForm: FC<IOtpConfirmation> = ({
         const isFormLoading = isLoading || formik.isSubmitting;
 
         return (
-          <VStack mt={5} space={2}>
+          <VStack width="100%" mt={5}>
             <InputOtp
               setIsPinReady={setIsPinReady}
               label="Код подтверждения"
@@ -97,43 +96,37 @@ export const OtpConfirmationForm: FC<IOtpConfirmation> = ({
               onBlur={formik.handleBlur('otp')}
               isDisabled={isFormLoading || isResendLoading}
               maximumLength={OTP_LENGTH}
+              mb={4}
             />
 
-            <Flex direction="row">
-              <Button
-                p={0}
-                size="sm"
-                variant="ghost"
-                isDisabled={isFormLoading}
-                onPress={cancelVerification}
-              >
-                Изменить email
-              </Button>
-            </Flex>
+            <Button
+              variant="ghost"
+              isDisabled={isFormLoading}
+              onPress={cancelVerification}
+            >
+              Изменить email
+            </Button>
 
             {!isTimerInitializing && (
               <>
                 {restTime ? (
                   <OtpTimerInfo timeLeft={restTime} />
                 ) : (
-                  <Flex direction="row">
-                    <Button
-                      isDisabled={isResendLoading}
-                      isLoading={isResendLoading}
-                      p={0}
-                      size="sm"
-                      variant="ghost"
-                      onPress={handleResend}
-                    >
-                      Повторить отправку
-                    </Button>
-                  </Flex>
+                  <Button
+                    isDisabled={isResendLoading}
+                    isLoading={isResendLoading}
+                    variant="ghost"
+                    onPress={handleResend}
+                  >
+                    Повторить отправку
+                  </Button>
                 )}
               </>
             )}
 
             <Button
-              mt={5}
+              mt={8}
+              width="100%"
               isDisabled={isFormLoading || !isPinReady}
               isLoading={isFormLoading}
               onPress={formik.handleSubmit}

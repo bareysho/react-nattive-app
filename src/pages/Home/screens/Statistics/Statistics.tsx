@@ -1,34 +1,32 @@
-import React, { FC } from 'react';
-import { Box, Center, Heading, Text } from 'native-base';
+import React, { FC, Fragment } from 'react';
 import { LineChart } from 'react-native-chart-kit';
 import { Dimensions } from 'react-native';
 
+import { Box, Text } from '@src/components/UI';
 import { PageLayout } from '@src/components/PageLayout';
 
 export const Statistics: FC = () => {
   const width = Dimensions.get('window').width;
 
-  const chartWidth = width - width * 0.1;
+  const chartWidth = width - width * 0.06;
 
   return (
     <PageLayout>
       <Box mb={5}>
-        <Heading size="lg" fontWeight="600">
+        <Text fontSize={20} fontWeight={600}>
           Статистика
-        </Heading>
+        </Text>
 
-        <Heading mt={1} fontWeight="medium" size="xs">
+        <Text fontSize={18} fontWeight={300} mt={1}>
           Проанализируйте свои упражнения
-        </Heading>
+        </Text>
       </Box>
 
-      {['Сегодня:', 'Неделя:', 'Месяц:'].map(chart => (
-        <Box mb={5} key={chart}>
-          <Text textAlign="left" fontSize={16}>
-            {chart}
-          </Text>
+      {['Сегодня:'].map(chart => (
+        <Fragment key={chart}>
+          <Text>{chart}</Text>
 
-          <Center>
+          <Box width="100%" alignItems="center" mb={5} key={chart}>
             <LineChart
               data={{
                 labels: Array.from(Array(12).keys()).map(i => `${i + 1}`),
@@ -61,8 +59,8 @@ export const Statistics: FC = () => {
                 backgroundGradientFrom: '#e7e5e4',
                 backgroundGradientTo: '#e7e5e4',
                 decimalPlaces: 2, // optional, defaults to 2dp
-                color: (opacity = 1) => '#78716c',
-                labelColor: (opacity = 1) => '#78716c',
+                color: () => '#78716c',
+                labelColor: () => '#78716c',
                 style: {
                   borderRadius: 16,
                 },
@@ -78,8 +76,8 @@ export const Statistics: FC = () => {
                 borderRadius: 16,
               }}
             />
-          </Center>
-        </Box>
+          </Box>
+        </Fragment>
       ))}
     </PageLayout>
   );

@@ -1,35 +1,27 @@
-import React, { useState } from 'react';
-import {
-  Actionsheet,
-  Box,
-  Button,
-  Center,
-  Heading,
-  Icon,
-  Text,
-  useDisclose,
-} from 'native-base';
+import React, { useCallback, useState } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DatePicker from 'react-native-date-picker';
 
-import { WorkoutEvent } from '@src/storage/models/WorkoutEvent';
+import {
+  Box,
+  Button,
+  HStack,
+  Icon,
+  Pressable,
+  Text,
+  VStack,
+} from '@src/components/UI';
 import { PageLayout } from '@src/components/PageLayout';
 import { useIntervalDate } from '@src/hooks/useIntervalDate';
 import { DateService } from '@src/services/dateService';
 import { WorkoutRecord } from '@src/pages/Home/screens/History/WorkoutRecord';
 import { WorkoutRecords } from '@src/storage/repositories/workoutRecords';
 
-
 export const History = () => {
   const [datePickerDate, setDatePickerDate] = useState(new Date());
   const [selectedEventsDate, setSelectedEventsDate] = useState(new Date());
 
-  const { isOpen, onOpen, onClose } = useDisclose();
-
-  const handleClose = () => {
-    setSelectedEventsDate(datePickerDate);
-    onClose();
-  };
+  const [isCalendarOpen, setCalendarOpen] = useState(false);
 
   const { endDate, startDate } = useIntervalDate(selectedEventsDate);
 
@@ -38,66 +30,84 @@ export const History = () => {
     endDate,
   );
 
-  const selectedRecordsDateString = DateService.formatDateUI(selectedEventsDate);
+  const selectedRecordsDateString =
+    DateService.formatDateUI(selectedEventsDate);
 
   const isDateEquals =
     DateService.formatDateUI(new Date()) === selectedRecordsDateString;
 
-  const buttonTitle = isDateEquals ? 'Выбрать дату' : selectedRecordsDateString;
+  const closedCalendarTitle = isDateEquals
+    ? 'Выбрать дату'
+    : selectedRecordsDateString;
+
+  const buttonTitle = isCalendarOpen ? 'Подтверидть' : closedCalendarTitle;
+
+  const submitButtonIcon = !isCalendarOpen ? (
+    <Icon
+      mr={3}
+      size={20}
+      color="#57534e"
+      as={<MaterialCommunityIcons name="calendar-search" />}
+    />
+  ) : undefined;
+
+  const handleSubmitDate = useCallback(() => {
+    if (isCalendarOpen) {
+      setCalendarOpen(false);
+      setSelectedEventsDate(datePickerDate);
+    } else {
+      setCalendarOpen(true);
+    }
+  }, [isCalendarOpen, datePickerDate]);
+
+  const handleCloseCalendar = () => {
+    setCalendarOpen(false);
+  };
+
+  const cleanSelectedDate = useCallback(() => {
+    setDatePickerDate(new Date());
+    setSelectedEventsDate(new Date());
+  }, []);
 
   return (
-    <Box height="100%">
+    <>
       <PageLayout>
-        <Heading size="lg" fontWeight="600">
+        <Text fontSize={20} fontWeight={600}>
           История упражнений
-        </Heading>
+        </Text>
 
-        <Heading mt={1} fontWeight="medium" size="xs">
+        <Text fontSize={18} fontWeight={300} mt={1}>
           Проанализируйте свои тренировки
-        </Heading>
+        </Text>
 
         {workoutsFiltered.map(workout => (
           <WorkoutRecord workout={workout} key={workout._id.toString()} />
         ))}
       </PageLayout>
 
-      <Center
-        width="95%"
-        bottom={5}
-        position="absolute"
-        justifyContent="space-between">
-        {!isDateEquals && (
-          <Icon
-            onPress={() => {
-              setSelectedEventsDate(new Date());
-            }}
-            zIndex={2}
-            right={2}
-            bottom={3}
-            size="lg"
-            color="gray.600"
-            position="absolute"
-            as={<MaterialCommunityIcons name="close-circle" />}
-          />
-        )}
+      <VStack bottom={10} width="100%" position="absolute" alignItems="center">
+        {isCalendarOpen && (
+          <Box
+            py={8}
+            mb={5}
+            width="95%"
+            alignItems="center"
+            backgroundColor="white"
+            rounded={20}
+          >
+            <Pressable
+              top={20}
+              right={20}
+              position="absolute"
+              onPress={handleCloseCalendar}
+            >
+              <Icon
+                size={30}
+                color="#57534e"
+                as={<MaterialCommunityIcons name="close-circle" />}
+              />
+            </Pressable>
 
-        <Button
-          onPress={onOpen}
-          alignItems="center"
-          minWidth={300}
-          leftIcon={
-            <Icon
-              mr={3}
-              size="lg"
-              color="gray.600"
-              as={<MaterialCommunityIcons name="calendar-search" />}
-            />
-          }>
-          <Text>{buttonTitle}</Text>
-        </Button>
-
-        <Actionsheet useRNModal isOpen={isOpen} onClose={handleClose}>
-          <Actionsheet.Content>
             <DatePicker
               mode="date"
               textColor="black"
@@ -106,9 +116,30 @@ export const History = () => {
               maximumDate={new Date()}
               onDateChange={setDatePickerDate}
             />
-          </Actionsheet.Content>
-        </Actionsheet>
-      </Center>
-    </Box>
+          </Box>
+        )}
+
+        <HStack width="100%" alignItems="center" justifyContent="space-evenly">
+          <Button
+            alignItems="center"
+            minWidth={300}
+            onPress={handleSubmitDate}
+            leftIcon={submitButtonIcon}
+          >
+            {buttonTitle}
+          </Button>
+
+          {!isDateEquals && (
+            <Pressable zIndex={2} onPress={cleanSelectedDate}>
+              <Icon
+                size={30}
+                color="#57534e"
+                as={<MaterialCommunityIcons name="close-circle" />}
+              />
+            </Pressable>
+          )}
+        </HStack>
+      </VStack>
+    </>
   );
 };

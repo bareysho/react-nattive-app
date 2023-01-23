@@ -1,20 +1,16 @@
 import React from 'react';
 import { NativeStackHeaderProps } from '@react-navigation/native-stack';
-import { HStack, Icon, Text } from 'native-base';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import { useThemedBgColor } from '@src/hooks/useThemedBgColor';
+import { HStack, Icon, Pressable, Text } from '@src/components/UI';
 
 export const ApplicationBar = ({
   navigation,
   options,
 }: NativeStackHeaderProps) => {
-  const bg = useThemedBgColor();
-
   return (
     <>
       <HStack
-        bg={bg}
         px={4}
         py={2}
         height={60}
@@ -23,11 +19,9 @@ export const ApplicationBar = ({
         alignItems="center"
       >
         <HStack alignItems="center">
-          <Icon
-            onPress={navigation.goBack}
-            mr={4}
-            as={<MaterialIcons name="arrow-back-ios" />}
-          />
+          <Pressable onPress={navigation.goBack}>
+            <Icon mr={4} as={<MaterialIcons name="arrow-back-ios" />} />
+          </Pressable>
 
           <Text fontSize={16}>{options.title}</Text>
         </HStack>

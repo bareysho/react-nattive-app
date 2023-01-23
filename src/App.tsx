@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Center, Fab, Icon, Spinner, useColorMode } from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+import { Center, Icon, Spinner, Fab } from '@src/components/UI';
 import { useAppDispatch } from '@src/redux/store';
 import { selectAuthState } from '@src/selectors/auth';
 import { recallUserAction } from '@src/redux/actions/authActions';
@@ -38,7 +38,7 @@ export const App = () => {
         await dispatch(setAccessToken(accessToken));
       }
 
-      if (!authenticatedUser && authenticatedUserId) {
+      if (!authenticatedUser.id && authenticatedUserId) {
         setGlobalLoading(true);
 
         try {
@@ -53,11 +53,11 @@ export const App = () => {
       setUserRecalled(true);
       setGlobalLoading(false);
     })();
-  }, [dispatch, authenticatedUser]);
+  }, [dispatch, authenticatedUser.id]);
 
   const isApplicationLoading = isGlobalLoading || !isUserRecalled;
 
-  const { colorMode, toggleColorMode } = useColorMode();
+  // const { colorMode, toggleColorMode } = useColorMode();
 
   return isApplicationLoading ? (
     <Center alignItems="center" flex={1}>
@@ -69,17 +69,14 @@ export const App = () => {
 
       {!isAuthenticated && (
         <Fab
-          renderInPortal={false}
           shadow={2}
-          placement="bottom-right"
-          size="sm"
-          onPress={toggleColorMode}
+          size={50}
+          // onPress={toggleColorMode}
           icon={
             <Icon
               color="black"
-              as={Ionicons}
-              name={ICON_NAME_MAPPER_BY_COLOR_MODE[colorMode || 'light']}
-              size="4"
+              as={<Ionicons name={ICON_NAME_MAPPER_BY_COLOR_MODE.light} />}
+              size={20}
             />
           }
         />

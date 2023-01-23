@@ -1,6 +1,6 @@
 import React, { FC, ReactElement, ReactNode } from 'react';
-import { Box, HStack, Icon, Text, VStack } from 'native-base';
 
+import { Icon, Text, VStack } from '@src/components/UI';
 import { Card } from '@src/components/Card';
 
 interface IDashboardCard {
@@ -19,24 +19,22 @@ export const DashboardCard: FC<IDashboardCard> = ({
   bottomButton,
 }) => {
   return (
-    <Card>
-      <HStack alignItems="center">
-        <VStack>
-          <Icon color={iconColor} size={55} mr={5} as={icon} />
+    <Card flexDirection="row" alignItems="center">
+      <VStack>
+        <Icon color={iconColor} size={55} mr={5} as={icon} />
 
-          {bottomButton}
-        </VStack>
+        {bottomButton}
+      </VStack>
 
-        <VStack alignContent="flex-start">
-          {title && (
-            <Text mb={3} fontSize={18}>
-              {title}
-            </Text>
-          )}
+      <VStack>
+        {title && (
+          <Text mb={3} fontSize={18}>
+            {title}
+          </Text>
+        )}
 
-          {children}
-        </VStack>
-      </HStack>
+        {children}
+      </VStack>
     </Card>
   );
 };

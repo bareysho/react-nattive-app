@@ -1,20 +1,7 @@
 import React, { FC, useEffect, useMemo } from 'react';
-import {
-  Actionsheet,
-  Box,
-  Button,
-  Center,
-  HStack,
-  Icon,
-  Progress,
-  Text,
-  useDisclose,
-} from 'native-base';
 import { useTimer } from 'use-timer';
-import { useColorModeValue } from 'native-base/src/core/color-mode/hooks';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import DatePicker from 'react-native-date-picker';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 import {
   finishSet,
@@ -29,8 +16,17 @@ import { WorkoutType } from '@src/enums/WorkoutType';
 import { selectWorkout } from '@src/selectors/workout';
 import { useAppDispatch, useAppSelector } from '@src/redux/store';
 import { WorkoutEvent } from '@src/storage/models/WorkoutEvent';
-import StorageContext from '@src/storage/storage';
 import { selectAuthState } from '@src/selectors/auth';
+import {
+  Box,
+  HStack,
+  Progress,
+  Center,
+  Text,
+  Button,
+  Icon,
+} from '@src/components/UI';
+import StorageContext from '@src/storage/storage';
 
 import { CircleButton } from './CircleButton';
 
@@ -38,11 +34,13 @@ const { useRealm } = StorageContext;
 
 interface IWorkout {
   mainColor: string;
+  secondaryColor: string;
   workoutType: WorkoutType;
 }
 
 export const Workout: FC<IWorkout> = ({
   mainColor: colorSchema,
+  secondaryColor,
   workoutType,
 }) => {
   const dispatch = useAppDispatch();
@@ -51,14 +49,14 @@ export const Workout: FC<IWorkout> = ({
 
   const realm = useRealm();
 
-  const workoutMainColor = `${colorSchema}.300`;
+  const workoutMainColor = `${colorSchema}`;
 
   const initialSetList = [20, 19, 15, 18];
 
   const {
     time: durationTimeSec,
     start: startWorkoutTimer,
-      pause: stopDurationTimer,
+    pause: stopDurationTimer,
     reset: resetWorkoutTimer,
   } = useTimer({
     timerType: TimerType.Incremental,
@@ -66,7 +64,6 @@ export const Workout: FC<IWorkout> = ({
 
   useEffect(() => {
     dispatch(initWorkout({ setList: initialSetList, setNumber: 0 }));
-    startWorkoutTimer();
   }, [dispatch]);
 
   const { reps, repsDoneTotal, setNumber, workoutState, setList } =
@@ -108,6 +105,7 @@ export const Workout: FC<IWorkout> = ({
     }
 
     if (isSetDone && isLastSet) {
+      stopDurationTimer();
       dispatch(setWorkoutState(WorkoutState.Finished));
     }
   }, [dispatch, isSetDone, isLastSet]);
@@ -120,8 +118,11 @@ export const Workout: FC<IWorkout> = ({
 
   const totalWorkoutReps = setList.reduce((accum, value) => accum + value, 0);
 
-  const setBlockColor = useColorModeValue('trueGray.50', 'trueGray.800');
-  const prevSetBlockColor = useColorModeValue('gray.300', 'gray.600');
+  // const setBlockColor = useColorModeValue('#fafafa', '#262626');
+  // const prevSetBlockColor = useColorModeValue('#d4d4d8', '#52525b');
+
+  const setBlockColor = '#fafafa';
+  const prevSetBlockColor = '#d4d4d8';
 
   const finishWorkoutCallback = async () => {
     realm.write(() => {
@@ -136,9 +137,8 @@ export const Workout: FC<IWorkout> = ({
       );
     });
 
-    stopDurationTimer();
-    dispatch(setWorkoutState(WorkoutState.Finished));
-    // dispatch(initWorkout({ setList, setNumber: 0 }));
+    resetWorkoutTimer();
+    dispatch(initWorkout({ setList, setNumber: 0 }));
   };
 
   const buttonProps: Record<
@@ -184,68 +184,47 @@ export const Workout: FC<IWorkout> = ({
     return setBlockColor;
   };
 
-  const { isOpen, onOpen, onClose } = useDisclose();
-
-  const handleClose = () => {
-    onClose();
-  };
-
   return (
-    <>
-      <HStack py={4} height="12%" justifyContent="space-evenly">
+    <Box px={4} width="100%" height="100%">
+      <HStack py={4} width="100%" height="12%" justifyContent="space-between">
         {setList.map((setListReps, index) => (
           <Center
+            shadow={1}
             key={index}
-            height={58}
+            height={60}
             rounded={10}
             borderWidth={3}
-            alignItems="center"
-            borderColor="gray.200"
-            shadow={1}
-            backgroundColor={getSetBlockBackgroundColor(index)}>
-            <Text px={4} textAlign="center" fontSize={16}>
-              {setListReps}
-            </Text>
+            borderColor="#d4d4d4"
+            backgroundColor={getSetBlockBackgroundColor(index)}
+          >
+            <Text px={4}>{setListReps}</Text>
           </Center>
         ))}
       </HStack>
 
-      <Box height="4%">
+      <Box width="100%" alignItems="center" height="4%">
         <Progress
-          _filledTrack={{
-            bg: workoutMainColor,
-          }}
-          width="95%"
-          alignSelf="center"
+          width="100%"
+          progressLineColor={workoutMainColor}
           value={(repsDoneTotal / totalWorkoutReps) * 100}
         />
       </Box>
 
-      <Box justifyContent="center" height="8%">
-        <Text px={4} textAlign="left" fontSize={16}>
-          <Text>Длительность: </Text>
-
-          <Text fontWeight={600}>{durationTimeSec}</Text>
+      <Box height="8%">
+        <Text px={4}>
+          Длительность: <Text fontWeight={600}>{durationTimeSec}</Text>
         </Text>
 
-        <Text px={4} textAlign="left" fontSize={16}>
-          <Text>Всего повторений: </Text>
-
-          <Text fontWeight={600}>{totalWorkoutReps}</Text>
+        <Text px={4}>
+          Всего повторений: <Text fontWeight={600}>{totalWorkoutReps}</Text>
         </Text>
 
-        <HStack px={4} textAlign="left" fontSize={16}>
-          <Text>Всего повторений выполнено: </Text>
-
-          <Text fontWeight={600}>{repsDoneTotal}</Text>
-        </HStack>
+        <Text px={4}>
+          Повторений выполнено: <Text fontWeight={600}>{repsDoneTotal}</Text>
+        </Text>
       </Box>
 
-      <Center
-        height="50%"
-        alignSelf="center"
-        justifyContent="center"
-        alignItems="center">
+      <Center width="100%" height="56%">
         {workoutState !== WorkoutState.Finished && (
           <>
             {(workoutState === WorkoutState.Working ||
@@ -253,93 +232,61 @@ export const Workout: FC<IWorkout> = ({
               <CircleButton
                 shadow={1}
                 text={approachRepetitions - reps}
-                onPress={() => dispatch(increaseReps())}
+                pressedBackgroundColor={secondaryColor}
+                onPress={() => {
+                  if (!durationTimeSec) {
+                    startWorkoutTimer();
+                  }
+
+                  dispatch(increaseReps());
+                }}
                 backgroundColor={workoutMainColor}
-                pressedBackgroundColor={`${colorSchema}.400`}
               />
             )}
 
             {workoutState === WorkoutState.Pause && (
               <CircleButton
-                text={pauseTime}
                 withLoading
+                text={pauseTime}
                 loaderColor={workoutMainColor}
-                pressedBackgroundColor="gray.300"
-                backgroundColor="gray.300"
+                pressedBackgroundColor="#d6d3d1"
+                backgroundColor="#d6d3d1"
               />
             )}
           </>
         )}
 
         {workoutState === WorkoutState.Finished && (
-          <Box>
-            <Icon size={160} as={<FontAwesome5 name="flag-checkered" />} />
-          </Box>
+          <Icon size={160} as={<FontAwesome5 name="flag-checkered" />} />
         )}
       </Center>
 
-      <Center height="14%">
-        <HStack width="95%" justifyContent="space-between" alignItems="center">
-          <Button
-            backgroundColor={workoutMainColor}
-            _pressed={{
-              backgroundColor: `${colorSchema}.400`,
-            }}
-            mr={6}
-            onPress={callback}>
-            {title}
-          </Button>
+      <HStack
+        width="100%"
+        height="8%"
+        justifyContent="space-between"
+        alignItems="center"
+      >
+        <Button
+          minWidth={300}
+          backgroundColor={workoutMainColor}
+          backgroundColorPressed={secondaryColor}
+          onPress={callback}
+        >
+          {title}
+        </Button>
 
-          <Button
-            onPress={onOpen}
-            backgroundColor={workoutMainColor}
-            rightIcon={
-              <Icon
-                size="lg"
-                color="gray.600"
-                as={<MaterialCommunityIcons name="arrow-up-drop-circle" />}
-              />
-            }
-          />
-        </HStack>
-
-        <Actionsheet useRNModal isOpen={isOpen} onClose={handleClose}>
-          <Actionsheet.Content pb={10}>
-            <Button
-              width="95%"
-              mt={2}
-              backgroundColor={workoutMainColor}
-              _pressed={{
-                backgroundColor: `${colorSchema}.400`,
-              }}
-              onPress={callback}>
-              Пропустить подход
-            </Button>
-
-            <Button
-              width="95%"
-              mt={2}
-              backgroundColor={workoutMainColor}
-              _pressed={{
-                backgroundColor: `${colorSchema}.400`,
-              }}
-              onPress={callback}>
-              Закончил самостоятельно
-            </Button>
-
-            <Button
-              width="95%"
-              mt={2}
-              backgroundColor={workoutMainColor}
-              _pressed={{
-                backgroundColor: `${colorSchema}.400`,
-              }}
-              onPress={finishWorkoutCallback}>
-              Прекратить тренировку
-            </Button>
-          </Actionsheet.Content>
-        </Actionsheet>
-      </Center>
-    </>
+        <Button
+          backgroundColor={workoutMainColor}
+          rightIcon={
+            <MaterialCommunityIcons
+              size={26}
+              color="#57534e"
+              name="arrow-up-drop-circle"
+            />
+          }
+        />
+      </HStack>
+    </Box>
   );
 };

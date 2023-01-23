@@ -1,5 +1,6 @@
 import React, { FC, useMemo } from 'react';
-import { Text } from 'native-base';
+
+import { Text } from '@src/components/UI';
 
 interface IOtpTimerInfo {
   timeLeft: number;
@@ -11,10 +12,13 @@ export const OtpTimerInfo: FC<IOtpTimerInfo> = ({ timeLeft }) => {
   return (
     <>
       {isTimerActive && (
-        <Text fontSize="xs">{`Код отправлен, повтор через: ${timeLeft}`}</Text>
+        <Text
+          mt={2}
+          fontSize={14}
+        >{`Код отправлен, повтор через: ${timeLeft}`}</Text>
       )}
 
-      <Text fontSize="xs">
+      <Text fontSize={14}>
         Мы отправим проверочный код на введенный email адрес.
       </Text>
     </>

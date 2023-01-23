@@ -1,6 +1,6 @@
 import React, { FC, ReactElement } from 'react';
-import { HStack, Text } from 'native-base';
 
+import { HStack, Text } from '@src/components/UI';
 import { ImageApp, ImageAppName } from '@src/components/Image/Image';
 
 import { DashboardCard } from './DashboardCard';
@@ -17,7 +17,7 @@ const RepetitionsCount: FC<IRepetitionsCount> = ({ iconName, count = 0 }) => {
     <HStack mr={6} alignItems="center">
       <ImageApp name={iconName} size={30} />
 
-      <Text minWidth={9} ml={2} fontSize={18}>
+      <Text minWidth={9} ml={2} fontSize={fontSize}>
         {count}
       </Text>
     </HStack>

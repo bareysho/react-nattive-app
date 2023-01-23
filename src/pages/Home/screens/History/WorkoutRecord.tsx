@@ -1,5 +1,4 @@
 import React, { FC } from 'react';
-import { Box, HStack, Icon, Text, VStack } from 'native-base';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 
@@ -8,6 +7,7 @@ import { ImageApp } from '@src/components/Image/Image';
 import { IMAGE_BY_WORKOUT_MAPPER } from '@src/constants/imageByWorkoutMapper';
 import { DateService } from '@src/services/dateService';
 import { WorkoutEvent } from '@src/storage/models/WorkoutEvent';
+import { Box, HStack, Icon, Text, VStack } from '@src/components/UI';
 
 interface IWorkoutRecord {
   workout: WorkoutEvent;
@@ -15,7 +15,7 @@ interface IWorkoutRecord {
 
 export const WorkoutRecord: FC<IWorkoutRecord> = ({ workout }) => {
   return (
-    <Card key={workout._id.toString()}>
+    <Card width="100%" key={workout._id.toString()}>
       <HStack alignItems="center">
         <Box mr={6}>
           <ImageApp name={IMAGE_BY_WORKOUT_MAPPER[workout.workoutType]} />
@@ -28,7 +28,7 @@ export const WorkoutRecord: FC<IWorkoutRecord> = ({ workout }) => {
               as={<MaterialCommunityIcons name="calendar-clock" />}
             />
 
-            <Text mr={10} color="gray.400">
+            <Text mr={10}>
               {DateService.formatDatetimeUI(workout.workoutDate)}
             </Text>
           </HStack>
@@ -50,7 +50,7 @@ export const WorkoutRecord: FC<IWorkoutRecord> = ({ workout }) => {
                 <Text mr={1}>{setRepetitionsCount}</Text>
 
                 <Icon
-                  color={index < 2 ? 'green.400' : 'red.400'}
+                  color={index < 2 ? '#4ade80' : '#f87171'}
                   as={<Entypo name="check" />}
                 />
               </HStack>

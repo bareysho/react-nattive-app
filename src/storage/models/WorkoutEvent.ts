@@ -1,7 +1,6 @@
 import { Realm } from '@realm/react';
 
 import { WorkoutType } from '@src/enums/WorkoutType';
-import {subDays} from "date-fns";
 
 export class WorkoutEvent extends Realm.Object {
   // To use a class as a Realm object type, define the object schema on the static property "schema".

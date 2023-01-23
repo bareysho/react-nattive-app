@@ -1,86 +1,81 @@
-import React, { FC, ReactElement, useMemo } from 'react';
+import React, { FC } from 'react';
 import { ParamListBase } from '@react-navigation/native';
-import {
-  Box,
-  Center,
-  HStack,
-  Icon,
-  Pressable,
-  Text,
-  VStack,
-} from 'native-base';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { useThemedBgColor } from '@src/hooks/useThemedBgColor';
+import { Box, HStack, Icon, Pressable, Text, VStack } from '@src/components/UI';
 
-import {Workouts, Profile, Statistics, Dashboard, History} from './screens';
+import { Dashboard, History, Profile, Statistics, Workouts } from './screens';
+
+export interface IHomeTab {
+  navigate: (path: string) => void;
+}
 
 interface IRoutesConfig {
   key: string;
   title: string;
   focusedIcon: string;
-  content: ReactElement;
+  content: FC<IHomeTab>;
 }
+
+const ROUTES: IRoutesConfig[] = [
+  {
+    key: 'application',
+    title: 'Сводка',
+    focusedIcon: 'application-outline',
+    content: Dashboard,
+  },
+  {
+    key: 'arm-flex',
+    title: 'Тренировка',
+    focusedIcon: 'arm-flex-outline',
+    content: Workouts,
+  },
+  {
+    key: 'chart-box',
+    title: 'Статистика',
+    focusedIcon: 'chart-box-outline',
+    content: Statistics,
+  },
+  {
+    key: 'history',
+    title: 'История',
+    focusedIcon: 'history',
+    content: History,
+  },
+  {
+    key: 'account',
+    title: 'Профиль',
+    focusedIcon: 'account-outline',
+    content: Profile,
+  },
+];
 
 export const Home: FC<NativeStackScreenProps<ParamListBase>> = ({
   navigation,
 }) => {
-  const routes: IRoutesConfig[] = useMemo(
-    () => [
-      {
-        key: 'application',
-        title: 'Сводка',
-        focusedIcon: 'application-outline',
-        content: <Dashboard />,
-      },
-      {
-        key: 'arm-flex',
-        title: 'Тренировка',
-        focusedIcon: 'arm-flex-outline',
-        content: <Workouts />,
-      },
-      {
-        key: 'chart-box',
-        title: 'Статистика',
-        focusedIcon: 'chart-box-outline',
-        content: <Statistics />,
-      },
-      {
-        key: 'history',
-        title: 'История',
-        focusedIcon: 'history',
-        content: <History />,
-      },
-      {
-        key: 'account',
-        title: 'Профиль',
-        focusedIcon: 'account-outline',
-        content: <Profile navigate={navigation.navigate} />,
-      },
-    ],
-    [],
-  );
-
   const [selectedTab, setSelectedTab] = React.useState(0);
 
-  const bg = useThemedBgColor();
+  const Component = ROUTES[selectedTab].content;
 
   return (
-    <VStack w="100%" justifyContent="space-between" flex={1}>
-      <Box height="92%">{routes[selectedTab].content}</Box>
+    <VStack width="100%" justifyContent="space-between" flex={1}>
+      <Box alignItems="center" alignSelf="center" width="100%" height="92%">
+        <Component navigate={navigation.navigate} />
+      </Box>
 
       <HStack
         height="8%"
+        width="100%"
         zIndex={3}
-        bg={bg}
+        justifyContent="space-between"
         alignItems="center"
-        safeAreaBottom
-        shadow={6}>
-        {routes.map((route, index) => {
+        shadow={0.2}
+      >
+        {ROUTES.map((route, index) => {
           const isActive = selectedTab === index;
 
-          const opacity = isActive ? 1 : 0.5;
+          const opacity = isActive ? 1 : 0.6;
           const name = isActive ? route.key : route.focusedIcon;
 
           const handleSelect = () => setSelectedTab(index);
@@ -91,16 +86,14 @@ export const Home: FC<NativeStackScreenProps<ParamListBase>> = ({
               opacity={opacity}
               py={2}
               flex={1}
-              onPress={handleSelect}>
-              <Center alignItems="center">
-                <Icon
-                  mb={1}
-                  as={<MaterialCommunityIcons name={name} />}
-                  size="lg"
-                />
+              alignItems="center"
+              rounded={20}
+              pressedBackgroundColor="#d6d3d1"
+              onPress={handleSelect}
+            >
+              <Icon mb={1} as={<MaterialCommunityIcons name={name} />} />
 
-                <Text fontSize={12}>{route.title}</Text>
-              </Center>
+              <Text fontSize={12}>{route.title}</Text>
             </Pressable>
           );
         })}

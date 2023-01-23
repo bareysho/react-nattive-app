@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
-import { Box, Button, Heading, HStack, Icon, Text, VStack } from 'native-base';
 import * as dateFns from 'date-fns';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { ru } from 'date-fns/locale';
 import { Results } from 'realm';
 
+import { Box, HStack, Text, VStack, Icon, Button } from '@src/components/UI';
 import { PageLayout } from '@src/components/PageLayout';
 import { Card } from '@src/components/Card';
 import { WorkoutRecords } from '@src/storage/repositories/workoutRecords';
@@ -20,7 +20,7 @@ export const Dashboard: FC = () => {
   const completed = [1, 2, 3];
 
   const getActivityShieldColor = (i: number) =>
-    completed.includes(i) ? 'green.500' : undefined;
+    completed.includes(i) ? '#78716c' : '#22c55e';
 
   const todayDateString = dateFns.format(new Date(), 'dd MMMM yyyy', {
     locale: ru,
@@ -95,20 +95,20 @@ export const Dashboard: FC = () => {
 
   return (
     <PageLayout>
-      <Heading size="lg" fontWeight="600">
+      <Text fontSize={20} fontWeight={600}>
         Информация
-      </Heading>
+      </Text>
 
-      <Heading mt={1} fontWeight="medium" size="xs">
+      <Text fontSize={18} fontWeight={300} mt={1}>
         {`Сводка на ${todayDateString}`}
-      </Heading>
+      </Text>
 
       <Card>
         <Text mb={3} fontSize={18}>
           Регулярность:
         </Text>
 
-        <HStack justifyContent="space-between">
+        <HStack justifyContent="space-between" width="100%">
           {[1, 2, 3, 4, 5, 6, 7].map(item => {
             const dayOfWeek = dateFns
               .format(dateFns.addDays(new Date(), item), 'EEEEEE', {
@@ -120,15 +120,21 @@ export const Dashboard: FC = () => {
               <VStack key={item}>
                 <Text
                   mb={2}
-                  fontWeight={item === 7 ? 'bold' : undefined}
-                  textAlign="center">
+                  fontWeight={item === 7 ? 700 : undefined}
+                  textAlign="center"
+                >
                   {dayOfWeek}
                 </Text>
 
                 <Icon
                   color={getActivityShieldColor(item)}
-                  size={8}
-                  as={<MaterialCommunityIcons name="shield-check" />}
+                  size={30}
+                  as={
+                    <MaterialCommunityIcons
+                      color={getActivityShieldColor(item)}
+                      name="shield-check"
+                    />
+                  }
                 />
               </VStack>
             );
@@ -142,7 +148,8 @@ export const Dashboard: FC = () => {
           <Button alignSelf="flex-start" py={0} px={1} variant="ghost">
             Запись
           </Button>
-        }>
+        }
+      >
         <HStack justifyContent="space-between">
           <Box mr={5}>
             <Text fontSize={14}>Текущий вес:</Text>
@@ -155,7 +162,7 @@ export const Dashboard: FC = () => {
           <Box>
             <Text fontSize={14}>Прошлая неделя:</Text>
 
-            <Text color="red.500" textAlign="center" fontSize={28}>
+            <Text color="#ef4444" textAlign="center" fontSize={28}>
               -2 кг
             </Text>
           </Box>
@@ -164,7 +171,7 @@ export const Dashboard: FC = () => {
 
       <DashboardWorkoutsCard
         title="Рекорд:"
-        iconColor="amber.400"
+        iconColor="#fbbf24"
         icon={<Ionicons name="ios-trophy" />}
         pushUpsCount={15}
         sitUpsCount={11}
@@ -173,7 +180,7 @@ export const Dashboard: FC = () => {
 
       <DashboardWorkoutsCard
         title="Сегодня:"
-        iconColor="emerald.300"
+        iconColor="#6ee7b7"
         icon={<MaterialCommunityIcons name="shield-check" />}
         pushUpsCount={sumsToday[WorkoutType.PushUp]}
         sitUpsCount={sumsToday[WorkoutType.SitUp]}
@@ -182,7 +189,7 @@ export const Dashboard: FC = () => {
 
       <DashboardWorkoutsCard
         title="За неделю:"
-        iconColor="violet.500"
+        iconColor="#8b5cf6"
         icon={<Ionicons name="ios-today" />}
         pushUpsCount={sumsThisWeek[WorkoutType.PushUp]}
         sitUpsCount={sumsThisWeek[WorkoutType.SitUp]}
