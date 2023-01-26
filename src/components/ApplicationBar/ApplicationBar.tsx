@@ -15,6 +15,7 @@ export const ApplicationBar = ({
         py={2}
         height={60}
         shadow={1}
+        backgroundColor="#e4e4e7"
         justifyContent="space-between"
         alignItems="center"
       >
