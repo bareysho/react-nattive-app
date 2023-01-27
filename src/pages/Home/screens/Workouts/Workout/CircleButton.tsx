@@ -36,7 +36,7 @@ export const CircleButton: FC<ICircleButton> = ({
       {withLoading && (
         <Spinner
           size={320}
-          right={-123}
+          right={-115}
           position="absolute"
           color={loaderColor || backgroundColor}
           borderColor={backgroundColor}

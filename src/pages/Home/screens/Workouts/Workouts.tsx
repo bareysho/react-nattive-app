@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 
-import { HStack, VStack, Pressable, Center } from '@src/components/UI';
+import {
+  HStack,
+  VStack,
+  Pressable,
+  Center,
+  useTheme,
+} from '@src/components/UI';
 import { ImageApp, ImageAppName } from '@src/components/Image/Image';
 import { WorkoutType } from '@src/enums/WorkoutType';
 import { Workout } from '@src/pages/Home/screens/Workouts/Workout/Workout';
@@ -29,8 +35,15 @@ export const Workouts = () => {
       ? pressedContentMapper[workOutType]
       : contentMapper[workOutType];
 
+  const { theme } = useTheme();
+
   return (
-    <VStack height="100%" width="100%" justifyContent="space-between">
+    <VStack
+      backgroundColor={theme.background}
+      height="100%"
+      width="100%"
+      justifyContent="space-between"
+    >
       <HStack height="10%" pb={2}>
         <Pressable
           width="33.33%"

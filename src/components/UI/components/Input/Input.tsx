@@ -16,7 +16,7 @@ import {
 import styled, { css } from 'styled-components/native';
 import { SimpleInterpolation } from 'styled-components';
 
-import { Box } from '@src/components/UI';
+import {Box, useTheme} from '@src/components/UI';
 
 import { baseElementCss } from '../../css/baseElementCss';
 import { IBaseElementStyleProps, IText } from '../../types/common';
@@ -95,14 +95,16 @@ export const Input: FC<IInput> = ({
   placeholderTextColor = '#a1a1aa',
   fontSize = 12,
   borderWidth = 1,
-  color = '#3f3f46',
-  borderColor = '#d1d5db',
+  color,
+  borderColor,
   borderRadius = 5,
   height = 45,
   width = '100%',
   ...rest
 }) => {
   const [inputState, setInputState] = useState<InputState[]>([]);
+
+  const { theme } = useTheme();
 
   const addState = (state: InputState) => {
     setInputState(prev => [...prev, state]);
@@ -170,14 +172,14 @@ export const Input: FC<IInput> = ({
         value={value}
         height={height}
         width={width}
-        color={color}
+        color={color || theme.text}
         pl={InputLeftElement ? pl + 4 : pl}
         pr={InputRightElement ? pr + 4 : pr}
         backgroundColor={backgroundColor}
         fontSize={fontSize}
         borderWidth={borderWidth}
         rounded={borderRadius}
-        borderColor={borderColor}
+        borderColor={borderColor || theme.inputBorder}
       />
 
       {InputRightElement &&

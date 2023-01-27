@@ -28,6 +28,7 @@ import {
   changeEmailAction,
   requestChangeEmailAction,
 } from '@src/redux/actions/emailActions';
+import {Card} from "@src/components/Card";
 
 const CHANGE_EMAIL_FORM_INITIAL_VALUES: IChangeEmailFormValues = {
   email: '',
@@ -103,9 +104,13 @@ export const ChangeEmail: FC<NativeStackScreenProps<ParamListBase>> = ({
               Следуйте инструкциям
             </Text>
 
-            <Center width="100%" my={36}>
-              <MaterialIcons name={'email'} size={98} color="gray" />
-            </Center>
+            <Icon
+              width="100%"
+              my={36}
+              size={98}
+              alignItems="center"
+              as={<MaterialIcons name="email" />}
+            />
           </>
         )}
 
@@ -122,7 +127,7 @@ export const ChangeEmail: FC<NativeStackScreenProps<ParamListBase>> = ({
             return (
               <VStack width="100%" mt={5}>
                 {pageState !== PageWithOtpState.SuccessUpdate && (
-                  <>
+                  <Card>
                     <InputControlled
                       label="Email"
                       isDisabled={isDisabledFields}
@@ -139,7 +144,7 @@ export const ChangeEmail: FC<NativeStackScreenProps<ParamListBase>> = ({
                     {submitRequestError && (
                       <FormError message={submitRequestError} />
                     )}
-                  </>
+                  </Card>
                 )}
 
                 {pageState === PageWithOtpState.Init && (

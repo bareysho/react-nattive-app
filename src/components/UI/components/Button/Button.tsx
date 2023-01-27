@@ -4,10 +4,11 @@ import { ButtonProps } from 'react-native';
 import { SimpleInterpolation } from 'styled-components';
 
 import { getButtonBackgroundColor } from '@src/components/UI/utils/common';
+import { LIGHT_PRIMARY_COLORS } from '@src/components/UI/components/ThemeProvider/lightPrimary';
 
-import { HStack, Spinner, Text } from '../..';
+import { HStack, Spinner, Text, useTheme } from '../..';
 import { baseElementCss } from '../../css/baseElementCss';
-import { IBackground, IBaseElementStyleProps, IText } from '../../types/common';
+import { IBaseElementStyleProps, IText } from '../../types/common';
 import { TextExternalProps } from '../../components/Text/Text';
 
 interface IButton {
@@ -45,12 +46,12 @@ export const Button: FC<IButton & IBaseElementStyleProps> = ({
   isLoading,
   minHeight = 26,
   variant = 'solid',
-  p = 2,
+  p,
   px = 5,
   shadow = 1,
   rounded = 8,
-  backgroundColor = '#ffe502',
-  backgroundColorPressed = '#facc15',
+  backgroundColor,
+  backgroundColorPressed,
   leftIcon,
   rightIcon,
   _text = {},
@@ -58,33 +59,37 @@ export const Button: FC<IButton & IBaseElementStyleProps> = ({
 }) => {
   const [pressed, setPressed] = useState(false);
 
-  const mapperTExtProps: Record<string, IText & IBackground> = {
+  const { theme } = useTheme();
+
+  const mapperTextProps: Record<string, IText & IBaseElementStyleProps> = {
     ghost: {
       textDecoration: 'underline',
       color: pressed ? '#a3a3a3' : _text?.color,
-      fontSize: _text?.fontSize || 14,
+      p: p || 0,
     },
     solid: {
-      fontSize: _text?.fontSize || 14,
-      color: isLoading || isDisabled ? '#a3a3a3' : _text?.color,
+      color:
+        isLoading || isDisabled
+          ? LIGHT_PRIMARY_COLORS.disabledText
+          : _text?.color || LIGHT_PRIMARY_COLORS.text,
+      p: p || 2,
     },
   };
 
-  const mapperBackgroundColor: Record<string, IBackground> = {
+  const mapperBackgroundColor: Record<string, IBaseElementStyleProps> = {
     solid: {
       backgroundColor: getButtonBackgroundColor({
         disabled: isLoading || isDisabled,
         pressed,
-        pressedColor: backgroundColorPressed,
-        disabledColor: '#a1a1aa',
-        normalColor: backgroundColor,
+        pressedColor: backgroundColorPressed || theme.primaryPressed,
+        disabledColor: theme.disabled,
+        normalColor: backgroundColor || theme.primary,
       }),
     },
     ghost: {
       backgroundColor: getButtonBackgroundColor({
         disabled: isLoading || isDisabled,
         pressed,
-        disabledColor: '#a1a1aa',
         normalColor: 'transparent',
       }),
     },
@@ -92,7 +97,8 @@ export const Button: FC<IButton & IBaseElementStyleProps> = ({
 
   const textProps: IText = {
     ..._text,
-    ...mapperTExtProps[variant],
+    ...mapperTextProps[variant],
+    fontSize: _text?.fontSize || 14,
   };
 
   const possibleStringToText = (possibleString: ReactNode, index = 0) => {
@@ -145,7 +151,7 @@ export const Button: FC<IButton & IBaseElementStyleProps> = ({
         <HStack alignItems={'center'}>
           {generateContent()}
 
-          {isLoading && <Spinner ml={2} color="#a3a3a3" />}
+          {isLoading && <Spinner ml={2} color={textProps.color} />}
         </HStack>
 
         {rightIcon}

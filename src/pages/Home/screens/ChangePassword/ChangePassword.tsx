@@ -5,7 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import { Button, Center, Icon, Text, VStack } from '@src/components/UI';
+import {Box, Button, Center, Icon, Text, VStack} from '@src/components/UI';
 import { PageLayout } from '@src/components/PageLayout';
 import { selectAuthState } from '@src/selectors/auth';
 import { useForm } from '@src/hooks/useForm';
@@ -17,6 +17,7 @@ import {
 import { InputPassword } from '@src/components/UI';
 import { useAppDispatch } from '@src/redux/store';
 import { changePassword } from '@src/redux/actions/passwordActions';
+import { Card } from '@src/components/Card';
 
 interface IUpdatePasswordForm {
   password: string;
@@ -85,9 +86,13 @@ export const ChangePassword: FC<NativeStackScreenProps<ParamListBase>> = ({
             Следуйте инструкциям
           </Text>
 
-          <Center width="100%" my={36}>
-            <MaterialIcons name={'vpn-key'} size={98} color="gray" />
-          </Center>
+          <Icon
+            width="100%"
+            my={36}
+            size={98}
+            alignItems="center"
+            as={<MaterialIcons name="vpn-key" />}
+          />
         </>
       )}
 
@@ -99,46 +104,48 @@ export const ChangePassword: FC<NativeStackScreenProps<ParamListBase>> = ({
         >
           {formik => (
             <VStack width="100%" mt={3}>
-              <InputPassword
-                mb={8}
-                label="Текущий пароль"
-                isDisabled={isLoading}
-                error={formik.errors.currentPassword}
-                value={formik.values.currentPassword}
-                isInvalid={Boolean(
-                  formik.touched.currentPassword || formik.submitCount,
-                )}
-                onChangeText={formik.handleChange('currentPassword')}
-                onBlur={formik.handleBlur('currentPassword')}
-                placeholder="Введите текущий пароль"
-              />
+              <Card>
+                <InputPassword
+                  mb={8}
+                  label="Текущий пароль"
+                  isDisabled={isLoading}
+                  error={formik.errors.currentPassword}
+                  value={formik.values.currentPassword}
+                  isInvalid={Boolean(
+                    formik.touched.currentPassword || formik.submitCount,
+                  )}
+                  onChangeText={formik.handleChange('currentPassword')}
+                  onBlur={formik.handleBlur('currentPassword')}
+                  placeholder="Введите текущий пароль"
+                />
 
-              <InputPassword
-                mb={4}
-                label="Пароль"
-                isDisabled={isLoading}
-                error={formik.errors.password}
-                value={formik.values.password}
-                isInvalid={Boolean(
-                  formik.touched.password || formik.submitCount,
-                )}
-                onChangeText={formik.handleChange('password')}
-                onBlur={formik.handleBlur('password')}
-                placeholder="Введите пароль"
-              />
+                <InputPassword
+                  mb={4}
+                  label="Пароль"
+                  isDisabled={isLoading}
+                  error={formik.errors.password}
+                  value={formik.values.password}
+                  isInvalid={Boolean(
+                    formik.touched.password || formik.submitCount,
+                  )}
+                  onChangeText={formik.handleChange('password')}
+                  onBlur={formik.handleBlur('password')}
+                  placeholder="Введите пароль"
+                />
 
-              <InputPassword
-                label="Подтвердите пароль"
-                isDisabled={isLoading}
-                error={formik.errors.confirmationPassword}
-                value={formik.values.confirmationPassword}
-                isInvalid={Boolean(
-                  formik.touched.confirmationPassword || formik.submitCount,
-                )}
-                onChangeText={formik.handleChange('confirmationPassword')}
-                onBlur={formik.handleBlur('confirmationPassword')}
-                placeholder="Подтвердите пароль"
-              />
+                <InputPassword
+                  label="Подтвердите пароль"
+                  isDisabled={isLoading}
+                  error={formik.errors.confirmationPassword}
+                  value={formik.values.confirmationPassword}
+                  isInvalid={Boolean(
+                    formik.touched.confirmationPassword || formik.submitCount,
+                  )}
+                  onChangeText={formik.handleChange('confirmationPassword')}
+                  onBlur={formik.handleBlur('confirmationPassword')}
+                  placeholder="Подтвердите пароль"
+                />
+              </Card>
 
               <Button
                 mt={10}

@@ -12,12 +12,15 @@ import { GlobalLoadingContext } from '@src/providers/GlobalLoadingProvider';
 import { ICON_NAME_MAPPER_BY_COLOR_MODE } from '@src/constants/common';
 import { ACCESS_TOKEN_KEY, USER_ID_KEY } from '@src/constants/asyncStorage';
 import { setAccessToken } from '@src/redux/slices/authenticationSlice';
+import { useTheme } from '@src/components/UI';
 
 export const App = () => {
   const dispatch = useAppDispatch();
 
   const { isGlobalLoading, setGlobalLoading } =
     useContext(GlobalLoadingContext);
+
+  const { themeType, switchTheme } = useTheme();
 
   const { isAuthenticated, user: authenticatedUser } =
     useSelector(selectAuthState);
@@ -71,11 +74,11 @@ export const App = () => {
         <Fab
           shadow={2}
           size={50}
-          // onPress={toggleColorMode}
+          onPress={() => switchTheme()}
           icon={
             <Icon
               color="black"
-              as={<Ionicons name={ICON_NAME_MAPPER_BY_COLOR_MODE.light} />}
+              as={<Ionicons name={ICON_NAME_MAPPER_BY_COLOR_MODE[themeType]} />}
               size={20}
             />
           }

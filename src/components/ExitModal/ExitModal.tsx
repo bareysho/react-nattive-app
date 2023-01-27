@@ -2,7 +2,15 @@ import React, { FC, ReactNode } from 'react';
 import Modal from 'react-native-modal';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { Box, Button, HStack, Icon, Pressable, Text } from '@src/components/UI';
+import {
+  Box,
+  Button,
+  HStack,
+  Icon,
+  Pressable,
+  Text,
+  useTheme,
+} from '@src/components/UI';
 
 interface IExitModal {
   handleLogout: () => Promise<void>;
@@ -21,6 +29,8 @@ export const ExitModal: FC<IExitModal> = ({
 
   const toggleOpen = () => setIsOpen(!isOpen);
 
+  const { theme } = useTheme();
+
   return (
     <>
       {renderComponent(toggleOpen)}
@@ -33,16 +43,20 @@ export const ExitModal: FC<IExitModal> = ({
         isVisible={isOpen}
       >
         <Box alignItems="center" justifyContent="center" flex={1}>
-          <Box p={6} width="100%" rounded={15} backgroundColor="white">
+          <Box
+            p={6}
+            width="100%"
+            rounded={15}
+            backgroundColor={theme.cardBackground}
+          >
             <HStack width="100%" mb={5} justifyContent="space-between">
               <Text fontWeight={500} fontSize={18}>
                 Выход
               </Text>
 
-              <Pressable onPress={closeModal}>
+              <Pressable rounded={25} onPress={closeModal}>
                 <Icon
                   size={25}
-                  color="#57534e"
                   as={<MaterialCommunityIcons name="close-circle" />}
                 />
               </Pressable>

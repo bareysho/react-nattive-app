@@ -13,3 +13,9 @@ export { InputOtp } from './components/Input/InputOtp';
 export { InputWithIcon } from './components/Input/InputWithIcon';
 export { FormError } from './components/FormError/FormError';
 export { Fab } from './components/Fab/Fab';
+export {
+  ThemeProvider,
+  ThemeContext,
+  ThemeType,
+  useTheme,
+} from './components/ThemeProvider/ThemeProvider';

@@ -3,7 +3,7 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { Box, HStack, Icon, Pressable, Text, VStack } from '@src/components/UI';
+import {Box, HStack, Icon, Pressable, Text, useTheme, VStack} from '@src/components/UI';
 
 import { Dashboard, History, Profile, Statistics, Workouts } from './screens';
 
@@ -58,6 +58,8 @@ export const Home: FC<NativeStackScreenProps<ParamListBase>> = ({
 
   const Component = ROUTES[selectedTab].content;
 
+  const { theme } = useTheme();
+
   return (
     <VStack width="100%" justifyContent="space-between" flex={1}>
       <Box alignItems="center" alignSelf="center" width="100%" height="92%">
@@ -71,6 +73,7 @@ export const Home: FC<NativeStackScreenProps<ParamListBase>> = ({
         justifyContent="space-between"
         alignItems="center"
         shadow={0.2}
+        backgroundColor={theme.cardBackground}
       >
         {ROUTES.map((route, index) => {
           const isActive = selectedTab === index;
@@ -84,11 +87,10 @@ export const Home: FC<NativeStackScreenProps<ParamListBase>> = ({
             <Pressable
               key={route.key}
               opacity={opacity}
-              py={2}
+              py={3}
               flex={1}
               alignItems="center"
-              rounded={20}
-              pressedBackgroundColor="#d6d3d1"
+              rounded={10}
               onPress={handleSelect}
             >
               <Icon mb={1} as={<MaterialCommunityIcons name={name} />} />

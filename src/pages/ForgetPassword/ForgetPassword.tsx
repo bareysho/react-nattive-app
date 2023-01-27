@@ -221,7 +221,7 @@ export const ForgetPassword: FC<NativeStackScreenProps<ParamListBase>> = ({
         )}
 
         {pageState === PageWithOtpState.SuccessUpdate && (
-          <Center width="100%" my={30}>
+          <Center width="100%" mt={180}>
             <Icon
               size={160}
               as={<MaterialIcons name={'check-circle-outline'} />}

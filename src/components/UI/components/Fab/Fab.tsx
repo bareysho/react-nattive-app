@@ -5,7 +5,9 @@ import { IBaseElementStyleProps } from '../../types/common';
 
 interface IFab extends IBaseElementStyleProps {
   icon: ReactElement;
+  onPress: () => void;
 }
+
 export const Fab: FC<IFab> = ({ icon, size = 50, ...rest }) => {
   return (
     <Button

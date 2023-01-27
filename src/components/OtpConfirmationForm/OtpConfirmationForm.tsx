@@ -7,6 +7,7 @@ import { useForm } from '@src/hooks/useForm';
 import { required } from '@src/validators/common';
 import { IOtpFormValues } from '@src/types/form';
 import { OTP_LENGTH } from '@src/constants/common';
+import { Card } from '@src/components/Card';
 
 interface IOtpConfirmation {
   submitCallback: (values: IOtpFormValues) => Promise<void>;
@@ -86,43 +87,45 @@ export const OtpConfirmationForm: FC<IOtpConfirmation> = ({
 
         return (
           <VStack width="100%" mt={5}>
-            <InputOtp
-              setIsPinReady={setIsPinReady}
-              label="Код подтверждения"
-              error={formik.errors.otp}
-              value={formik.values.otp}
-              isInvalid={Boolean(formik.touched.otp || formik.submitCount)}
-              onChangeText={formik.handleChange('otp')}
-              onBlur={formik.handleBlur('otp')}
-              isDisabled={isFormLoading || isResendLoading}
-              maximumLength={OTP_LENGTH}
-              mb={4}
-            />
+            <Card>
+              <InputOtp
+                setIsPinReady={setIsPinReady}
+                label="Код подтверждения"
+                error={formik.errors.otp}
+                value={formik.values.otp}
+                isInvalid={Boolean(formik.touched.otp || formik.submitCount)}
+                onChangeText={formik.handleChange('otp')}
+                onBlur={formik.handleBlur('otp')}
+                isDisabled={isFormLoading || isResendLoading}
+                maximumLength={OTP_LENGTH}
+                mb={4}
+              />
 
-            <Button
-              variant="ghost"
-              isDisabled={isFormLoading}
-              onPress={cancelVerification}
-            >
-              Изменить email
-            </Button>
+              <Button
+                variant="ghost"
+                isDisabled={isFormLoading}
+                onPress={cancelVerification}
+              >
+                Изменить email
+              </Button>
 
-            {!isTimerInitializing && (
-              <>
-                {restTime ? (
-                  <OtpTimerInfo timeLeft={restTime} />
-                ) : (
-                  <Button
-                    isDisabled={isResendLoading}
-                    isLoading={isResendLoading}
-                    variant="ghost"
-                    onPress={handleResend}
-                  >
-                    Повторить отправку
-                  </Button>
-                )}
-              </>
-            )}
+              {!isTimerInitializing && (
+                <>
+                  {restTime ? (
+                    <OtpTimerInfo timeLeft={restTime} />
+                  ) : (
+                    <Button
+                      isDisabled={isResendLoading}
+                      isLoading={isResendLoading}
+                      variant="ghost"
+                      onPress={handleResend}
+                    >
+                      Повторить отправку
+                    </Button>
+                  )}
+                </>
+              )}
+            </Card>
 
             <Button
               mt={8}

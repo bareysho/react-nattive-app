@@ -27,6 +27,8 @@ import {
   Icon,
 } from '@src/components/UI';
 import StorageContext from '@src/storage/storage';
+import { LIGHT_PRIMARY_COLORS } from '@src/components/UI/components/ThemeProvider/lightPrimary';
+import { Card } from '@src/components/Card';
 
 import { CircleButton } from './CircleButton';
 
@@ -188,17 +190,18 @@ export const Workout: FC<IWorkout> = ({
     <Box px={4} width="100%" height="100%">
       <HStack py={4} width="100%" height="12%" justifyContent="space-between">
         {setList.map((setListReps, index) => (
-          <Center
+          <Card
+            size={60}
+            width="auto"
             shadow={1}
             key={index}
-            height={60}
             rounded={10}
             borderWidth={3}
             borderColor="#d4d4d4"
             backgroundColor={getSetBlockBackgroundColor(index)}
           >
-            <Text px={4}>{setListReps}</Text>
-          </Center>
+            <Text color={LIGHT_PRIMARY_COLORS.text}>{setListReps}</Text>
+          </Card>
         ))}
       </HStack>
 
@@ -211,20 +214,20 @@ export const Workout: FC<IWorkout> = ({
       </Box>
 
       <Box height="8%">
-        <Text px={4}>
+        <Text>
           Длительность: <Text fontWeight={600}>{durationTimeSec}</Text>
         </Text>
 
-        <Text px={4}>
+        <Text>
           Всего повторений: <Text fontWeight={600}>{totalWorkoutReps}</Text>
         </Text>
 
-        <Text px={4}>
+        <Text>
           Повторений выполнено: <Text fontWeight={600}>{repsDoneTotal}</Text>
         </Text>
       </Box>
 
-      <Center width="100%" height="56%">
+      <Center width="100%" height="59%">
         {workoutState !== WorkoutState.Finished && (
           <>
             {(workoutState === WorkoutState.Working ||
@@ -263,7 +266,7 @@ export const Workout: FC<IWorkout> = ({
 
       <HStack
         width="100%"
-        height="8%"
+        height="5%"
         justifyContent="space-between"
         alignItems="center"
       >
@@ -277,6 +280,7 @@ export const Workout: FC<IWorkout> = ({
         </Button>
 
         <Button
+          py={1}
           backgroundColor={workoutMainColor}
           rightIcon={
             <MaterialCommunityIcons

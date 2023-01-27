@@ -5,6 +5,7 @@ import { TextProps } from 'react-native';
 import { valueToPx } from '../../utils/common';
 import { baseElementCss } from '../../css/baseElementCss';
 import { IBaseElementStyleProps, IText } from '../../types/common';
+import {useTheme} from "@src/components/UI";
 
 const TextStyled = styled.Text<IBaseElementStyleProps & IText>`
   font-size: ${props => valueToPx(props.fontSize) || '16px'};
@@ -19,12 +20,14 @@ export type TextExternalProps = IText & TextProps & IBaseElementStyleProps;
 
 export const Text: FC<PropsWithChildren<TextExternalProps>> = ({
   children,
-  color = '#404040',
+  color,
   fontSize = 16,
   ...rest
 }) => {
+  const { switchTheme, themeType, theme } = useTheme();
+
   return (
-    <TextStyled {...rest} color={color} fontSize={fontSize}>
+    <TextStyled {...rest} color={color || theme.text} fontSize={fontSize}>
       {children}
     </TextStyled>
   );

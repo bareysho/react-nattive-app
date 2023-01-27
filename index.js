@@ -5,6 +5,7 @@ import 'react-native-get-random-values';
 
 import { App } from '@src/App';
 import { store } from '@src/redux/store';
+import { ThemeProvider } from '@src/components/UI';
 import { GlobalLoadingProvider } from '@src/providers/GlobalLoadingProvider';
 import { ScreenLoadingProvider } from '@src/providers/ScreenLoadingProvider';
 
@@ -17,13 +18,15 @@ const RNRedux = () => {
   return (
     // eslint-disable-next-line react/jsx-filename-extension
     <Provider store={store}>
-      <GlobalLoadingProvider>
-        <ScreenLoadingProvider>
-          <RealmProvider>
-            <App />
-          </RealmProvider>
-        </ScreenLoadingProvider>
-      </GlobalLoadingProvider>
+      <ThemeProvider>
+        <GlobalLoadingProvider>
+          <ScreenLoadingProvider>
+            <RealmProvider>
+              <App />
+            </RealmProvider>
+          </ScreenLoadingProvider>
+        </GlobalLoadingProvider>
+      </ThemeProvider>
     </Provider>
   );
 };

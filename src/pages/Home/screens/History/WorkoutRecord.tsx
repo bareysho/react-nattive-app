@@ -15,7 +15,7 @@ interface IWorkoutRecord {
 
 export const WorkoutRecord: FC<IWorkoutRecord> = ({ workout }) => {
   return (
-    <Card width="100%" key={workout._id.toString()}>
+    <Card mt={5} width="100%" key={workout._id.toString()}>
       <HStack alignItems="center">
         <Box mr={6}>
           <ImageApp name={IMAGE_BY_WORKOUT_MAPPER[workout.workoutType]} />

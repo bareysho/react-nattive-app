@@ -85,7 +85,7 @@ export const History = () => {
         ))}
       </PageLayout>
 
-      <VStack bottom={10} width="100%" position="absolute" alignItems="center">
+      <VStack bottom={15} width="100%" position="absolute" alignItems="center">
         {isCalendarOpen && (
           <Box
             py={8}

@@ -20,7 +20,7 @@ export const Dashboard: FC = () => {
   const completed = [1, 2, 3];
 
   const getActivityShieldColor = (i: number) =>
-    completed.includes(i) ? '#78716c' : '#22c55e';
+    completed.includes(i) ? undefined : '#22c55e';
 
   const todayDateString = dateFns.format(new Date(), 'dd MMMM yyyy', {
     locale: ru,
@@ -103,7 +103,7 @@ export const Dashboard: FC = () => {
         {`Сводка на ${todayDateString}`}
       </Text>
 
-      <Card>
+      <Card mt={6}>
         <Text mb={3} fontSize={18}>
           Регулярность:
         </Text>
@@ -145,7 +145,7 @@ export const Dashboard: FC = () => {
       <DashboardCard
         icon={<MaterialCommunityIcons name="scale-bathroom" />}
         bottomButton={
-          <Button alignSelf="flex-start" py={0} px={1} variant="ghost">
+          <Button alignSelf="flex-start" variant="ghost">
             Запись
           </Button>
         }
@@ -189,7 +189,7 @@ export const Dashboard: FC = () => {
 
       <DashboardWorkoutsCard
         title="За неделю:"
-        iconColor="#8b5cf6"
+        iconColor="#f97316"
         icon={<Ionicons name="ios-today" />}
         pushUpsCount={sumsThisWeek[WorkoutType.PushUp]}
         sitUpsCount={sumsThisWeek[WorkoutType.SitUp]}

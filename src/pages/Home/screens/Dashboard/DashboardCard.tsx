@@ -19,7 +19,7 @@ export const DashboardCard: FC<IDashboardCard> = ({
   bottomButton,
 }) => {
   return (
-    <Card flexDirection="row" alignItems="center">
+    <Card mt={6} flexDirection="row" alignItems="center">
       <VStack>
         <Icon color={iconColor} size={55} mr={5} as={icon} />
 

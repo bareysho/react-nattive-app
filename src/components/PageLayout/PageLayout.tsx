@@ -1,23 +1,20 @@
 import React, { FC, PropsWithChildren, useContext } from 'react';
-import { ScrollView } from 'react-native';
 
-import { Box, Center, Spinner } from '@src/components/UI';
+import { Box, Center, Spinner, useTheme } from '@src/components/UI';
 import { ScreenLoadingContext } from '@src/providers/ScreenLoadingProvider';
 
 export const PageLayout: FC<PropsWithChildren> = ({ children }) => {
   const { isScreenLoading } = useContext(ScreenLoadingContext);
 
+  const { theme } = useTheme();
+
   return isScreenLoading ? (
-    <Center flex={1}>
+    <Center backgroundColor={theme.background} flex={1}>
       <Spinner size={60} />
     </Center>
   ) : (
-    <ScrollView
-      style={{
-        width: '100%',
-      }}
-    >
-      <Box p={4}>{children}</Box>
-    </ScrollView>
+    <Box width="100%" height="100%" backgroundColor={theme.background} p={4}>
+      {children}
+    </Box>
   );
 };

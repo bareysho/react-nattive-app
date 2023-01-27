@@ -3,12 +3,15 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {
+  Box,
   Button,
   HStack,
   Icon,
   Pressable,
   Switch,
   Text,
+  ThemeType,
+  useTheme,
   VStack,
 } from '@src/components/UI';
 import { useAppDispatch, useAppSelector } from '@src/redux/store';
@@ -23,9 +26,11 @@ import { Card } from '@src/components/Card';
 import { IHomeTab } from '@src/pages/Home/Home';
 
 export const SwitchTheme = () => {
-  const [toggle, setToggle] = useState(false);
+  const { switchTheme, themeType } = useTheme();
 
-  return <Switch toggle={setToggle} value={toggle} />;
+  return (
+    <Switch toggle={() => switchTheme()} value={themeType === ThemeType.Dark} />
+  );
 };
 
 const ROLE_MAPPER = {
@@ -35,6 +40,8 @@ const ROLE_MAPPER = {
 
 export const Profile: FC<IHomeTab> = ({ navigate }) => {
   const dispatch = useAppDispatch();
+
+  const { switchTheme, themeType } = useTheme();
 
   const { setGlobalLoading } = useContext(GlobalLoadingContext);
 
@@ -50,80 +57,84 @@ export const Profile: FC<IHomeTab> = ({ navigate }) => {
 
   return (
     <PageLayout>
-      <HStack width="100%" justifyContent="space-between" mb={6}>
-        <Pressable>
-          <Card>
+      <VStack height="100%" width="100%" justifyContent="space-between">
+        <VStack width="100%">
+          <HStack width="100%" justifyContent="space-between" mb={5}>
+            <Card onPress={() => switchTheme()} width="auto">
+              <Icon
+                as={
+                  <Ionicons name={ICON_NAME_MAPPER_BY_COLOR_MODE[themeType]} />
+                }
+                size={20}
+              />
+            </Card>
+
+            <ExitModal
+              handleLogout={handleLogout}
+              renderComponent={toggleOpen => (
+                <Card width="auto" onPress={toggleOpen}>
+                  <Icon as={<Ionicons name="exit-outline" />} size={20} />
+                </Card>
+              )}
+            />
+          </HStack>
+
+          <Card flexDirection="row" mb={5}>
             <Icon
-              as={<Ionicons name={ICON_NAME_MAPPER_BY_COLOR_MODE.light} />}
-              size={20}
+              mr={10}
+              size={120}
+              as={<MaterialIcons name="account-circle" />}
+            />
+
+            <VStack>
+              <Text mb={2} fontWeight={600}>
+                Пользователь:
+              </Text>
+
+              <Text fontSize={14}>{user.username}</Text>
+
+              <Text fontSize={14}>{user.email}</Text>
+
+              <Text fontSize={14}>
+                {user.verified ? 'Верифицирован' : 'Не верифицирован'}
+              </Text>
+
+              <Text fontSize={14}>{ROLE_MAPPER[user.role]}</Text>
+            </VStack>
+          </Card>
+
+          <Card>
+            <MenuItem
+              title="Пароль"
+              icon={<MaterialIcons name="vpn-key" />}
+              callback={() => navigate('ChangePassword')}
+            />
+
+            <MenuItem
+              title="Email"
+              icon={<MaterialIcons name="email" />}
+              callback={() => navigate('ChangeEmail')}
+            />
+
+            <MenuItem
+              title="Темная тема"
+              icon={<Ionicons name="ios-sunny-sharp" />}
+              rightIcon={<SwitchTheme />}
+              callback={() => switchTheme()}
             />
           </Card>
-        </Pressable>
+        </VStack>
 
         <ExitModal
           handleLogout={handleLogout}
+          isLoading={isLoading}
           renderComponent={toggleOpen => (
-            <Pressable onPress={toggleOpen}>
-              <Card width="auto">
-                <Icon as={<Ionicons name="exit-outline" />} size={20} />
-              </Card>
-            </Pressable>
+            <Button width="100%" onPress={toggleOpen}>
+              Выйти
+            </Button>
           )}
         />
-      </HStack>
-
-      <Card flexDirection="row" mb={10}>
-        <Icon mr={10} size={120} as={<MaterialIcons name="account-circle" />} />
-
-        <VStack>
-          <Text mb={2} fontWeight={600}>
-            Пользователь:
-          </Text>
-
-          <Text fontSize={14}>{user.username}</Text>
-
-          <Text fontSize={14}>{user.email}</Text>
-
-          <Text fontSize={14}>
-            {user.verified ? 'Верифицирован' : 'Не верифицирован'}
-          </Text>
-
-          <Text fontSize={14}>{ROLE_MAPPER[user.role]}</Text>
-        </VStack>
-      </Card>
-
-      <Card mb={20}>
-        <MenuItem
-          title="Пароль"
-          icon={<MaterialIcons name="vpn-key" />}
-          callback={() => navigate('ChangePassword')}
-        />
-
-        <MenuItem
-          title="Email"
-          icon={<MaterialIcons name="email" />}
-          callback={() => navigate('ChangeEmail')}
-        />
-
-        <MenuItem
-          title="Темная тема"
-          icon={<Ionicons name="ios-sunny-sharp" />}
-          rightIcon={<SwitchTheme />}
-          callback={() => {
-            console.log('changed theme');
-          }}
-        />
-      </Card>
-
-      <ExitModal
-        handleLogout={handleLogout}
-        isLoading={isLoading}
-        renderComponent={toggleOpen => (
-          <Button width="100%" onPress={toggleOpen}>
-            Выйти
-          </Button>
-        )}
-      />
+      </VStack>
     </PageLayout>
   );
 };

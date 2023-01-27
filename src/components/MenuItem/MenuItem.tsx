@@ -18,13 +18,7 @@ export const MenuItem: FC<IMenuItem> = ({
   callback,
 }) => {
   return (
-    <Pressable
-      mb={1}
-      width="100%"
-      rounded={10}
-      pressedBackgroundColor="#d6d3d1"
-      onPress={callback}
-    >
+    <Pressable mb={1} px={2} width="100%" rounded={10} onPress={callback}>
       <HStack
         width="100%"
         height={46}
@@ -38,7 +32,6 @@ export const MenuItem: FC<IMenuItem> = ({
         </HStack>
 
         <Icon
-          mr={2}
           size={26}
           as={rightIcon || <MaterialIcons name="keyboard-arrow-right" />}
         />

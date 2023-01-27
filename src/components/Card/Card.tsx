@@ -1,20 +1,28 @@
 import React, { FC } from 'react';
 
-import { Box } from '@src/components/UI';
-import { IStackContainer } from '@src/components/UI/components/Stack/Stack';
+import { Pressable, useTheme } from '@src/components/UI';
+import { IPressableProps } from '@src/components/UI/components/Pressable/Pressable';
 
-export const Card: FC<IStackContainer> = ({ children, width, ...boxProps }) => {
+export const Card: FC<IPressableProps> = ({
+  children,
+  width,
+  backgroundColor,
+  p,
+  ...boxProps
+}) => {
+  const { theme } = useTheme();
+
   return (
-    <Box
+    <Pressable
       {...boxProps}
       shadow={1}
-      mt={6}
-      p={4}
+      p={p || 4}
+      disabled={!boxProps.onPress}
       rounded={10}
       width={width || '100%'}
-      backgroundColor="#e7e5e4"
+      backgroundColor={backgroundColor || theme.cardBackground}
     >
       {children}
-    </Box>
+    </Pressable>
   );
 };
