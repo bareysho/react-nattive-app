@@ -1,17 +1,19 @@
-import React, { FC, useContext } from 'react';
+import React, { FC, useContext, useState } from 'react';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
 import {
+  Box,
   Button,
   HStack,
   Icon,
   Pressable,
   Switch,
   Text,
-  useColorMode,
+  ThemeType,
+  useTheme,
   VStack,
-} from 'native-base';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-
+} from '@src/components/UI';
 import { useAppDispatch, useAppSelector } from '@src/redux/store';
 import { selectAuthState } from '@src/selectors/auth';
 import { logoutAction } from '@src/redux/actions/authActions';
@@ -19,25 +21,27 @@ import { MenuItem } from '@src/components/MenuItem';
 import { ExitModal } from '@src/components/ExitModal';
 import { ICON_NAME_MAPPER_BY_COLOR_MODE } from '@src/constants/common';
 import { GlobalLoadingContext } from '@src/providers/GlobalLoadingProvider';
-
-interface IProfile {
-  navigate: (path: string) => void;
-}
+import { PageLayout } from '@src/components/PageLayout';
+import { Card } from '@src/components/Card';
+import { IHomeTab } from '@src/pages/Home/Home';
 
 export const SwitchTheme = () => {
-  const { toggleColorMode, colorMode } = useColorMode();
+  const { switchTheme, themeType } = useTheme();
 
   return (
-    <Switch
-      onToggle={toggleColorMode}
-      value={colorMode === 'dark'}
-      colorScheme="primary"
-    />
+    <Switch toggle={() => switchTheme()} value={themeType === ThemeType.Dark} />
   );
 };
 
-export const Profile: FC<IProfile> = ({ navigate }) => {
+const ROLE_MAPPER = {
+  user: 'Пользователь',
+  admin: 'Администратор',
+};
+
+export const Profile: FC<IHomeTab> = ({ navigate }) => {
   const dispatch = useAppDispatch();
+
+  const { switchTheme, themeType } = useTheme();
 
   const { setGlobalLoading } = useContext(GlobalLoadingContext);
 
@@ -51,52 +55,55 @@ export const Profile: FC<IProfile> = ({ navigate }) => {
     navigate('Login');
   };
 
-  const { toggleColorMode, colorMode } = useColorMode();
-
   return (
-    <>
-      {user && (
-        <VStack w="100%">
-          <HStack mb={6} justifyContent="space-between">
-            <Pressable onPress={toggleColorMode} w={10}>
+    <PageLayout>
+      <VStack height="100%" width="100%" justifyContent="space-between">
+        <VStack width="100%">
+          <HStack width="100%" justifyContent="space-between" mb={5}>
+            <Card onPress={() => switchTheme()} width="auto">
               <Icon
-                as={Ionicons}
-                name={ICON_NAME_MAPPER_BY_COLOR_MODE[colorMode || 'light']}
-                size="lg"
+                as={
+                  <Ionicons name={ICON_NAME_MAPPER_BY_COLOR_MODE[themeType]} />
+                }
+                size={20}
               />
-            </Pressable>
+            </Card>
 
             <ExitModal
               handleLogout={handleLogout}
-              renderComponent={() => (
-                <Icon as={Ionicons} name="exit-outline" size="lg" />
+              renderComponent={toggleOpen => (
+                <Card width="auto" onPress={toggleOpen}>
+                  <Icon as={<Ionicons name="exit-outline" />} size={20} />
+                </Card>
               )}
             />
           </HStack>
 
-          <HStack mb={10}>
+          <Card flexDirection="row" mb={5}>
             <Icon
               mr={10}
               size={120}
               as={<MaterialIcons name="account-circle" />}
             />
 
-            <VStack mb={10}>
-              <Text mb={2} fontSize={16} fontWeight={600}>
+            <VStack>
+              <Text mb={2} fontWeight={600}>
                 Пользователь:
               </Text>
 
-              <Text>{user.username}</Text>
+              <Text fontSize={14}>{user.username}</Text>
 
-              <Text>{user.email}</Text>
+              <Text fontSize={14}>{user.email}</Text>
 
-              <Text>{user.role}</Text>
+              <Text fontSize={14}>
+                {user.verified ? 'Верифицирован' : 'Не верифицирован'}
+              </Text>
 
-              <Text>{user.verified}</Text>
+              <Text fontSize={14}>{ROLE_MAPPER[user.role]}</Text>
             </VStack>
-          </HStack>
+          </Card>
 
-          <VStack mb={20}>
+          <Card>
             <MenuItem
               title="Пароль"
               icon={<MaterialIcons name="vpn-key" />}
@@ -113,21 +120,21 @@ export const Profile: FC<IProfile> = ({ navigate }) => {
               title="Темная тема"
               icon={<Ionicons name="ios-sunny-sharp" />}
               rightIcon={<SwitchTheme />}
-              callback={toggleColorMode}
+              callback={() => switchTheme()}
             />
-          </VStack>
-
-          <ExitModal
-            handleLogout={handleLogout}
-            isLoading={isLoading}
-            renderComponent={toggleOpen => (
-              <Button onPress={toggleOpen} px={10}>
-                Выйти
-              </Button>
-            )}
-          />
+          </Card>
         </VStack>
-      )}
-    </>
+
+        <ExitModal
+          handleLogout={handleLogout}
+          isLoading={isLoading}
+          renderComponent={toggleOpen => (
+            <Button width="100%" onPress={toggleOpen}>
+              Выйти
+            </Button>
+          )}
+        />
+      </VStack>
+    </PageLayout>
   );
 };

@@ -1,5 +1,6 @@
 import React, { FC, useCallback } from 'react';
-import { HStack, Link, Text } from 'native-base';
+
+import { HStack, Text, Button } from '@src/components/UI';
 
 interface IAlreadyRegisteredSection {
   navigate: (screen: string) => void;
@@ -14,10 +15,12 @@ export const AlreadyRegisteredSection: FC<IAlreadyRegisteredSection> = ({
   }, [navigate]);
 
   return (
-    <HStack mt="6" justifyContent="center">
-      {hasAccountHint && <Text fontSize="sm">У меня есть аккаунт. </Text>}
+    <HStack width="100%" mt={6} alignItems="center" justifyContent="center">
+      {hasAccountHint && <Text fontSize={14}>У меня есть аккаунт. </Text>}
 
-      <Link onPress={handlePress}>Войти</Link>
+      <Button variant="ghost" onPress={handlePress}>
+        Войти
+      </Button>
     </HStack>
   );
 };

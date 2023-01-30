@@ -7,5 +7,4 @@ module.exports = {
   tabWidth: 2,
   bracketSpacing: true,
   jsxBracketSameLine: false,
-  bracketSameLine: true,
 };

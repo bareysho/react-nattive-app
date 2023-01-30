@@ -16,7 +16,7 @@ export interface IAuthState {
   isLoading: boolean;
   isAuthenticated: boolean;
   verified: boolean;
-  user: IUser | null;
+  user: IUser;
 }
 
 export const initialState: IAuthState = {
@@ -24,7 +24,7 @@ export const initialState: IAuthState = {
   isLoading: false,
   isAuthenticated: false,
   verified: false,
-  user: null,
+  user: {} as IUser,
 };
 
 const setLoading =

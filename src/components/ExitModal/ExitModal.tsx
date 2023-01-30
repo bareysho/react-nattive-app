@@ -1,5 +1,16 @@
 import React, { FC, ReactNode } from 'react';
-import { AlertDialog, Button, Center, Pressable } from 'native-base';
+import Modal from 'react-native-modal';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import {
+  Box,
+  Button,
+  HStack,
+  Icon,
+  Pressable,
+  Text,
+  useTheme,
+} from '@src/components/UI';
 
 interface IExitModal {
   handleLogout: () => Promise<void>;
@@ -14,46 +25,57 @@ export const ExitModal: FC<IExitModal> = ({
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const onClose = () => setIsOpen(false);
-
-  const cancelRef = React.useRef(null);
+  const closeModal = () => setIsOpen(false);
 
   const toggleOpen = () => setIsOpen(!isOpen);
 
+  const { theme } = useTheme();
+
   return (
-    <Center>
-      <Pressable onPress={toggleOpen}>{renderComponent(toggleOpen)}</Pressable>
+    <>
+      {renderComponent(toggleOpen)}
 
-      <AlertDialog
-        leastDestructiveRef={cancelRef}
-        isOpen={isOpen}
-        onClose={onClose}
+      <Modal
+        animationInTiming={300}
+        backdropTransitionInTiming={300}
+        backdropTransitionOutTiming={0}
+        animationOut="slideOutDown"
+        isVisible={isOpen}
       >
-        <AlertDialog.Content>
-          <AlertDialog.CloseButton />
+        <Box alignItems="center" justifyContent="center" flex={1}>
+          <Box
+            p={6}
+            width="100%"
+            rounded={15}
+            backgroundColor={theme.cardBackground}
+          >
+            <HStack width="100%" mb={5} justifyContent="space-between">
+              <Text fontWeight={500} fontSize={18}>
+                Выход
+              </Text>
 
-          <AlertDialog.Header borderBottomWidth={0}>Выход</AlertDialog.Header>
+              <Pressable rounded={25} onPress={closeModal}>
+                <Icon
+                  size={25}
+                  as={<MaterialCommunityIcons name="close-circle" />}
+                />
+              </Pressable>
+            </HStack>
 
-          <AlertDialog.Body>Вы действительно хотите выйти?</AlertDialog.Body>
+            <Text mb={7}>Вы действительно хотите выйти?</Text>
 
-          <AlertDialog.Footer borderTopWidth={0}>
-            <Button.Group space={2}>
-              <Button
-                variant="unstyled"
-                colorScheme="coolGray"
-                onPress={onClose}
-                ref={cancelRef}
-              >
+            <HStack alignSelf="flex-end" alignItems="center">
+              <Button mr={4} variant="ghost" onPress={closeModal}>
                 Отмена
               </Button>
 
               <Button isLoading={isLoading} onPress={handleLogout}>
                 Выход
               </Button>
-            </Button.Group>
-          </AlertDialog.Footer>
-        </AlertDialog.Content>
-      </AlertDialog>
-    </Center>
+            </HStack>
+          </Box>
+        </Box>
+      </Modal>
+    </>
   );
 };

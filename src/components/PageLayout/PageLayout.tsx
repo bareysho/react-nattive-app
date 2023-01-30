@@ -1,25 +1,26 @@
 import React, { FC, PropsWithChildren, useContext } from 'react';
-import { Box, Center, ScrollView, Spinner } from 'native-base';
 
+import { Box, Center, Spinner, useTheme } from '@src/components/UI';
 import { ScreenLoadingContext } from '@src/providers/ScreenLoadingProvider';
-import { useThemedBgColor } from '@src/hooks/useThemedBgColor';
 
 export const PageLayout: FC<PropsWithChildren> = ({ children }) => {
   const { isScreenLoading } = useContext(ScreenLoadingContext);
 
-  const bg = useThemedBgColor();
+  const { theme } = useTheme();
 
   return isScreenLoading ? (
-    <Center bg={bg} alignItems="center" flex={1}>
+    <Center backgroundColor={theme.background} flex={1}>
       <Spinner size={60} />
     </Center>
   ) : (
-    <ScrollView h="80" bg={bg}>
-      <Center w="100%">
-        <Box safeArea p={2} py={6} w="95%">
-          {children}
-        </Box>
-      </Center>
-    </ScrollView>
+    <Box
+      p={4}
+      flex={1}
+      width="100%"
+      height="100%"
+      backgroundColor={theme.background}
+    >
+      {children}
+    </Box>
   );
 };

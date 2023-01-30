@@ -1,7 +1,11 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 
-import { authReducer, userSettingReducer } from '@src/redux/slices';
+import {
+  authReducer,
+  userSettingReducer,
+  workoutSliceReducer,
+} from '@src/redux/slices';
 import { baseQueryApi } from '@src/api/queryAPI';
 
 export const store = configureStore({
@@ -9,6 +13,7 @@ export const store = configureStore({
     [baseQueryApi.reducerPath]: baseQueryApi.reducer,
     auth: authReducer,
     userSettings: userSettingReducer,
+    workouts: workoutSliceReducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware().concat(baseQueryApi.middleware),

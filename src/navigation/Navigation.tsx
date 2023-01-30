@@ -6,6 +6,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { selectAuthState } from '@src/selectors/auth';
 import { ForgetPassword, Home, Login, Registration } from '@src/pages';
 import { ChangeEmail, ChangePassword } from '@src/pages/Home/screens';
+import { ApplicationBar } from '@src/components/ApplicationBar';
+import {
+  PushUpsScreen,
+  SitUpsScreen,
+  SquatsScreen,
+} from '@src/pages/Home/screens/Workouts/Workout/Workout';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,16 +22,39 @@ export const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {authenticatedUser && isAuthenticated ? (
+        {authenticatedUser.id && isAuthenticated ? (
           <>
             <Stack.Screen
               name="Home"
               options={{
                 title: 'Главная',
                 headerShown: false,
-                // header: props => <ApplicationBar {...props} />,
               }}
               component={Home}
+            />
+
+            <Stack.Screen
+              name="SitUpWorkoutScreen"
+              options={{
+                headerShown: false,
+              }}
+              component={SitUpsScreen}
+            />
+
+            <Stack.Screen
+              name="PushUpsWorkoutScreen"
+              options={{
+                headerShown: false,
+              }}
+              component={PushUpsScreen}
+            />
+
+            <Stack.Screen
+              name="SquatWorkoutScreen"
+              options={{
+                headerShown: false,
+              }}
+              component={SquatsScreen}
             />
 
             <Stack.Screen
@@ -33,7 +62,7 @@ export const Navigation = () => {
               options={{
                 title: 'Изменение пароля',
                 headerShown: true,
-                // header: props => <ApplicationBar {...props} />,
+                header: ApplicationBar,
               }}
               component={ChangePassword}
             />
@@ -43,7 +72,7 @@ export const Navigation = () => {
               options={{
                 title: 'Изменение email',
                 headerShown: true,
-                // header: props => <ApplicationBar {...props} />,
+                header: ApplicationBar,
               }}
               component={ChangeEmail}
             />

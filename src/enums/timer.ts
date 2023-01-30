@@ -6,6 +6,7 @@ export enum TimerState {
 
 export enum TimerType {
   Decremental = 'DECREMENTAL',
+  Incremental = 'INCREMENTAL',
 }
 
 export enum TimerName {

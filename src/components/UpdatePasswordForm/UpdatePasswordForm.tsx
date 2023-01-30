@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
 import { Formik } from 'formik';
-import { Button, VStack } from 'native-base';
 import { useSelector } from 'react-redux';
 
 import {
@@ -9,7 +8,7 @@ import {
   validatePassword,
 } from '@src/validators/common';
 import { useForm } from '@src/hooks/useForm';
-import { InputPassword } from '@src/components/control';
+import { InputPassword, Button, VStack } from '@src/components/UI';
 import { selectAuthState } from '@src/selectors/auth';
 import { IUpdatePasswordForm } from '@src/types/form';
 
@@ -43,7 +42,7 @@ export const UpdatePasswordForm: FC<IUpdatePasswordFormParams> = ({
       validate={validate}
     >
       {formik => (
-        <VStack mt={5} space={2}>
+        <VStack width="100%" mt={5}>
           <InputPassword
             label="Пароль"
             isDisabled={isLoading}
@@ -69,6 +68,7 @@ export const UpdatePasswordForm: FC<IUpdatePasswordFormParams> = ({
 
           <Button
             mt={5}
+            width="100%"
             isDisabled={formik.isSubmitting}
             isLoading={isLoading || formik.isSubmitting}
             onPress={formik.handleSubmit}

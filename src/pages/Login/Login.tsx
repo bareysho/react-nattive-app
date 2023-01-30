@@ -1,25 +1,24 @@
 import React, { FC, useCallback } from 'react';
 import { Formik, FormikValues } from 'formik';
 import { ParamListBase } from '@react-navigation/native';
-import {
-  Button,
-  Center,
-  Heading,
-  HStack,
-  Link,
-  Text,
-  VStack,
-} from 'native-base';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
+import {
+  Button,
+  Center,
+  HStack,
+  Text,
+  VStack,
+  FormError,
+  InputPassword,
+  InputWithIcon,
+} from '@src/components/UI';
 import { selectAuthState } from '@src/selectors/auth';
 import { useAppDispatch, useAppSelector } from '@src/redux/store';
 import { loginAction } from '@src/redux/actions/authActions';
 import { onlyLatin, required } from '@src/validators/common';
 import { useForm } from '@src/hooks/useForm';
-import { InputPassword, InputWithIcon } from '@src/components/control';
-import { FormError } from '@src/components/control/FormError';
 import { ILoginFormValues } from '@src/types/form';
 import { PageLayout } from '@src/components/PageLayout';
 
@@ -63,15 +62,15 @@ export const Login: FC<NativeStackScreenProps<ParamListBase>> = ({
 
   return (
     <PageLayout>
-      <Heading size="lg" fontWeight="600">
+      <Text fontSize={20} fontWeight={600}>
         Добро пожаловать
-      </Heading>
+      </Text>
 
-      <Heading mt={1} fontWeight="medium" size="xs">
+      <Text fontSize={18} fontWeight={300} mt={1}>
         Авторизируйтесь чтобы продолжить!
-      </Heading>
+      </Text>
 
-      <Center my={36}>
+      <Center width="100%" my={36}>
         <MaterialIcons name={'fitness-center'} size={98} color="gray" />
       </Center>
 
@@ -82,7 +81,7 @@ export const Login: FC<NativeStackScreenProps<ParamListBase>> = ({
         validate={validate}
       >
         {formik => (
-          <VStack w="100%" space={3}>
+          <VStack width="100%">
             <InputWithIcon
               label="Имя пользователя"
               isDisabled={isLoading}
@@ -92,7 +91,7 @@ export const Login: FC<NativeStackScreenProps<ParamListBase>> = ({
               onChangeText={formik.handleChange('login')}
               onBlur={formik.handleBlur('login')}
               placeholder="Введите имя пользователя"
-              icon={<MaterialIcons name={'person'} />}
+              InputLeftElement={<MaterialIcons name="person" />}
             />
 
             <InputPassword
@@ -108,15 +107,17 @@ export const Login: FC<NativeStackScreenProps<ParamListBase>> = ({
 
             {submitRequestError && <FormError message={submitRequestError} />}
 
-            <Link
+            <Button
               alignSelf="flex-end"
+              variant="ghost"
               onPress={getNavigateCallback('ForgetPassword')}
             >
               Забыли пароль?
-            </Link>
+            </Button>
 
             <Button
               mt={6}
+              width="100%"
               onPress={formik.handleSubmit}
               isDisabled={isLoading}
               isLoading={isLoading}
@@ -124,12 +125,20 @@ export const Login: FC<NativeStackScreenProps<ParamListBase>> = ({
               Войти
             </Button>
 
-            <HStack mt="6" justifyContent="center">
-              <Text fontSize="sm">Я новый пользователь. </Text>
+            <HStack
+              width="100%"
+              mt={6}
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Text fontSize={14}>Я новый пользователь. </Text>
 
-              <Link onPress={getNavigateCallback('Registration')}>
+              <Button
+                variant="ghost"
+                onPress={getNavigateCallback('Registration')}
+              >
                 Зарегистрироваться
-              </Link>
+              </Button>
             </HStack>
           </VStack>
         )}
