@@ -4,7 +4,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 
 import { Card } from '@src/components/Card';
 import { ImageApp } from '@src/components/Image/Image';
-import { IMAGE_BY_WORKOUT_MAPPER } from '@src/constants/imageByWorkoutMapper';
+import { IMAGE_BY_WORKOUT_MAPPER } from '@src/constants/workouts';
 import { DateService } from '@src/services/dateService';
 import { WorkoutEvent } from '@src/storage/models/WorkoutEvent';
 import { Box, HStack, Icon, Text, VStack } from '@src/components/UI';
@@ -46,7 +46,7 @@ export const WorkoutRecord: FC<IWorkoutRecord> = ({ workout }) => {
 
           <HStack>
             {workout.setList.map((setRepetitionsCount, index) => (
-              <HStack alignItems="center" key={setRepetitionsCount} mr={2}>
+              <HStack alignItems="center" key={index} mr={2}>
                 <Text mr={1}>{setRepetitionsCount}</Text>
 
                 <Icon

@@ -13,6 +13,7 @@ export { InputOtp } from './components/Input/InputOtp';
 export { InputWithIcon } from './components/Input/InputWithIcon';
 export { FormError } from './components/FormError/FormError';
 export { Fab } from './components/Fab/Fab';
+export { ActionSheet } from './components/ActionSheet/ActionSheet';
 export {
   ThemeProvider,
   ThemeContext,

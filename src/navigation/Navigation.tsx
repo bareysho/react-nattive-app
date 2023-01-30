@@ -7,6 +7,11 @@ import { selectAuthState } from '@src/selectors/auth';
 import { ForgetPassword, Home, Login, Registration } from '@src/pages';
 import { ChangeEmail, ChangePassword } from '@src/pages/Home/screens';
 import { ApplicationBar } from '@src/components/ApplicationBar';
+import {
+  PushUpsScreen,
+  SitUpsScreen,
+  SquatsScreen,
+} from '@src/pages/Home/screens/Workouts/Workout/Workout';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +31,30 @@ export const Navigation = () => {
                 headerShown: false,
               }}
               component={Home}
+            />
+
+            <Stack.Screen
+              name="SitUpWorkoutScreen"
+              options={{
+                headerShown: false,
+              }}
+              component={SitUpsScreen}
+            />
+
+            <Stack.Screen
+              name="PushUpsWorkoutScreen"
+              options={{
+                headerShown: false,
+              }}
+              component={PushUpsScreen}
+            />
+
+            <Stack.Screen
+              name="SquatWorkoutScreen"
+              options={{
+                headerShown: false,
+              }}
+              component={SquatsScreen}
             />
 
             <Stack.Screen

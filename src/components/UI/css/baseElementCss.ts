@@ -31,5 +31,7 @@ export const baseElementCss = css<IBaseElementStyleProps>`
   left: ${props => valueToPx(props.left) || 'auto'};
   right: ${props => valueToPx(props.right) || 'auto'};
   flex-grow: ${props => props.flex || 0};
+  border-bottom-width: ${props =>
+    valueToPx(props.borderBottomWidth) || valueToPx(props.borderWidth) || 0.0};
   ${props => props.shadow && shadow}
 `;

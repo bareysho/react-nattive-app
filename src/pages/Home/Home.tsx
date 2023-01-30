@@ -3,7 +3,15 @@ import { ParamListBase } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {Box, HStack, Icon, Pressable, Text, useTheme, VStack} from '@src/components/UI';
+import {
+  Box,
+  HStack,
+  Icon,
+  Pressable,
+  Text,
+  useTheme,
+  VStack,
+} from '@src/components/UI';
 
 import { Dashboard, History, Profile, Statistics, Workouts } from './screens';
 

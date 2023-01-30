@@ -50,6 +50,7 @@ export interface IBorder {
   borderRadius?: number;
   borderColor?: string;
   borderWidth?: number | string;
+  borderBottomWidth?: number | string;
 }
 
 export interface IBackground {

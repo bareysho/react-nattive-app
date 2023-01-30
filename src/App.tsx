@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { Center, Icon, Spinner, Fab } from '@src/components/UI';
+import { Center, Fab, Icon, Spinner, useTheme } from '@src/components/UI';
 import { useAppDispatch } from '@src/redux/store';
 import { selectAuthState } from '@src/selectors/auth';
 import { recallUserAction } from '@src/redux/actions/authActions';
@@ -12,7 +12,9 @@ import { GlobalLoadingContext } from '@src/providers/GlobalLoadingProvider';
 import { ICON_NAME_MAPPER_BY_COLOR_MODE } from '@src/constants/common';
 import { ACCESS_TOKEN_KEY, USER_ID_KEY } from '@src/constants/asyncStorage';
 import { setAccessToken } from '@src/redux/slices/authenticationSlice';
-import { useTheme } from '@src/components/UI';
+import { setWorkoutLevel } from '@src/redux/slices/workoutSlice';
+import { WorkoutType } from '@src/enums/WorkoutType';
+import { WORKOUT_LEVEL_ASYNC_STORAGE_KEY } from '@src/constants/workouts';
 
 export const App = () => {
   const dispatch = useAppDispatch();
@@ -39,6 +41,23 @@ export const App = () => {
 
       if (accessToken) {
         await dispatch(setAccessToken(accessToken));
+
+        const workoutTypes = Object.values(WorkoutType);
+
+        const workoutStoredLevels = await AsyncStorage.multiGet(
+          workoutTypes.map(value => WORKOUT_LEVEL_ASYNC_STORAGE_KEY[value]),
+        );
+
+        for (const [index, workoutType] of workoutTypes.entries()) {
+          const [workoutLevel = 0] = workoutStoredLevels[index].reverse();
+
+          dispatch(
+            setWorkoutLevel({
+              workoutType,
+              level: Number(workoutLevel),
+            }),
+          );
+        }
       }
 
       if (!authenticatedUser.id && authenticatedUserId) {

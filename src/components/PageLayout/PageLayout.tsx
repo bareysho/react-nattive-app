@@ -13,7 +13,13 @@ export const PageLayout: FC<PropsWithChildren> = ({ children }) => {
       <Spinner size={60} />
     </Center>
   ) : (
-    <Box width="100%" height="100%" backgroundColor={theme.background} p={4}>
+    <Box
+      p={4}
+      flex={1}
+      width="100%"
+      height="100%"
+      backgroundColor={theme.background}
+    >
       {children}
     </Box>
   );

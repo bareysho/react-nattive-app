@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import DatePicker from 'react-native-date-picker';
+import { ScrollView } from 'react-native';
 
 import {
   Box,
@@ -28,7 +29,7 @@ export const History = () => {
   const workoutsFiltered = WorkoutRecords.getWorkoutRecordsInDateInterval(
     startDate,
     endDate,
-  );
+  ).slice(0, 9);
 
   const selectedRecordsDateString =
     DateService.formatDateUI(selectedEventsDate);
@@ -71,19 +72,21 @@ export const History = () => {
 
   return (
     <>
-      <PageLayout>
-        <Text fontSize={20} fontWeight={600}>
-          История упражнений
-        </Text>
+      <ScrollView style={{ width: '100%', backgroundColor: 'black' }}>
+        <PageLayout>
+          <Text fontSize={20} fontWeight={600}>
+            История упражнений
+          </Text>
 
-        <Text fontSize={18} fontWeight={300} mt={1}>
-          Проанализируйте свои тренировки
-        </Text>
+          <Text fontSize={18} fontWeight={300} mt={1}>
+            Проанализируйте свои тренировки
+          </Text>
 
-        {workoutsFiltered.map(workout => (
-          <WorkoutRecord workout={workout} key={workout._id.toString()} />
-        ))}
-      </PageLayout>
+          {workoutsFiltered.map(workout => (
+            <WorkoutRecord workout={workout} key={workout._id.toString()} />
+          ))}
+        </PageLayout>
+      </ScrollView>
 
       <VStack bottom={15} width="100%" position="absolute" alignItems="center">
         {isCalendarOpen && (

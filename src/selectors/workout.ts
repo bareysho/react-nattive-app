@@ -7,4 +7,4 @@ type WorkoutSelector = (state: RootState) => IWorkoutState;
 export const selectWorkout =
   (workOutType: WorkoutType): WorkoutSelector =>
   (state: RootState): IWorkoutState =>
-    state[workOutType];
+    state.workouts[workOutType];

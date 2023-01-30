@@ -64,3 +64,14 @@ export const useTheme = () => {
 
   return { theme, switchTheme, themeType };
 };
+
+export const useColorModeValue = (light: string, dark: string): string => {
+  const { themeType } = useContext(ThemeContext);
+
+  const COLORS_MAPPER: Record<ThemeType, string> = {
+    [ThemeType.Dark]: dark,
+    [ThemeType.Light]: light,
+  };
+
+  return COLORS_MAPPER[themeType];
+};
