@@ -140,10 +140,8 @@ export const workoutSlice = createSlice({
 
       const currentWorkoutState = state[workoutType];
 
-      currentWorkoutState.setsDone = [
-        ...currentWorkoutState.setsDone,
-        currentWorkoutState.repsDone,
-      ];
+      currentWorkoutState.setsDone[currentWorkoutState.currentSetIndex] =
+        currentWorkoutState.repsDone;
 
       currentWorkoutState.setsDone = currentWorkoutState.sets.map(
         (setValue, index) => {
@@ -165,20 +163,7 @@ export const workoutSlice = createSlice({
 
       const currentWorkoutState = state[workoutType];
 
-      currentWorkoutState.setsDone = [
-        ...currentWorkoutState.setsDone,
-        currentWorkoutState.sets[currentWorkoutState.currentSetIndex],
-      ];
-
-      currentWorkoutState.setsDone = currentWorkoutState.sets.map(
-        (setValue, index) => {
-          if (typeof currentWorkoutState.setsDone[index] === 'number') {
-            return currentWorkoutState.setsDone[index];
-          }
-
-          return setValue;
-        },
-      );
+      currentWorkoutState.setsDone = currentWorkoutState.sets;
 
       currentWorkoutState.workoutState = WorkoutState.Finished;
     },

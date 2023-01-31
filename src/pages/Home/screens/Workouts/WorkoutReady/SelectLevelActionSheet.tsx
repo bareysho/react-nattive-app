@@ -22,12 +22,16 @@ interface ISelectLevelActionSheet {
   actionSheetRef: RefObject<ActionSheetRef>;
   workoutType: WorkoutType;
   workoutLevel: number;
+  backgroundColor: string;
+  backgroundColorPressed: string;
 }
 
 export const SelectLevelActionSheet: FC<ISelectLevelActionSheet> = ({
   actionSheetRef,
   workoutType,
   workoutLevel,
+  backgroundColor,
+  backgroundColorPressed,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -62,7 +66,11 @@ export const SelectLevelActionSheet: FC<ISelectLevelActionSheet> = ({
         const textColor =
           (isSelectedLevel && LIGHT_PRIMARY_COLORS.text) || undefined;
 
-        const backgroundColor = (isSelectedLevel && theme.primary) || undefined;
+        const levelBackgroundColor =
+          (isSelectedLevel && backgroundColor) || undefined;
+
+        const pressedLevelBackgroundColor =
+          (isSelectedLevel && backgroundColorPressed) || undefined;
 
         const { restSec, sets } = workoutConfig;
 
@@ -71,7 +79,8 @@ export const SelectLevelActionSheet: FC<ISelectLevelActionSheet> = ({
             <Pressable
               rounded={5}
               width="100%"
-              backgroundColor={backgroundColor}
+              backgroundColor={levelBackgroundColor}
+              pressedBackgroundColor={pressedLevelBackgroundColor}
               onPress={handleSelectLevel(levelConfig)}
             >
               <Text rounded={5} p={2} color={textColor}>

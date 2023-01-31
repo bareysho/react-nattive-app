@@ -188,6 +188,7 @@ export const Workout: FC<IWorkout> = ({
 
     if (workoutState === WorkoutState.Finished) {
       stopDurationTimer();
+      resetPause();
 
       dispatch(
         setWorkoutState({ workoutState: WorkoutState.Finished, workoutType }),
@@ -416,31 +417,33 @@ export const Workout: FC<IWorkout> = ({
 
             <Center width="100%">
               <ActionSheet actionSheetRef={actionSheetRef}>
-                <ConfirmModal
-                  modalTitle="Пропустить подход?"
-                  modalDescription={
-                    'Будет выполнен переход к следующему подходу. \n\nЗапишутся только выполненные упражнения.'
-                  }
-                  renderComponent={toggleOpen => (
-                    <Button
-                      mb={4}
-                      width="100%"
-                      backgroundColor={workoutMainColor}
-                      backgroundColorPressed={secondaryColor}
-                      onPress={toggleOpen}
-                    >
-                      Пропустить подход
-                    </Button>
-                  )}
-                  confirm={() => {
-                    dispatch(skipCurrentSet({ workoutType }));
+                {workoutState !== WorkoutState.Pause && (
+                  <ConfirmModal
+                    modalTitle="Пропустить подход?"
+                    modalDescription={
+                      'Будет выполнен переход к следующему подходу. \n\nЗапишутся только выполненные упражнения.'
+                    }
+                    renderComponent={toggleOpen => (
+                      <Button
+                        mb={4}
+                        width="100%"
+                        backgroundColor={workoutMainColor}
+                        backgroundColorPressed={secondaryColor}
+                        onPress={toggleOpen}
+                      >
+                        Пропустить подход
+                      </Button>
+                    )}
+                    confirm={() => {
+                      dispatch(skipCurrentSet({ workoutType }));
 
-                    handleFinishCurrentSet();
+                      handleFinishCurrentSet();
 
-                    actionSheetRef?.current?.hide();
-                  }}
-                  confirmButtonTitle="Пропустить"
-                />
+                      actionSheetRef?.current?.hide();
+                    }}
+                    confirmButtonTitle="Пропустить"
+                  />
+                )}
 
                 <ConfirmModal
                   modalTitle="Прекратить тренировку?"

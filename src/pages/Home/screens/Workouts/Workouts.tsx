@@ -14,6 +14,7 @@ import {
   WORKOUT_PRIMARY_COLOR,
   WORKOUT_SECONDARY_COLOR,
   IMAGE_BY_WORKOUT_MAPPER,
+  WORKOUT_HEADER_SECONDARY_COLOR,
 } from '@src/constants/workouts';
 import { IHomeTab } from '@src/pages/Home/Home';
 
@@ -25,7 +26,7 @@ export const Workouts: FC<IHomeTab> = ({ navigate }) => {
   const isActiveStyle = (itemWorkoutType: WorkoutType) =>
     itemWorkoutType === workOutType
       ? WORKOUT_PRIMARY_COLOR[workOutType]
-      : WORKOUT_SECONDARY_COLOR[workOutType];
+      : WORKOUT_HEADER_SECONDARY_COLOR[workOutType];
 
   const { theme } = useTheme();
 

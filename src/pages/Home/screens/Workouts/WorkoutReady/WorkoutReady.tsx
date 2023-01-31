@@ -102,12 +102,19 @@ export const WorkoutReady: FC<IWorkoutReady> = ({
         </Button>
 
         <VStack width="100%">
-          <Button isDisabled mb={5} width="100%">
+          <Button
+            mb={5}
+            isDisabled
+            width="100%"
+            backgroundColor={mainColor}
+            backgroundColorPressed={secondaryColor}
+          >
             Рекорд
           </Button>
 
           <Button
             backgroundColor={mainColor}
+            backgroundColorPressed={secondaryColor}
             onPress={() => actionSheetRef.current?.show()}
             width="100%"
           >
@@ -119,6 +126,8 @@ export const WorkoutReady: FC<IWorkoutReady> = ({
       <SelectLevelActionSheet
         workoutType={workoutType}
         workoutLevel={workoutLevel}
+        backgroundColor={mainColor}
+        backgroundColorPressed={secondaryColor}
         actionSheetRef={actionSheetRef}
       />
     </PageLayout>
