@@ -63,7 +63,7 @@ export const Dashboard: FC = () => {
             value.reduce(
               (accumWorkouts, workoutEvent) =>
                 accumWorkouts +
-                workoutEvent.setList.reduce((sum, v) => sum + v, 0),
+                workoutEvent.sets.reduce((sum, v) => sum + v, 0),
               0,
             ),
         };

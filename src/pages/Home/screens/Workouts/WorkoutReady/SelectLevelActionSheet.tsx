@@ -56,15 +56,15 @@ export const SelectLevelActionSheet: FC<ISelectLevelActionSheet> = ({
 
   return (
     <ActionSheet actionSheetRef={actionSheetRef}>
-      {workoutConfigsGroupByLevel.map(([configLevel, workoutConfig], index) => {
-        const isSelectedLevel = workoutLevel === Number(configLevel);
+      {workoutConfigsGroupByLevel.map(([levelConfig, workoutConfig], index) => {
+        const isSelectedLevel = workoutLevel === Number(levelConfig);
 
         const textColor =
           (isSelectedLevel && LIGHT_PRIMARY_COLORS.text) || undefined;
 
         const backgroundColor = (isSelectedLevel && theme.primary) || undefined;
 
-        const { restSec, set: setList } = workoutConfig;
+        const { restSec, sets } = workoutConfig;
 
         return (
           <Fragment key={index}>
@@ -72,10 +72,10 @@ export const SelectLevelActionSheet: FC<ISelectLevelActionSheet> = ({
               rounded={5}
               width="100%"
               backgroundColor={backgroundColor}
-              onPress={handleSelectLevel(configLevel)}
+              onPress={handleSelectLevel(levelConfig)}
             >
               <Text rounded={5} p={2} color={textColor}>
-                {`${configLevel}. ${setList.join(' - ')}, отдых ${restSec}`}
+                {`${levelConfig}. ${sets.join(' - ')}, отдых ${restSec}`}
               </Text>
             </Pressable>
 

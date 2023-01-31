@@ -10,6 +10,7 @@ import {
   Icon,
   Pressable,
   Text,
+  useTheme,
   VStack,
 } from '@src/components/UI';
 import { PageLayout } from '@src/components/PageLayout';
@@ -29,7 +30,7 @@ export const History = () => {
   const workoutsFiltered = WorkoutRecords.getWorkoutRecordsInDateInterval(
     startDate,
     endDate,
-  ).slice(0, 9);
+  );
 
   const selectedRecordsDateString =
     DateService.formatDateUI(selectedEventsDate);
@@ -70,9 +71,11 @@ export const History = () => {
     setSelectedEventsDate(new Date());
   }, []);
 
+  const { theme } = useTheme();
+
   return (
     <>
-      <ScrollView style={{ width: '100%', backgroundColor: 'black' }}>
+      <ScrollView style={{ width: '100%', backgroundColor: theme.background }}>
         <PageLayout>
           <Text fontSize={20} fontWeight={600}>
             История упражнений
@@ -82,9 +85,11 @@ export const History = () => {
             Проанализируйте свои тренировки
           </Text>
 
-          {workoutsFiltered.map(workout => (
-            <WorkoutRecord workout={workout} key={workout._id.toString()} />
-          ))}
+          <Box width="100%" mb={10}>
+            {workoutsFiltered.slice(0, 6).map(workout => (
+              <WorkoutRecord workout={workout} key={workout._id.toString()} />
+            ))}
+          </Box>
         </PageLayout>
       </ScrollView>
 

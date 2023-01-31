@@ -15,10 +15,8 @@ export class WorkoutRecords {
       ? existsWorkoutsResult
       : useQuery<WorkoutEvent>(WorkoutEvent);
 
-    return workouts.filtered(
-      'workoutDate >= $0 && workoutDate =< $1',
-      startDate,
-      endDate,
-    );
+    return workouts
+      .filtered('workoutDate >= $0 && workoutDate =< $1', startDate, endDate)
+      .sorted('workoutDate', true);
   };
 }
