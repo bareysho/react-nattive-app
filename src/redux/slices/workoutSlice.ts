@@ -3,30 +3,31 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { WorkoutType } from '@src/enums/WorkoutType';
 
 export enum WorkoutState {
-  Ready,
   Working,
   Pause,
   Finished,
 }
 
 export interface IWorkoutState {
-  workoutState: WorkoutState;
-  setNumber: number;
-  reps: number;
+  repsDone: number;
   repsDoneTotal: number;
-  setList: number[];
+  sets: number[];
+  setsDone: number[];
   workoutLevel: number;
+  currentSetIndex: number;
+  workoutState: WorkoutState;
 }
 
 export interface IWorkoutsState extends Record<WorkoutType, IWorkoutState> {}
 
 const initialWorkoutState: IWorkoutState = {
-  workoutState: WorkoutState.Working,
-  setNumber: 0,
-  reps: 0,
+  sets: [],
+  setsDone: [],
+  repsDone: 0,
   repsDoneTotal: 0,
-  setList: [],
+  currentSetIndex: 0,
   workoutLevel: 0,
+  workoutState: WorkoutState.Working,
 };
 
 const initialState: IWorkoutsState = {
@@ -37,7 +38,7 @@ const initialState: IWorkoutsState = {
 
 export const workoutSlice = createSlice({
   reducers: {
-    initWorkout: (
+    initializeWorkout: (
       state: IWorkoutsState,
       action: PayloadAction<
         { workoutType: WorkoutType } & Partial<IWorkoutState>
@@ -45,14 +46,9 @@ export const workoutSlice = createSlice({
     ) => {
       const { workoutType, ...payload } = action.payload;
 
-      return {
-        ...state,
-        [workoutType]: {
-          ...initialWorkoutState,
-          ...payload,
-          workoutLevel: state[workoutType].workoutLevel,
-        },
-      };
+      const { workoutLevel } = state[workoutType];
+
+      state[workoutType] = { ...initialWorkoutState, ...payload, workoutLevel };
     },
     setWorkoutState: (
       state: IWorkoutsState,
@@ -71,8 +67,22 @@ export const workoutSlice = createSlice({
     ) => {
       const { workoutType } = action.payload;
 
-      state[workoutType].reps = state[workoutType].reps + 1;
-      state[workoutType].repsDoneTotal = state[workoutType].repsDoneTotal + 1;
+      const currentWorkoutState = state[workoutType];
+
+      const repsInCurrentSet =
+        currentWorkoutState.sets[currentWorkoutState.currentSetIndex];
+
+      const increasedRepsDone = currentWorkoutState.repsDone + 1;
+
+      if (repsInCurrentSet === increasedRepsDone) {
+        currentWorkoutState.setsDone = [
+          ...currentWorkoutState.setsDone,
+          increasedRepsDone,
+        ];
+      }
+
+      currentWorkoutState.repsDone = increasedRepsDone;
+      currentWorkoutState.repsDoneTotal = currentWorkoutState.repsDoneTotal + 1;
     },
     increaseSetNumber: (
       state: IWorkoutsState,
@@ -80,22 +90,97 @@ export const workoutSlice = createSlice({
     ) => {
       const { workoutType } = action.payload;
 
-      state[workoutType].reps = 0;
-      state[workoutType].setNumber = state[workoutType].setNumber + 1;
+      const currentWorkoutState = state[workoutType];
+
+      currentWorkoutState.currentSetIndex =
+        currentWorkoutState.currentSetIndex + 1;
+
+      currentWorkoutState.repsDone = 0;
     },
-    finishSet: (
+    skipCurrentSet: (
       state: IWorkoutsState,
       action: PayloadAction<{ workoutType: WorkoutType }>,
     ) => {
       const { workoutType } = action.payload;
 
-      state[workoutType].repsDoneTotal =
-        state[workoutType].repsDoneTotal -
-        state[workoutType].reps +
-        state[workoutType].setList[state[workoutType].setNumber];
+      const currentWorkoutState = state[workoutType];
 
-      state[workoutType].reps =
-        state[workoutType].setList[state[workoutType].setNumber];
+      currentWorkoutState.setsDone = [
+        ...currentWorkoutState.setsDone,
+        currentWorkoutState.repsDone,
+      ];
+    },
+    completeCurrentSet: (
+      state: IWorkoutsState,
+      action: PayloadAction<{ workoutType: WorkoutType }>,
+    ) => {
+      const { workoutType } = action.payload;
+
+      const currentWorkoutState = state[workoutType];
+
+      const repsInCurrentSet =
+        currentWorkoutState.sets[currentWorkoutState.currentSetIndex];
+
+      const undoneRepsInCurrentSet =
+        repsInCurrentSet - currentWorkoutState.repsDone;
+
+      currentWorkoutState.repsDoneTotal =
+        currentWorkoutState.repsDoneTotal + undoneRepsInCurrentSet;
+
+      state[workoutType].setsDone = [
+        ...state[workoutType].setsDone,
+        repsInCurrentSet,
+      ];
+    },
+    exitWorkout: (
+      state: IWorkoutsState,
+      action: PayloadAction<{ workoutType: WorkoutType }>,
+    ) => {
+      const { workoutType } = action.payload;
+
+      const currentWorkoutState = state[workoutType];
+
+      currentWorkoutState.setsDone = [
+        ...currentWorkoutState.setsDone,
+        currentWorkoutState.repsDone,
+      ];
+
+      currentWorkoutState.setsDone = currentWorkoutState.sets.map(
+        (setValue, index) => {
+          if (typeof currentWorkoutState.setsDone[index] === 'number') {
+            return currentWorkoutState.setsDone[index];
+          }
+
+          return 0;
+        },
+      );
+
+      currentWorkoutState.workoutState = WorkoutState.Finished;
+    },
+    completeWorkout: (
+      state: IWorkoutsState,
+      action: PayloadAction<{ workoutType: WorkoutType }>,
+    ) => {
+      const { workoutType } = action.payload;
+
+      const currentWorkoutState = state[workoutType];
+
+      currentWorkoutState.setsDone = [
+        ...currentWorkoutState.setsDone,
+        currentWorkoutState.sets[currentWorkoutState.currentSetIndex],
+      ];
+
+      currentWorkoutState.setsDone = currentWorkoutState.sets.map(
+        (setValue, index) => {
+          if (typeof currentWorkoutState.setsDone[index] === 'number') {
+            return currentWorkoutState.setsDone[index];
+          }
+
+          return setValue;
+        },
+      );
+
+      currentWorkoutState.workoutState = WorkoutState.Finished;
     },
     setWorkoutLevel: (
       state: IWorkoutsState,
@@ -110,11 +195,14 @@ export const workoutSlice = createSlice({
   name: '@workoutsSlice',
 });
 
-export const initWorkout = workoutSlice.actions.initWorkout;
+export const initializeWorkout = workoutSlice.actions.initializeWorkout;
 export const increaseReps = workoutSlice.actions.increaseReps;
 export const increaseSetNumber = workoutSlice.actions.increaseSetNumber;
 export const setWorkoutState = workoutSlice.actions.setWorkoutState;
-export const finishSet = workoutSlice.actions.finishSet;
+export const completeCurrentSet = workoutSlice.actions.completeCurrentSet;
+export const skipCurrentSet = workoutSlice.actions.skipCurrentSet;
 export const setWorkoutLevel = workoutSlice.actions.setWorkoutLevel;
+export const exitWorkout = workoutSlice.actions.exitWorkout;
+export const completeWorkout = workoutSlice.actions.completeWorkout;
 
 export const workoutSliceReducer = workoutSlice.reducer;

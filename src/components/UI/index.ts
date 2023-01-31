@@ -14,6 +14,7 @@ export { InputWithIcon } from './components/Input/InputWithIcon';
 export { FormError } from './components/FormError/FormError';
 export { Fab } from './components/Fab/Fab';
 export { ActionSheet } from './components/ActionSheet/ActionSheet';
+export { ConfirmModal } from './components/ConfirmModal/ConfirmModal';
 export {
   ThemeProvider,
   ThemeContext,

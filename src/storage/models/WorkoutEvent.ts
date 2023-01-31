@@ -12,7 +12,8 @@ export class WorkoutEvent extends Realm.Object {
     properties: {
       _id: 'objectId',
       userId: 'string',
-      setList: 'int[]',
+      sets: 'int[]',
+      setsDone: 'int[]',
       workoutType: 'string',
       workoutDate: 'date',
       durationTimeSec: 'int',
@@ -29,24 +30,29 @@ export class WorkoutEvent extends Realm.Object {
 
   durationTimeSec!: number;
 
-  setList!: Realm.List<number>;
+  sets!: Realm.List<number>;
+
+  setsDone!: Realm.List<number>;
 
   // the Task.generate() method creates Task objects with fields with default values
   static generate({
     userId,
-    setList,
+    sets,
+    setsDone,
     workoutType,
     durationTimeSec,
   }: {
     userId: string;
-    setList: number[];
+    sets: number[];
+    setsDone: number[];
     durationTimeSec: number;
     workoutType: WorkoutType;
   }) {
     return {
       _id: new Realm.BSON.ObjectId(),
       userId,
-      setList,
+      sets,
+      setsDone,
       workoutType,
       durationTimeSec,
       workoutDate: new Date(),

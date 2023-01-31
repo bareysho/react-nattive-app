@@ -33,13 +33,13 @@ export const WORKOUT_LEVEL_ASYNC_STORAGE_KEY = {
 
 export const PUSH_UP_WORKOUT_LEVELS: Record<
   number,
-  { level: string; set: number[]; restSec: number }
+  { level: string; sets: number[]; restSec: number }
 > = {
-  1: { level: '1', set: [16, 15, 12, 18], restSec: 60 },
-  2: { level: '2', set: [18, 17, 15, 21], restSec: 40 },
-  3: { level: '3', set: [21, 19, 18, 24], restSec: 40 },
-  4: { level: '4', set: [24, 21, 21, 27], restSec: 30 },
-  5: { level: '5', set: [27, 23, 24, 30], restSec: 30 },
+  1: { level: '1', sets: [16, 15, 12, 18], restSec: 60 },
+  2: { level: '2', sets: [18, 17, 15, 21], restSec: 40 },
+  3: { level: '3', sets: [21, 19, 18, 24], restSec: 40 },
+  4: { level: '4', sets: [24, 21, 21, 27], restSec: 30 },
+  5: { level: '5', sets: [27, 23, 24, 30], restSec: 30 },
 };
 
 export const WORKOUT_TITLE_MAPPER: Record<WorkoutType, string> = {

@@ -1,7 +1,7 @@
 import { format, intervalToDuration } from 'date-fns';
 
 export const DATE_UI = 'dd.MM.yyyy';
-export const DATETIME_UI = 'dd.MM.yyyy hh:mm';
+export const DATETIME_UI = 'dd.MM.yyyy HH:mm';
 
 export class DateService {
   public static formatDatetimeUI = (date: Date) => {
