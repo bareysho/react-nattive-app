@@ -23,6 +23,7 @@ export const ActionSheet: FC<
       defaultOverlayOpacity={0.7}
       indicatorStyle={{
         width: 100,
+        backgroundColor: theme.text,
       }}
       containerStyle={{
         backgroundColor: theme.cardBackground,

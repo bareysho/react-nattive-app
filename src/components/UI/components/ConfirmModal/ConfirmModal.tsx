@@ -37,6 +37,12 @@ export const ConfirmModal: FC<IExitModal> = ({
 
   const { theme } = useTheme();
 
+  const handleConfirm = async () => {
+    await confirm();
+
+    toggleOpen();
+  };
+
   return (
     <>
       {renderComponent(toggleOpen)}
@@ -75,7 +81,7 @@ export const ConfirmModal: FC<IExitModal> = ({
                 Отмена
               </Button>
 
-              <Button isLoading={isLoading} onPress={confirm}>
+              <Button isLoading={isLoading} onPress={handleConfirm}>
                 {confirmButtonTitle}
               </Button>
             </HStack>

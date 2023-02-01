@@ -28,7 +28,7 @@ import {
   changeEmailAction,
   requestChangeEmailAction,
 } from '@src/redux/actions/emailActions';
-import {Card} from "@src/components/Card";
+import { Card } from '@src/components/Card';
 
 const CHANGE_EMAIL_FORM_INITIAL_VALUES: IChangeEmailFormValues = {
   email: '',

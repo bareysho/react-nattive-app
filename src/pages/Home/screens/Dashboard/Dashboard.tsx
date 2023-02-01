@@ -1,27 +1,21 @@
 import React, { FC } from 'react';
 import * as dateFns from 'date-fns';
+import { ru } from 'date-fns/locale';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { ru } from 'date-fns/locale';
-import { Results } from 'realm';
 
-import { Box, HStack, Text, VStack, Icon, Button } from '@src/components/UI';
+import { Box, Button, HStack, Icon, Text, VStack } from '@src/components/UI';
 import { PageLayout } from '@src/components/PageLayout';
 import { Card } from '@src/components/Card';
 import { WorkoutRecords } from '@src/storage/repositories/workoutRecords';
 import { useIntervalDate } from '@src/hooks/useIntervalDate';
 import { WorkoutType } from '@src/enums/WorkoutType';
-import { WorkoutEvent } from '@src/storage/models/WorkoutEvent';
+import { getGroupedWorkoutsRepsTotal } from '@src/utils/workoutRecord';
 
 import { DashboardWorkoutsCard } from './DashboardWorkoutsCard';
 import { DashboardCard } from './DashboardCard';
 
 export const Dashboard: FC = () => {
-  const completed = [1, 2, 3];
-
-  const getActivityShieldColor = (i: number) =>
-    completed.includes(i) ? undefined : '#22c55e';
-
   const todayDateString = dateFns.format(new Date(), 'dd MMMM yyyy', {
     locale: ru,
   });
@@ -35,48 +29,10 @@ export const Dashboard: FC = () => {
     -7,
   );
 
-  console.log({ todayEndTade, todayStartTade });
-  console.log({ weekEndDate, weekStartDate });
+  const bestResults = WorkoutRecords.getGroupedByWorkoutTypeBestResults();
 
-  const separateByType = (workoutsToday: Results<WorkoutEvent>) =>
-    workoutsToday.reduce<Record<WorkoutType, WorkoutEvent[]>>(
-      (accum, item) => {
-        return {
-          ...accum,
-          [item.workoutType]: [...accum[item.workoutType], item],
-        };
-      },
-      {
-        [WorkoutType.SitUp]: [],
-        [WorkoutType.Squat]: [],
-        [WorkoutType.PushUp]: [],
-      },
-    );
-
-  const getSums = (workoutsToday: Record<WorkoutType, WorkoutEvent[]>) =>
-    Object.entries(workoutsToday).reduce<Record<WorkoutType, number>>(
-      (accum, [key, value]) => {
-        return {
-          ...accum,
-          [key]:
-            accum[key as WorkoutType] +
-            value.reduce(
-              (accumWorkouts, workoutEvent) =>
-                accumWorkouts +
-                workoutEvent.sets.reduce((sum, v) => sum + v, 0),
-              0,
-            ),
-        };
-      },
-      {
-        [WorkoutType.SitUp]: 0,
-        [WorkoutType.Squat]: 0,
-        [WorkoutType.PushUp]: 0,
-      },
-    );
-
-  const sumsToday = getSums(
-    separateByType(
+  const todayGroupedWorkoutsRepsTotal = getGroupedWorkoutsRepsTotal(
+    Array.from(
       WorkoutRecords.getWorkoutRecordsInDateInterval(
         todayStartTade,
         todayEndTade,
@@ -84,13 +40,20 @@ export const Dashboard: FC = () => {
     ),
   );
 
-  const sumsThisWeek = getSums(
-    separateByType(
-      WorkoutRecords.getWorkoutRecordsInDateInterval(
-        weekStartDate,
-        weekEndDate,
-      ),
-    ),
+  const currentWeekWorkouts = WorkoutRecords.getWorkoutRecordsInDateInterval(
+    weekStartDate,
+    weekEndDate,
+  );
+
+  const currentWeekWorkoutsDates = currentWeekWorkouts.map(currentWeekWorkout =>
+    dateFns.format(currentWeekWorkout.workoutDate, 'dd.MM'),
+  );
+
+  const getActivityShieldColor = (dateString: string) =>
+    currentWeekWorkoutsDates.includes(dateString) ? '#22c55e' : undefined;
+
+  const currentWeekGroupedWorkoutsRepsTotal = getGroupedWorkoutsRepsTotal(
+    Array.from(currentWeekWorkouts),
   );
 
   return (
@@ -109,33 +72,36 @@ export const Dashboard: FC = () => {
         </Text>
 
         <HStack justifyContent="space-between" width="100%">
-          {[1, 2, 3, 4, 5, 6, 7].map(item => {
-            const dayOfWeek = dateFns
-              .format(dateFns.addDays(new Date(), item), 'EEEEEE', {
+          {[6, 5, 4, 3, 2, 1, 0].map(item => {
+            const dayOfWeekDate = dateFns.subDays(new Date(), item);
+
+            const dayOfWeekString = dateFns
+              .format(dayOfWeekDate, 'EEEEEE', {
                 locale: ru,
               })
               .toUpperCase();
 
+            const dayOfWeekDateString = dateFns.format(dayOfWeekDate, 'dd.MM');
+
             return (
-              <VStack key={item}>
+              <VStack alignItems="center" key={item}>
                 <Text
                   mb={2}
                   fontWeight={item === 7 ? 700 : undefined}
                   textAlign="center"
                 >
-                  {dayOfWeek}
+                  {dayOfWeekString}
                 </Text>
 
                 <Icon
-                  color={getActivityShieldColor(item)}
+                  color={getActivityShieldColor(dayOfWeekDateString)}
                   size={30}
-                  as={
-                    <MaterialCommunityIcons
-                      color={getActivityShieldColor(item)}
-                      name="shield-check"
-                    />
-                  }
+                  as={<MaterialCommunityIcons name="shield-check" />}
                 />
+
+                <Text mt={2} fontSize={12}>
+                  {dayOfWeekDateString}
+                </Text>
               </VStack>
             );
           })}
@@ -170,30 +136,30 @@ export const Dashboard: FC = () => {
       </DashboardCard>
 
       <DashboardWorkoutsCard
-        title="Рекорд:"
+        title="Рекорд за 1 подход:"
         iconColor="#fbbf24"
         icon={<Ionicons name="ios-trophy" />}
-        pushUpsCount={15}
-        sitUpsCount={11}
-        squatsCount={29}
+        pushUpsCount={bestResults[WorkoutType.PushUp]}
+        sitUpsCount={bestResults[WorkoutType.SitUp]}
+        squatsCount={bestResults[WorkoutType.Squat]}
       />
 
       <DashboardWorkoutsCard
         title="Сегодня:"
         iconColor="#22c55e"
         icon={<MaterialCommunityIcons name="shield-check" />}
-        pushUpsCount={sumsToday[WorkoutType.PushUp]}
-        sitUpsCount={sumsToday[WorkoutType.SitUp]}
-        squatsCount={sumsToday[WorkoutType.Squat]}
+        pushUpsCount={todayGroupedWorkoutsRepsTotal[WorkoutType.PushUp]}
+        sitUpsCount={todayGroupedWorkoutsRepsTotal[WorkoutType.SitUp]}
+        squatsCount={todayGroupedWorkoutsRepsTotal[WorkoutType.Squat]}
       />
 
       <DashboardWorkoutsCard
         title="За неделю:"
         iconColor="#0ea5e9"
         icon={<Ionicons name="ios-today" />}
-        pushUpsCount={sumsThisWeek[WorkoutType.PushUp]}
-        sitUpsCount={sumsThisWeek[WorkoutType.SitUp]}
-        squatsCount={sumsThisWeek[WorkoutType.Squat]}
+        pushUpsCount={currentWeekGroupedWorkoutsRepsTotal[WorkoutType.PushUp]}
+        sitUpsCount={currentWeekGroupedWorkoutsRepsTotal[WorkoutType.SitUp]}
+        squatsCount={currentWeekGroupedWorkoutsRepsTotal[WorkoutType.Squat]}
       />
     </PageLayout>
   );

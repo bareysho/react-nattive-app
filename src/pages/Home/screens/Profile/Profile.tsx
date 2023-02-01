@@ -1,13 +1,12 @@
-import React, { FC, useContext, useState } from 'react';
+import React, { FC, useContext } from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {
-  Box,
   Button,
+  ConfirmModal,
   HStack,
   Icon,
-  Pressable,
   Switch,
   Text,
   ThemeType,
@@ -24,6 +23,9 @@ import { GlobalLoadingContext } from '@src/providers/GlobalLoadingProvider';
 import { PageLayout } from '@src/components/PageLayout';
 import { Card } from '@src/components/Card';
 import { IHomeTab } from '@src/pages/Home/Home';
+import StorageContext from '@src/storage/storage';
+
+const { useRealm } = StorageContext;
 
 export const SwitchTheme = () => {
   const { switchTheme, themeType } = useTheme();
@@ -32,7 +34,6 @@ export const SwitchTheme = () => {
     <Switch toggle={() => switchTheme()} value={themeType === ThemeType.Dark} />
   );
 };
-
 const ROLE_MAPPER = {
   user: 'Пользователь',
   admin: 'Администратор',
@@ -46,6 +47,8 @@ export const Profile: FC<IHomeTab> = ({ navigate }) => {
   const { setGlobalLoading } = useContext(GlobalLoadingContext);
 
   const { user, isLoading } = useAppSelector(selectAuthState);
+
+  const realm = useRealm();
 
   const handleLogout = async () => {
     await dispatch(logoutAction());
@@ -114,6 +117,27 @@ export const Profile: FC<IHomeTab> = ({ navigate }) => {
               title="Email"
               icon={<MaterialIcons name="email" />}
               callback={() => navigate('ChangeEmail')}
+            />
+
+            <ConfirmModal
+              modalTitle="Очистить данные?"
+              modalDescription={
+                'Вы действительно хотите очистить данные? \n\nВся информация о тренировках и статистика будет удалена.'
+              }
+              renderComponent={toggleOpen => (
+                <MenuItem
+                  title="Очистить данные"
+                  icon={<MaterialIcons name="cleaning-services" />}
+                  rightIcon={<></>}
+                  callback={toggleOpen}
+                />
+              )}
+              confirm={() => {
+                realm.write(() => {
+                  realm.deleteAll();
+                });
+              }}
+              confirmButtonTitle="Очистить"
             />
 
             <MenuItem

@@ -56,6 +56,8 @@ import { PageLayout } from '@src/components/PageLayout';
 import { DateService } from '@src/services/dateService';
 import { WorkoutEvent } from '@src/storage/models/WorkoutEvent';
 import { WorkoutRecord } from '@src/pages/Home/screens/History/WorkoutRecord';
+import { WorkoutRecords } from '@src/storage/repositories/workoutRecords';
+import { BestWorkoutResult } from '@src/storage/models/BestWorkoutResult';
 
 import { CircleButton } from './CircleButton';
 
@@ -177,6 +179,8 @@ export const Workout: FC<IWorkout> = ({
 
   const [workoutResult, setWorkoutResult] = useState<WorkoutEvent | null>(null);
 
+  const bestWorkout = WorkoutRecords.getWorkoutTypeBestResult(workoutType);
+
   useEffect(() => {
     if (workoutState === WorkoutState.Working) {
       resetPause();
@@ -195,7 +199,31 @@ export const Workout: FC<IWorkout> = ({
       );
       dispatch(increaseSetNumber({ workoutType }));
 
+      let updatedRecord: number | null = null;
+
+      if (
+        !bestWorkout ||
+        (bestWorkout && setsDone.some(set => set > bestWorkout.reps))
+      ) {
+        updatedRecord = [...setsDone].sort().reverse()[0];
+      }
+
       realm.write(() => {
+        if (updatedRecord) {
+          if (bestWorkout) {
+            bestWorkout.reps = updatedRecord;
+          } else {
+            realm.create(
+              'BestWorkoutResult',
+              BestWorkoutResult.generate({
+                userId: user.id,
+                workoutType,
+                reps: updatedRecord,
+              }),
+            );
+          }
+        }
+
         const result = realm.create<WorkoutEvent>(
           'WorkoutEvent',
           WorkoutEvent.generate({
