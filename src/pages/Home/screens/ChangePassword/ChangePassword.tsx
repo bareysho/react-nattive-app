@@ -5,7 +5,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { ParamListBase } from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import {Box, Button, Center, Icon, Text, VStack} from '@src/components/UI';
+import { Button, Center, Icon, Text, VStack } from '@src/components/UI';
 import { PageLayout } from '@src/components/PageLayout';
 import { selectAuthState } from '@src/selectors/auth';
 import { useForm } from '@src/hooks/useForm';

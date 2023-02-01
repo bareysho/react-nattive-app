@@ -1,10 +1,10 @@
 import React, { FC, useEffect, useRef } from 'react';
 import { ActionSheetRef } from 'react-native-actions-sheet';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import { Button, Text, VStack } from '@src/components/UI';
+import { Button, HStack, Icon, Text, VStack } from '@src/components/UI';
 import { PageLayout } from '@src/components/PageLayout';
 import { WorkoutRecord } from '@src/pages/Home/screens/History/WorkoutRecord';
-import { WorkoutEvent } from '@src/storage/models/WorkoutEvent';
 import { WorkoutType } from '@src/enums/WorkoutType';
 import {
   PUSH_UP_WORKOUT_LEVELS,
@@ -13,12 +13,10 @@ import {
 } from '@src/constants/workouts';
 import { useAppSelector } from '@src/redux/store';
 import { selectWorkout } from '@src/selectors/workout';
-import StorageContext from '@src/storage/storage';
 import { Card } from '@src/components/Card';
+import { WorkoutRecords } from '@src/storage/repositories/workoutRecords';
 
 import { SelectLevelActionSheet } from './SelectLevelActionSheet';
-
-const { useQuery } = StorageContext;
 
 interface IWorkoutReady {
   workoutType: WorkoutType;
@@ -33,13 +31,9 @@ export const WorkoutReady: FC<IWorkoutReady> = ({
   mainColor,
   navigate,
 }) => {
-  let workouts = useQuery<WorkoutEvent>(WorkoutEvent);
+  const [lastWorkout] = WorkoutRecords.getWorkoutsByType(workoutType);
 
-  workouts = workouts
-    .filtered('workoutType == $0', workoutType)
-    .sorted('workoutDate', true);
-
-  const [workout] = workouts;
+  const bestWorkout = WorkoutRecords.getWorkoutTypeBestResult(workoutType);
 
   const actionSheetRef = useRef<ActionSheetRef>(null);
 
@@ -62,13 +56,27 @@ export const WorkoutReady: FC<IWorkoutReady> = ({
     <PageLayout>
       <VStack flex={1} width="100%" justifyContent="space-between">
         <VStack width="100%" alignItems="center">
-          <Text mb={8} fontSize={28}>
-            {WORKOUT_TITLE_MAPPER[workoutType]}
+          <Text mb={6} fontSize={28}>
+            {WORKOUT_TITLE_MAPPER[workoutType].toUpperCase()}
           </Text>
 
-          <Text mb={2} fontSize={26} alignSelf="flex-start">
-            {`Уровень: ${selectedLevelProps ? workoutLevel : 'Не выбрано'}`}
-          </Text>
+          <HStack mb={8} justifyContent="space-between" width="100%">
+            <HStack alignItems="center">
+              <Icon mr={2} as={<Ionicons name="star" />} />
+
+              <Text fontSize={24} textAlign="left">
+                {`Уровень: ${selectedLevelProps ? workoutLevel : 'Не выбрано'}`}
+              </Text>
+            </HStack>
+
+            {bestWorkout && (
+              <HStack alignItems="center">
+                <Icon mr={2} as={<Ionicons name="ios-trophy" />} />
+
+                <Text fontSize={24}>{`Рекорд: ${bestWorkout.reps}`}</Text>
+              </HStack>
+            )}
+          </HStack>
 
           {levelDescription ? (
             <Text fontSize={18} mb={5} alignSelf="flex-start">
@@ -80,8 +88,8 @@ export const WorkoutReady: FC<IWorkoutReady> = ({
             Последняя тренировка:
           </Text>
 
-          {workout ? (
-            <WorkoutRecord isSetsVisible={true} workout={workout} />
+          {lastWorkout ? (
+            <WorkoutRecord isSetsVisible={true} workout={lastWorkout} />
           ) : (
             <Card mt={4}>
               <Text alignSelf="flex-start">Это первая ваша тренировка</Text>

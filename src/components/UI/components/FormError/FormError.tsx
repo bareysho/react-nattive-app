@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-import {HStack, Icon, Text, useTheme} from '@src/components/UI';
+import { HStack, Icon, Text, useTheme } from '@src/components/UI';
 
 interface IFormError {
   message?: string;

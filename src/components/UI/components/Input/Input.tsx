@@ -16,7 +16,7 @@ import {
 import styled, { css } from 'styled-components/native';
 import { SimpleInterpolation } from 'styled-components';
 
-import {Box, useTheme} from '@src/components/UI';
+import { Box, useTheme } from '@src/components/UI';
 
 import { baseElementCss } from '../../css/baseElementCss';
 import { IBaseElementStyleProps, IText } from '../../types/common';

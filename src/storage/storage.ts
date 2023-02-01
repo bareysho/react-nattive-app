@@ -2,6 +2,7 @@
 import { createRealmContext, Realm } from '@realm/react';
 
 import { WorkoutEvent } from './models/WorkoutEvent';
+import { BestWorkoutResult } from './models/BestWorkoutResult';
 
 // Increase for migration
 const SCHEMA_VERSION = 4;
@@ -26,7 +27,7 @@ const SCHEMA_VERSION = 4;
 // });
 
 const config = {
-  schema: [WorkoutEvent],
+  schema: [WorkoutEvent, BestWorkoutResult],
   schemaVersion: SCHEMA_VERSION,
 };
 
