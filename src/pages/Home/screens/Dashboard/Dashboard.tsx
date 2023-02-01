@@ -180,7 +180,7 @@ export const Dashboard: FC = () => {
 
       <DashboardWorkoutsCard
         title="Сегодня:"
-        iconColor="#6ee7b7"
+        iconColor="#22c55e"
         icon={<MaterialCommunityIcons name="shield-check" />}
         pushUpsCount={sumsToday[WorkoutType.PushUp]}
         sitUpsCount={sumsToday[WorkoutType.SitUp]}
@@ -189,7 +189,7 @@ export const Dashboard: FC = () => {
 
       <DashboardWorkoutsCard
         title="За неделю:"
-        iconColor="#f97316"
+        iconColor="#0ea5e9"
         icon={<Ionicons name="ios-today" />}
         pushUpsCount={sumsThisWeek[WorkoutType.PushUp]}
         sitUpsCount={sumsThisWeek[WorkoutType.SitUp]}

@@ -13,7 +13,7 @@ export interface IPrimaryColors {
 }
 
 export const LIGHT_PRIMARY_COLORS: IPrimaryColors = {
-  primary: '#FDDB3A',
+  primary: '#ffdb33',
   primaryPressed: '#facc15',
   pressablePressed: '#d4d4d4',
   disabled: '#d4d4d4',
@@ -30,8 +30,8 @@ export const DARK_PRIMARY_COLORS: IPrimaryColors = {
   ...LIGHT_PRIMARY_COLORS,
   text: '#fafafa',
   pressablePressed: '#4b5563',
-  background: '#4b5563',
-  cardBackground: '#374151',
+  background: '#1f2937',
+  cardBackground: '#111827',
   iconColor: '#e5e5e5',
   error: '#f87171',
 };

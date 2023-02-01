@@ -1,5 +1,6 @@
 import { ImageAppName } from '@src/components/Image/Image';
 import { WorkoutType } from '@src/enums/WorkoutType';
+import { LIGHT_PRIMARY_COLORS } from '@src/components/UI/components/ThemeProvider/lightPrimary';
 
 import {
   PUSH_UP_WORKOUT_LEVEL,
@@ -14,15 +15,21 @@ export const IMAGE_BY_WORKOUT_MAPPER: Record<WorkoutType, ImageAppName> = {
 };
 
 export const WORKOUT_PRIMARY_COLOR = {
+  [WorkoutType.Squat]: '#06b6d4',
+  [WorkoutType.SitUp]: '#22c55e',
+  [WorkoutType.PushUp]: LIGHT_PRIMARY_COLORS.primary,
+};
+
+export const WORKOUT_HEADER_SECONDARY_COLOR = {
   [WorkoutType.Squat]: '#67e8f9',
-  [WorkoutType.PushUp]: '#ffe502',
   [WorkoutType.SitUp]: '#86efac',
+  [WorkoutType.PushUp]: '#ffee9c',
 };
 
 export const WORKOUT_SECONDARY_COLOR = {
-  [WorkoutType.Squat]: '#0bd5e8',
-  [WorkoutType.PushUp]: '#dcc40c',
-  [WorkoutType.SitUp]: '#18c055',
+  [WorkoutType.Squat]: '#0891b2',
+  [WorkoutType.SitUp]: '#16a34a',
+  [WorkoutType.PushUp]: LIGHT_PRIMARY_COLORS.primaryPressed,
 };
 
 export const WORKOUT_LEVEL_ASYNC_STORAGE_KEY = {

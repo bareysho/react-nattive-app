@@ -11,13 +11,13 @@ interface IRepetitionsCount {
 }
 
 const RepetitionsCount: FC<IRepetitionsCount> = ({ iconName, count = 0 }) => {
-  const fontSize = count.toString().length > 2 ? 18 : 24;
+  const fontSize = count.toString().length > 2 ? 16 : 20;
 
   return (
-    <HStack mr={6} alignItems="center">
+    <HStack mr={6} minWidth={70} alignItems="center">
       <ImageApp name={iconName} size={30} />
 
-      <Text minWidth={9} ml={2} fontSize={fontSize}>
+      <Text ml={2} fontSize={fontSize}>
         {count}
       </Text>
     </HStack>
