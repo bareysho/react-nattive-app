@@ -5,7 +5,7 @@ import { WorkoutEvent } from './models/WorkoutEvent';
 import { BestWorkoutResult } from './models/BestWorkoutResult';
 
 // Increase for migration
-const SCHEMA_VERSION = 4;
+const SCHEMA_VERSION = 0;
 
 // Uncomment for migration
 

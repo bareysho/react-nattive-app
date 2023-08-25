@@ -75,7 +75,7 @@ export const ChangePassword: FC<NativeStackScreenProps<ParamListBase>> = ({
   });
 
   return (
-    <PageLayout>
+    <PageLayout withScroll>
       {pageState !== PageState.Success && (
         <>
           <Text fontSize={20} fontWeight={600}>

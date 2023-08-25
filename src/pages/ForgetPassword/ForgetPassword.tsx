@@ -134,7 +134,7 @@ export const ForgetPassword: FC<NativeStackScreenProps<ParamListBase>> = ({
   );
 
   return (
-    <PageLayout>
+    <PageLayout withScroll>
       <Box width="100%">
         <Text fontSize={20} fontWeight={600}>
           Восстановление пароля
@@ -147,7 +147,7 @@ export const ForgetPassword: FC<NativeStackScreenProps<ParamListBase>> = ({
         {pageState !== PageWithOtpState.SuccessUpdate && (
           <>
             <Center width="100%" my={36}>
-              <MaterialIcons name={'vpn-key'} size={98} color="gray" />
+              <Icon size={98} as={<MaterialIcons name="vpn-key" />} />
             </Center>
 
             <Formik<IForgotFormValues>

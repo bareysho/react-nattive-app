@@ -7,8 +7,6 @@ export class BestWorkoutResult extends Realm.Object {
   static schema = {
     name: 'BestWorkoutResult',
     primaryKey: '_id',
-    type: 'object',
-    schemaVersion: 2,
     properties: {
       _id: 'objectId',
       userId: 'string',

@@ -13,6 +13,7 @@ import {
   FormError,
   InputPassword,
   InputWithIcon,
+  Icon,
 } from '@src/components/UI';
 import { selectAuthState } from '@src/selectors/auth';
 import { useAppDispatch, useAppSelector } from '@src/redux/store';
@@ -61,7 +62,7 @@ export const Login: FC<NativeStackScreenProps<ParamListBase>> = ({
   );
 
   return (
-    <PageLayout>
+    <PageLayout withScroll>
       <Text fontSize={20} fontWeight={600}>
         Добро пожаловать
       </Text>
@@ -71,13 +72,14 @@ export const Login: FC<NativeStackScreenProps<ParamListBase>> = ({
       </Text>
 
       <Center width="100%" my={36}>
-        <MaterialIcons name={'fitness-center'} size={98} color="gray" />
+        <Icon size={98} as={<MaterialIcons name="fitness-center" />} />
       </Center>
 
       <Formik<ILoginFormValues>
         initialValues={{ login: '', password: '' }}
         onSubmit={onSubmit}
         validateOnChange
+        validateOnBlur
         validate={validate}
       >
         {formik => (

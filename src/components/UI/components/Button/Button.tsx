@@ -1,7 +1,7 @@
 import React, { FC, ReactElement, ReactNode, useState } from 'react';
 import styled, { css } from 'styled-components/native';
 import { ButtonProps } from 'react-native';
-import { SimpleInterpolation } from 'styled-components';
+import { RuleSet } from 'styled-components';
 
 import { getButtonBackgroundColor } from '@src/components/UI/utils/common';
 import { LIGHT_PRIMARY_COLORS } from '@src/components/UI/components/ThemeProvider/lightPrimary';
@@ -28,7 +28,7 @@ const ghostButtonCss = css`
   elevation: 0;
 `;
 
-const STYLES_MAPPER: Record<string, ReadonlyArray<SimpleInterpolation>> = {
+const STYLES_MAPPER: Record<string, RuleSet<object>> = {
   ghost: ghostButtonCss,
 };
 

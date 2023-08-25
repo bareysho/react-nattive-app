@@ -22,27 +22,25 @@ class HttpService {
   private static initHttp(): AxiosInstance {
     const axiosInstance = axios.create({
       timeout: 30 * 1000,
-      baseURL: 'https://workout-plan-node-server.herokuapp.com',
-      // baseURL: 'http://192.168.1.2:3000',
+      // baseURL: 'https://workout-plan-node-server.herokuapp.com',
+      baseURL: 'http://192.168.1.2:3000',
     });
 
-    axiosInstance.interceptors.request.use(
-      async (config: AxiosRequestConfig) => {
-        if (config.headers) {
+    axiosInstance.interceptors.request.use(async config => {
+      if (config.headers) {
+        // @ts-ignore
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        if (!config.headers['authorization']) {
+          const { token } = selectAuthState(store.getState());
+
           // @ts-ignore
           // eslint-disable-next-line @typescript-eslint/dot-notation
-          if (!config.headers['authorization']) {
-            const { token } = selectAuthState(store.getState());
-
-            // @ts-ignore
-            // eslint-disable-next-line @typescript-eslint/dot-notation
-            config.headers['authorization'] = `bearer ${token}`;
-          }
+          config.headers['authorization'] = `bearer ${token}`;
         }
+      }
 
-        return config;
-      },
-    );
+      return config;
+    });
 
     axiosInstance.interceptors.response.use(
       response => response,

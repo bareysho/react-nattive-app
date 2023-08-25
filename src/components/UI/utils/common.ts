@@ -61,7 +61,7 @@ export const transformOffset = (
     return paddings;
   }
 
-  return '0 0 0 0';
+  return `${offsetName}: 0 0 0 0`;
 };
 
 export const transformPadding = ({ pt, pb, pr, p, py, px, pl }: IPadding) =>
