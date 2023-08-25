@@ -1,10 +1,5 @@
 module.exports = {
-  extends: [
-    '@react-native-community',
-    'airbnb-typescript',
-    'airbnb/hooks',
-    'prettier',
-  ],
+  extends: ['@react-native', 'airbnb-typescript', 'airbnb/hooks', 'prettier'],
   plugins: ['import'],
   rules: {
     'max-len': ['error', 150],

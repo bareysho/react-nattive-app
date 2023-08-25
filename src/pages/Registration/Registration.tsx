@@ -23,6 +23,7 @@ import {
   InputControlled,
   InputPassword,
   InputWithIcon,
+  Icon,
 } from '@src/components/UI';
 import { TimerName } from '@src/enums/timer';
 import { OtpConfirmationForm } from '@src/components/OtpConfirmationForm';
@@ -125,7 +126,7 @@ export const Registration: FC<NativeStackScreenProps<ParamListBase>> = ({
   );
 
   return (
-    <PageLayout>
+    <PageLayout withScroll>
       <Box width="100%">
         <Text fontSize={20} fontWeight={600}>
           Регистрация
@@ -136,7 +137,7 @@ export const Registration: FC<NativeStackScreenProps<ParamListBase>> = ({
         </Text>
 
         <Center width="100%" my={18}>
-          <MaterialIcons name={'supervisor-account'} size={98} color="gray" />
+          <Icon size={98} as={<MaterialIcons name="supervisor-account" />} />
         </Center>
 
         <Formik<IRegistrationFormValues>

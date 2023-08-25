@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react';
+import React, { FC } from 'react';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
@@ -19,7 +19,6 @@ import { logoutAction } from '@src/redux/actions/authActions';
 import { MenuItem } from '@src/components/MenuItem';
 import { ExitModal } from '@src/components/ExitModal';
 import { ICON_NAME_MAPPER_BY_COLOR_MODE } from '@src/constants/common';
-import { GlobalLoadingContext } from '@src/providers/GlobalLoadingProvider';
 import { PageLayout } from '@src/components/PageLayout';
 import { Card } from '@src/components/Card';
 import { IHomeTab } from '@src/pages/Home/Home';
@@ -44,18 +43,12 @@ export const Profile: FC<IHomeTab> = ({ navigate }) => {
 
   const { switchTheme, themeType } = useTheme();
 
-  const { setGlobalLoading } = useContext(GlobalLoadingContext);
-
   const { user, isLoading } = useAppSelector(selectAuthState);
 
   const realm = useRealm();
 
   const handleLogout = async () => {
     await dispatch(logoutAction());
-
-    setGlobalLoading(true);
-
-    navigate('Login');
   };
 
   return (

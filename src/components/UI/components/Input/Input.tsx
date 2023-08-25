@@ -8,13 +8,12 @@ import React, {
 } from 'react';
 import {
   NativeSyntheticEvent,
-  NativeTouchEvent,
   TextInput,
   TextInputFocusEventData,
   TextInputProps,
 } from 'react-native';
 import styled, { css } from 'styled-components/native';
-import { SimpleInterpolation } from 'styled-components';
+import { RuleSet } from 'styled-components';
 
 import { Box, useTheme } from '@src/components/UI';
 
@@ -52,10 +51,7 @@ const errorCss = css`
   border-color: #dc2626;
 `;
 
-const INPUT_STYLE_BY_INPUT_STATE: Record<
-  InputState,
-  ReadonlyArray<SimpleInterpolation>
-> = {
+const INPUT_STYLE_BY_INPUT_STATE: Record<InputState, RuleSet<object>> = {
   [InputState.Focused]: focusCss,
   [InputState.Disabled]: disabledCss,
   [InputState.Error]: errorCss,
@@ -85,7 +81,7 @@ export const Input: FC<IInput> = ({
   value,
   type = 'text',
   onBlur,
-  onPressIn,
+  onFocus,
   onChangeText,
   InputRightElement,
   InputLeftElement,
@@ -142,12 +138,16 @@ export const Input: FC<IInput> = ({
     removeState(InputState.Focused);
 
     if (onBlur) onBlur(event);
+
+    if (onChangeText && value) onChangeText(value.trim());
   };
 
-  const handleFocus = (event: NativeSyntheticEvent<NativeTouchEvent>) => {
+  const handleFocus = (
+    event: NativeSyntheticEvent<TextInputFocusEventData>,
+  ) => {
     addState(InputState.Focused);
 
-    if (onPressIn) onPressIn(event);
+    if (onFocus) onFocus(event);
   };
 
   return (
@@ -163,7 +163,7 @@ export const Input: FC<IInput> = ({
         {...rest}
         secureTextEntry={type === 'password'}
         onChangeText={onChangeText}
-        onPressIn={handleFocus}
+        onFocus={handleFocus}
         onBlur={handleBlur}
         editable={!(isDisabled || isReadOnly)}
         placeholder={placeholder}
@@ -180,6 +180,7 @@ export const Input: FC<IInput> = ({
         borderWidth={borderWidth}
         rounded={borderRadius}
         borderColor={borderColor || theme.inputBorder}
+        maxLength={40}
       />
 
       {InputRightElement &&

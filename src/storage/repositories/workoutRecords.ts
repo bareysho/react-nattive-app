@@ -1,5 +1,3 @@
-import { Results } from 'realm';
-
 import { WorkoutEvent } from '@src/storage/models/WorkoutEvent';
 import { BestWorkoutResult } from '@src/storage/models/BestWorkoutResult';
 import { WorkoutType } from '@src/enums/WorkoutType';
@@ -8,6 +6,14 @@ import StorageContext from '@src/storage/storage';
 const { useQuery } = StorageContext;
 
 export class WorkoutRecords {
+  public static getWorkoutsByUser = (userId: string) => {
+    const workouts = useQuery<WorkoutEvent>(WorkoutEvent);
+
+    return workouts
+      .filtered('userId == $0', userId)
+      .sorted('workoutDate', true);
+  };
+
   public static getWorkoutsByType = (workoutType: WorkoutType) => {
     const workouts = useQuery<WorkoutEvent>(WorkoutEvent);
 
@@ -19,7 +25,7 @@ export class WorkoutRecords {
   public static getWorkoutRecordsInDateInterval = (
     startDate: Date,
     endDate: Date,
-    existsWorkoutsResult?: Results<WorkoutEvent>,
+    existsWorkoutsResult?: Realm.Results<WorkoutEvent>,
   ) => {
     const workouts = existsWorkoutsResult
       ? existsWorkoutsResult

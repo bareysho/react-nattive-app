@@ -92,7 +92,7 @@ export const ChangeEmail: FC<NativeStackScreenProps<ParamListBase>> = ({
   );
 
   return (
-    <PageLayout>
+    <PageLayout withScroll>
       <Box width="100%">
         {pageState !== PageWithOtpState.SuccessUpdate && (
           <>
